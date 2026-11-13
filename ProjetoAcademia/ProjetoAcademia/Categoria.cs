@@ -2,7 +2,7 @@
 {
     class Categoria
     {
-        private Guid _id;
+        private Guid Id { get; set; }
         private string Nome { get; set; }
     }
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Desktop\\Formação\\C#\\Projetos\\ProjetoAcademia\\ProjetoAcademia\\ProjetoAcademia.csproj": {}
+    "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Documents\\GitHub\\AppOrcamentacao_askblue\\ProjetoAcademia\\ProjetoAcademia\\ProjetoAcademia.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Desktop\\Formação\\C#\\Projetos\\ProjetoAcademia\\ProjetoAcademia\\ProjetoAcademia.csproj": {
+    "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Documents\\GitHub\\AppOrcamentacao_askblue\\ProjetoAcademia\\ProjetoAcademia\\ProjetoAcademia.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Desktop\\Formação\\C#\\Projetos\\ProjetoAcademia\\ProjetoAcademia\\ProjetoAcademia.csproj",
+        "projectUniqueName": "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Documents\\GitHub\\AppOrcamentacao_askblue\\ProjetoAcademia\\ProjetoAcademia\\ProjetoAcademia.csproj",
         "projectName": "ProjetoAcademia",
-        "projectPath": "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Desktop\\Formação\\C#\\Projetos\\ProjetoAcademia\\ProjetoAcademia\\ProjetoAcademia.csproj",
+        "projectPath": "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Documents\\GitHub\\AppOrcamentacao_askblue\\ProjetoAcademia\\ProjetoAcademia\\ProjetoAcademia.csproj",
         "packagesPath": "C:\\Users\\gabriel.teixeira\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Desktop\\Formação\\C#\\Projetos\\ProjetoAcademia\\ProjetoAcademia\\obj\\",
+        "outputPath": "C:\\Users\\gabriel.teixeira\\OneDrive - AskBlue\\Documents\\GitHub\\AppOrcamentacao_askblue\\ProjetoAcademia\\ProjetoAcademia\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\gabriel.teixeira\\AppData\\Roaming\\NuGet\\NuGet.Config",
