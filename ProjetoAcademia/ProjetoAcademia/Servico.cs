@@ -26,7 +26,7 @@
         private DateTime PrazoPropostas {  get; set; }
         private DateTime DataDesejada { get; set; }
 
-        public Servico(Utilizador cliente, Categoria categoria, string titulo, string descricao, DateTime prazoPropostas, DateTime dataDesejada)
+        private Servico(Utilizador cliente, Categoria categoria, string titulo, string descricao, DateTime prazoPropostas, DateTime dataDesejada)
         {
             // Validar Cliente
             if (cliente == null)
