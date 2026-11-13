@@ -1,5 +1,11 @@
 ﻿namespace ProjetoAcademia
 {
+    enum EstadoOrcamento
+    {
+        Aceite,
+        Recusado
+    }
+
     class Orcamento
     {
         public Guid Id { get; private set; }

@@ -1,10 +1,11 @@
 ﻿namespace ProjetoAcademia
 {
-    public enum Estado
+    public enum EstadoServico
     {
         PorAprovar,
         EmCurso,
-        Cancelado
+        Cancelado,
+        Concluido
     }
 
     public class Servico
