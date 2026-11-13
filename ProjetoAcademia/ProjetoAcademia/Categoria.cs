@@ -2,7 +2,7 @@
 {
     class Categoria
     {
-        private Guid Id { get; set; }
+        private Guid Id { get; }
         private string Nome { get; set; }
 
         public Categoria(string nome)
