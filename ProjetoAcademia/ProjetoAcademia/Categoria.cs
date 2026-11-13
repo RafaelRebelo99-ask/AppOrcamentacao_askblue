@@ -10,7 +10,7 @@
             if (string.IsNullOrWhiteSpace(nome.Trim()))
                 throw new ArgumentException(nameof(nome), "Nome de categoria inválido.");
 
-            this.Nome = nome;
+            this.Nome = nome.Trim();
         }
     }
 
