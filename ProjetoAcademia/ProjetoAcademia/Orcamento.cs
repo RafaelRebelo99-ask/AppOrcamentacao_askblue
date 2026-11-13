@@ -90,4 +90,12 @@
     Response 
     - ID, IdServico, ValorSemIVA, TaxaIVA, DuracaoDias, DataValidade, ValorTotal
      */
+
+    /* app/servicos/IdServico/orcamentos 
+     Request (GET) -> todos os orcamentos associados ao IdServico e IdPrestador (JOIN etc) 
+     */
+
+    /* app/servicos/IdServico/orcamentos/IdOrcamento 
+     Request (GET) -> O orcamento associados ao IdOrcamento 
+     */
 }
