@@ -1,6 +1,7 @@
 ﻿namespace GestaoServicosWeb.API
 {
-    public class OrcamentoAPI
+    class OrcamentoAPI
     {
+       
     }
 }
