@@ -3,7 +3,9 @@
     enum EstadoOrcamento
     {
         Aceite,
-        Recusado
+        Recusado, 
+        Enviado,
+        Rascunho
     }
 
     class Orcamento
@@ -11,17 +13,53 @@
         public Guid Id { get; private set; }
 
         // FK
-        public Guid IdPrestador { get; private set; }
+        public Guid IdPrestador { get; 
+            private set 
+            {
+                if (IdPrestador == Guid.Empty)
+                    throw new ArgumentException("Prestador inválido.", nameof(IdPrestador));
+            } 
+        }
         public Utilizador Prestador { get; private set; }
 
         // FK
-        public Guid IdServico { get; private set; }
+        public Guid IdServico { get; 
+            private set 
+            {
+                if (IdServico == Guid.Empty)
+                    throw new ArgumentException("Serviço inválido.", nameof(IdServico));
+            } 
+        }
         public Servico Servico { get; private set; }
 
-        public decimal ValorSemIVA { get; private set; }
-        public decimal TaxaIVA { get; private set; }
-        public DateTime DataValidade { get; private set; }
-        public int DuracaoDias { get; private set; }
+        public decimal ValorSemIVA { get; 
+            private set
+            {
+                if (ValorSemIVA <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(ValorSemIVA), "O valor tem de ser positivo.");
+            }
+        }
+        public decimal TaxaIVA { get; 
+            private set
+            {
+                if (TaxaIVA < 0 || TaxaIVA > 100)
+                    throw new ArgumentOutOfRangeException(nameof(TaxaIVA), "Taxa de IVA inválida.");
+            }
+        }
+        public DateTime DataValidade { get; 
+            private set 
+            {
+                if (DataValidade.Date <= DateTime.Now.Date)
+                    throw new ArgumentOutOfRangeException(nameof(DataValidade), "A validade tem de ser no futuro.");
+            } 
+        }
+        public int DuracaoDias { get; 
+            private set
+            {
+                if (DuracaoDias <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(DuracaoDias), "A duração tem de ser positiva.");
+            }
+        }
 
         private decimal ValorTotal
         {
@@ -34,26 +72,7 @@
         public Orcamento(Guid idPrestador, Guid idServico, decimal valorSemIVA, decimal taxaIVA,
             DateTime dataValidade, int duracaoDias)
         {
-            if (idPrestador == Guid.Empty) 
-                throw new ArgumentException("Prestador inválido.", nameof(idPrestador));
-
-            if (idServico == Guid.Empty) 
-                throw new ArgumentException("Serviço inválido.", nameof(idServico));
-
-            if (valorSemIVA <= 0)
-                throw new ArgumentOutOfRangeException(nameof(valorSemIVA), "O valor tem de ser positivo.");
-
-            if (taxaIVA < 0 || taxaIVA > 100)
-                throw new ArgumentOutOfRangeException(nameof(taxaIVA), "Taxa de IVA inválida.");
-
-            if (dataValidade.Date <= DateTime.Now.Date)
-                throw new ArgumentOutOfRangeException(nameof(dataValidade), "A validade tem de ser no futuro.");
-
-            if (duracaoDias <= 0)
-                throw new ArgumentOutOfRangeException(nameof(duracaoDias), "A duração tem de ser positiva.");
-
             this.Id = Guid.NewGuid();
-
             this.IdPrestador = idPrestador;
             this.IdServico = idServico;
             this.ValorSemIVA = valorSemIVA;
@@ -63,4 +82,12 @@
 
         }
     }
+
+    /*
+     Request (POST) 
+    - campos preenchidos pelo prestador -> ValorSemIVA, TaxaIVA, DuracaoDias, DataValidade
+
+    Response 
+    - ID, IdServico, ValorSemIVA, TaxaIVA, DuracaoDias, DataValidade, ValorTotal
+     */
 }
