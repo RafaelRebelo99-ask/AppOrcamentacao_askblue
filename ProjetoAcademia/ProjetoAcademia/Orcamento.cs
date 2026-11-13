@@ -28,9 +28,11 @@
         public Orcamento(Guid idPrestador, Guid idServico, decimal valorSemIVA, decimal taxaIVA,
             DateTime dataValidade, int duracaoDias)
         {
-            if (idPrestador == Guid.Empty) throw new ArgumentNullException("Prestador inválido: " + nameof(idPrestador));
+            if (idPrestador == Guid.Empty) 
+                throw new ArgumentNullException("Prestador inválido.", nameof(idPrestador));
 
-            if (idServico == Guid.Empty) throw new ArgumentNullException("Serviço inválido: " + nameof(idServico));
+            if (idServico == Guid.Empty) 
+                throw new ArgumentNullException("Serviço inválido.", nameof(idServico));
 
             if (valorSemIVA <= 0)
                 throw new ArgumentOutOfRangeException(nameof(valorSemIVA), "O valor tem de ser positivo.");
