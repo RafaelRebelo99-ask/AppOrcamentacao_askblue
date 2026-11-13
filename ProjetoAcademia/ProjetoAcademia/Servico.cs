@@ -22,7 +22,7 @@
 
         private string Titulo { get; set; }
         private string Descricao {  get; set; }
-        private Estado Estado { get; set; }
+        private EstadoServico Estado { get; set; }
         private DateTime CriadoEm { get; set; }
         private DateTime PrazoPropostas {  get; set; }
         private DateTime DataDesejada { get; set; }
@@ -63,21 +63,21 @@
             PrazoPropostas = prazoPropostas;
             DataDesejada = dataDesejada;
             CriadoEm = DateTime.Now;
-            Estado = Estado.PorAprovar;
+            Estado = EstadoServico.PorAprovar;
         }
         
         // Regras simples de mudança de estado
         public void Aprovar()
         {
-            if (Estado != Estado.PorAprovar)
+            if (Estado != EstadoServico.PorAprovar)
                 throw new InvalidOperationException("Apenas serviços por aprovar podem ser colocados em curso.");
-            Estado = Estado.EmCurso;
+            Estado = EstadoServico.EmCurso;
         }
         public void Cancelar()
         {
-            if (Estado == Estado.Cancelado)
+            if (Estado == EstadoServico.Cancelado)
                 throw new InvalidOperationException("O serviço já se encontra cancelado.");
-            Estado = Estado.Cancelado;
+            Estado = EstadoServico.Cancelado;
         }
     }
 
