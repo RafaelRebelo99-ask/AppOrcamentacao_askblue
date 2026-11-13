@@ -11,9 +11,11 @@
     {
         private Guid Id {  get; set; }
 
+        //FK
         private Guid IdCliente { get; set; }
         private Utilizador Cliente { get; set; }
 
+        //FK
         private Guid IdCategoria { get; set; }
         private Categoria Categoria { get; set; }
 
@@ -23,7 +25,6 @@
         private DateTime CriadoEm { get; set; }
         private DateTime PrazoPropostas {  get; set; }
         private DateTime DataDesejada { get; set; }
-        private Categoria Categoria { get; set; }
 
     }
 }
