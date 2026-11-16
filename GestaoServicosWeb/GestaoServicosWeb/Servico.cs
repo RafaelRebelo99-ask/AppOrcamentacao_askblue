@@ -1,4 +1,4 @@
-namespace ProjetoAcademia
+namespace GestaoServicosWeb
 {
     public enum EstadoServico
     {

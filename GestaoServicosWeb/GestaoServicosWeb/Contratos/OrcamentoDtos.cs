@@ -1,6 +1,6 @@
-﻿namespace GestaoServicosWeb.API.OrcamentoAPI;
+﻿namespace GestaoServicosWeb.Contratos;
 
-public record CriarOrcamentoRequest(Guid IdPrestador, Guid IdServico, decimal ValorSemIVA,
+public record OrcamentoDtos(Guid IdPrestador, Guid IdServico, decimal ValorSemIVA,
     decimal TaxaIVA, DateTime DataValidade, int DuracaoDias);
 
 public record OrcamentoResponse(Guid Id, Guid IdPrestador, Guid IdServico, decimal ValorSemIVA,

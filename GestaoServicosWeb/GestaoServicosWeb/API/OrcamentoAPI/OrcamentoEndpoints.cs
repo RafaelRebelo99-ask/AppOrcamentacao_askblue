@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using GestaoServicosWeb.Aplicacao;
+using GestaoServicosWeb.Contratos;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace GestaoServicosWeb.API.OrcamentoAPI;
 
@@ -20,7 +22,7 @@ public static class OrcamentoEndpoints
         });
 
         group.MapPost("/", Results<Created<OrcamentoResponse>, BadRequest<object>> (
-            CriarOrcamentoRequest pedido, OrcamentoService service) =>
+            OrcamentoDtos pedido, OrcamentoService service) =>
         {
             try
             {

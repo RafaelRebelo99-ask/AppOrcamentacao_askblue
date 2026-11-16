@@ -1,8 +1,8 @@
-namespace ProjetoAcademia
+namespace GestaoServicosWeb
 {
     class Categoria
     {
-        private Guid Id { get; }
+        public Guid Id { get; }
         private string Nome { get; set; }
 
         public Categoria(string nome)

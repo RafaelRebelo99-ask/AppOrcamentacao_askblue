@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using GestaoServicosWeb;
 
-namespace GestaoServicosWeb.API.OrcamentoAPI
+namespace GestaoServicosWeb.Aplicacao
 {
     public class OrcamentoService
     {
