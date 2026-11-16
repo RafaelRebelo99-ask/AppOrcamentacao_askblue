@@ -11,3 +11,4 @@ namespace GestaoServicosWeb
         public string? Summary { get; set; }
     }
 }
+
