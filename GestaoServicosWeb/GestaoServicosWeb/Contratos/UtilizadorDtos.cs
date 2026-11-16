@@ -1,4 +1,3 @@
-using ProjetoAcademia;   // enquanto as entidades tiverem o namespace antigo
 
 namespace GestaoServicosWeb.Contratos
 {

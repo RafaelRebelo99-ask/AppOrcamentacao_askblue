@@ -8,7 +8,7 @@ public static class OrcamentoEndpoints
 {
     public static void MapOrcamentoEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/orcamentos").WithTags("Orçamentos");
+        var group = app.MapGroup("/api/orcamentos").WithTags("Orçamentos");
 
         group.MapGet("/", (OrcamentoService service) =>
             TypedResults.Ok(service.Listar().Select(OrcamentoResponse.De)));
@@ -28,7 +28,7 @@ public static class OrcamentoEndpoints
             {
                 var orcamento = service.Criar(pedido.IdPrestador, pedido.IdServico, pedido.ValorSemIVA,
                                               pedido.TaxaIVA, pedido.DataValidade, pedido.DuracaoDias);
-                return TypedResults.Created($"/orcamentos/{orcamento.Id}", OrcamentoResponse.De(orcamento));
+                return TypedResults.Created($"/api/orcamentos/{orcamento.Id}", OrcamentoResponse.De(orcamento));
             }
             catch (ArgumentException erro)
             {
