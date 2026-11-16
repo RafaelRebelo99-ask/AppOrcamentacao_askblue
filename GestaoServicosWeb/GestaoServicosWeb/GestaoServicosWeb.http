@@ -1,6 +1,6 @@
 @GestaoServicosWeb_HostAddress = http://localhost:5126
 
-GET {{GestaoServicosWeb_HostAddress}}/weatherforecast/
+GET {{GestaoServicosWeb_HostAddress}}/api/utilizadores/
 Accept: application/json
 
 ###
