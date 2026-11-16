@@ -1,4 +1,4 @@
-﻿namespace ProjetoAcademia
+﻿namespace GestaoServicosWeb
 {
     enum EstadoOrcamento
     {
@@ -8,8 +8,11 @@
         Rascunho
     }
 
-    class Orcamento
+    public class Orcamento
     {
+        /*
+         Para o caso dos orçamentos poderem ser editados na aplicação final, decidi colocar as regras e validações nos setters
+         */
         public Guid Id { get; private set; }
 
         // FK
@@ -61,7 +64,7 @@
             }
         }
 
-        private decimal ValorTotal
+        public decimal ValorTotal
         {
             get
             {
