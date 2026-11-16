@@ -11,6 +11,7 @@ builder.Services.AddOpenApi();
 
 // Uma única instância partilhada: mantém os dados enquanto a aplicação corre
 builder.Services.AddSingleton<UtilizadorService>();
+builder.Services.AddSingleton<ServicoService>();
 
 var app = builder.Build();
 
@@ -26,5 +27,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapUtilizadorAPI();
+app.MapServicoAPI();
 
 app.Run();
