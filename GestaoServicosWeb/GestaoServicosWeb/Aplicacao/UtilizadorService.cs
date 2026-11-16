@@ -1,6 +1,5 @@
 using GestaoServicosWeb.Contratos;
 using Microsoft.AspNetCore.Identity;
-using ProjetoAcademia;   // enquanto as entidades tiverem o namespace antigo
 
 namespace GestaoServicosWeb.Aplicacao
 {
