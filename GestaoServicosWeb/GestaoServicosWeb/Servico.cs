@@ -1,4 +1,4 @@
-﻿namespace ProjetoAcademia
+namespace ProjetoAcademia
 {
     public enum EstadoServico
     {
@@ -10,54 +10,49 @@
 
     public class Servico
     {
-        private Guid Id {  get; set; }
+        public Guid Id { get; private set; }
 
-        //FK
-        private Guid IdCliente { get; set; }
-        private Utilizador Cliente { get; set; }
+        // FK
+        public Guid IdCliente { get; private set; }
+        internal Utilizador? Cliente { get; private set; }
 
-        //FK
-        private Guid IdCategoria { get; set; }
-        private Categoria Categoria { get; set; }
+        // FK
+        public Guid IdCategoria { get; private set; }
+        internal Categoria? Categoria { get; private set; }
 
-        private string Titulo { get; set; }
-        private string Descricao {  get; set; }
-        private EstadoServico Estado { get; set; }
-        private DateTime CriadoEm { get; set; }
-        private DateTime PrazoPropostas {  get; set; }
-        private DateTime DataDesejada { get; set; }
+        public string Titulo { get; private set; } = string.Empty;
+        public string Descricao { get; private set; } = string.Empty;
+        public EstadoServico Estado { get; private set; }
+        public DateTime CriadoEm { get; private set; }
+        public DateTime PrazoPropostas { get; private set; }
+        public DateTime DataDesejada { get; private set; }
 
-        private Servico(Utilizador cliente, Categoria categoria, string titulo, string descricao, DateTime prazoPropostas, DateTime dataDesejada)
+        public Servico() { }
+
+        // Construtor principal para criação por IDs (usado nas APIs/DTOs)
+        public Servico(Guid idCliente, Guid idCategoria, string titulo, string descricao, DateTime prazoPropostas, DateTime dataDesejada)
         {
-            // Validar Cliente
-            if (cliente == null)
-                throw new ArgumentNullException(nameof(cliente), "O cliente é obrigatório.");
+            if (idCliente == Guid.Empty)
+                throw new ArgumentException("O cliente é obrigatório.", nameof(idCliente));
 
-            if (cliente.Role != Role.Cliente)
-                throw new ArgumentException("Apenas utilizadores com o perfil de Cliente podem criar serviços.");
+            if (idCategoria == Guid.Empty)
+                throw new ArgumentException("A categoria é obrigatória.", nameof(idCategoria));
 
-            // Validar Categoria
-            if (categoria == null)
-                throw new ArgumentNullException(nameof(categoria), "A categoria é obrigatória.");
-
-            // Validar Textos
             if (string.IsNullOrWhiteSpace(titulo))
                 throw new ArgumentException("O título não pode estar vazio.", nameof(titulo));
+
             if (string.IsNullOrWhiteSpace(descricao))
                 throw new ArgumentException("A descrição não pode estar vazia.", nameof(descricao));
 
-            // Validar Datas
             if (prazoPropostas <= DateTime.Now)
                 throw new ArgumentException("O prazo de propostas deve ser uma data futura.", nameof(prazoPropostas));
+
             if (dataDesejada < prazoPropostas)
                 throw new ArgumentException("A data desejada para o serviço deve ser posterior ao prazo de propostas.", nameof(dataDesejada));
 
-            // Atribuição de valores
             Id = Guid.NewGuid();
-            Cliente = cliente;
-            IdCliente = cliente.Id;
-            Categoria = categoria;
-            // IdCategoria = categoria.Id; // quando Id for public em Categoria
+            IdCliente = idCliente;
+            IdCategoria = idCategoria;
             Titulo = titulo.Trim();
             Descricao = descricao.Trim();
             PrazoPropostas = prazoPropostas;
@@ -65,19 +60,43 @@
             CriadoEm = DateTime.Now;
             Estado = EstadoServico.PorAprovar;
         }
+
+        // Construtor completo com entidades
+        internal Servico(Utilizador cliente, Categoria categoria, string titulo, string descricao, DateTime prazoPropostas, DateTime dataDesejada)
+            : this(
+                cliente?.Id ?? throw new ArgumentNullException(nameof(cliente), "O cliente é obrigatório."),
+                categoria?.Id ?? throw new ArgumentNullException(nameof(categoria), "A categoria é obrigatória."),
+                titulo, descricao, prazoPropostas, dataDesejada)
+        {
+            if (cliente.Role != Role.Cliente)
+                throw new ArgumentException("Apenas utilizadores com o perfil de Cliente podem criar serviços.");
+
+            Cliente = cliente;
+            Categoria = categoria;
+        }
         
-        // Regras simples de mudança de estado
+        // Métodos de mudança de estado
         public void Aprovar()
         {
             if (Estado != EstadoServico.PorAprovar)
                 throw new InvalidOperationException("Apenas serviços por aprovar podem ser colocados em curso.");
             Estado = EstadoServico.EmCurso;
         }
+
         public void Cancelar()
         {
             if (Estado == EstadoServico.Cancelado)
                 throw new InvalidOperationException("O serviço já se encontra cancelado.");
+            if (Estado == EstadoServico.Concluido)
+                throw new InvalidOperationException("Não é possível cancelar um serviço já concluído.");
             Estado = EstadoServico.Cancelado;
+        }
+
+        public void Concluir()
+        {
+            if (Estado != EstadoServico.EmCurso)
+                throw new InvalidOperationException("Apenas serviços em curso podem ser concluídos.");
+            Estado = EstadoServico.Concluido;
         }
     }
 

@@ -1,4 +1,4 @@
-﻿namespace ProjetoAcademia
+namespace ProjetoAcademia
 {
     public class Utilizador
     {
