@@ -1,6 +1,5 @@
 ﻿using GestaoServicosWeb.Aplicacao;
 using GestaoServicosWeb.Contratos;
-using ProjetoAcademia;   // enquanto as entidades tiverem o namespace antigo
 
 namespace GestaoServicosWeb.API
 {
