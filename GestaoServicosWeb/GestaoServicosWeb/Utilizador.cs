@@ -1,6 +1,6 @@
 ﻿namespace ProjetoAcademia
 {
-    class Utilizador
+    public class Utilizador
     {
         // ===== Campos privados (onde os valores ficam realmente guardados) =====
         private string _nome = "";
@@ -137,7 +137,7 @@
         }
     }
 
-    enum Role
+    public enum Role
     {
         Cliente,
         Prestador,
