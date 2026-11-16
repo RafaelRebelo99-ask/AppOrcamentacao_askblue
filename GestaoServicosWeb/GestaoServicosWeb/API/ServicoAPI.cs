@@ -1,83 +1,70 @@
-using ProjetoAcademia;
+using GestaoServicosWeb.Aplicacao;
+using GestaoServicosWeb.Contratos;
 
 namespace GestaoServicosWeb.API
 {
+    // ===== Endpoints do Serviço =====
+    // Só tratam do HTTP: recebem o pedido, chamam o ServicoService e escolhem a resposta.
     public static class ServicoAPI
     {
-        // Lista em memória para guardar os serviços temporariamente
-        private static readonly List<Servico> _servicos = new();
-
-        // Método de extensão que regista todas as rotas (Minimal API) de Serviços
-        public static void MapServicoEndpoints(this IEndpointRouteBuilder app)
+        public static void MapServicoAPI(this WebApplication app)
         {
             var grupo = app.MapGroup("/api/servicos").WithTags("Serviços");
 
-            // 1. Criar novo serviço: POST /api/servicos
-            grupo.MapPost("/", (CriarServicoDto dto) =>
+            // 1. GET /api/servicos → listar com filtros opcionais (estado, categoria)
+            grupo.MapGet("/", (EstadoServico? estado, Guid? idCategoria, ServicoService service) =>
+            {
+                return Results.Ok(service.Listar(estado, idCategoria).Select(ParaDto));
+            });
+
+            // 2. GET /api/servicos/{id} → ver um serviço por Id
+            grupo.MapGet("/{id:guid}", (Guid id, ServicoService service) =>
+            {
+                var s = service.Buscar(id);
+
+                return s == null
+                    ? Results.NotFound()
+                    : Results.Ok(ParaDto(s));
+            });
+
+            // 3. GET /api/servicos/cliente/{clienteId} → ver serviços de um determinado cliente
+            grupo.MapGet("/cliente/{clienteId:guid}", (Guid clienteId, ServicoService service) =>
+            {
+                return Results.Ok(service.ListarPorCliente(clienteId).Select(ParaDto));
+            });
+
+            // 4. POST /api/servicos → criar novo serviço
+            grupo.MapPost("/", (CriarServicoDto dto, ServicoService service) =>
             {
                 try
                 {
-                    var servico = new Servico(
-                        dto.IdCliente,
-                        dto.IdCategoria,
-                        dto.Titulo,
-                        dto.Descricao,
-                        dto.PrazoPropostas,
-                        dto.DataDesejada
-                    );
-
-                    _servicos.Add(servico);
-
-                    return Results.Created($"/api/servicos/{servico.Id}", servico);
+                    var s = service.Criar(dto);
+                    return Results.Created($"/api/servicos/{s.Id}", ParaDto(s));
                 }
                 catch (ArgumentException ex)
                 {
-                    return Results.BadRequest(new { erro = ex.Message });
+                    return Results.BadRequest(ex.Message);
                 }
             });
 
-            // 2. Listar todos os serviços: GET /api/servicos
-            grupo.MapGet("/", () => Results.Ok(_servicos));
-
-            // 3. Obter um serviço por Id: GET /api/servicos/{id}
-            grupo.MapGet("/{id:guid}", (Guid id) =>
+            // 5. PUT /api/servicos/{id}/cancelar → cancelar serviço
+            grupo.MapPut("/{id:guid}/cancelar", (Guid id, ServicoService service) =>
             {
-                var servico = _servicos.FirstOrDefault(s => s.Id == id);
-                return servico is not null 
-                    ? Results.Ok(servico) 
-                    : Results.NotFound(new { mensagem = "Serviço não encontrado." });
-            });
-
-            // 4. Cancelar um serviço: PUT /api/servicos/{id}/cancelar
-            grupo.MapPut("/{id:guid}/cancelar", (Guid id) =>
-            {
-                var servico = _servicos.FirstOrDefault(s => s.Id == id);
-                if (servico is null)
-                {
-                    return Results.NotFound(new { mensagem = "Serviço não encontrado." });
-                }
-
                 try
                 {
-                    servico.Cancelar();
-                    return Results.Ok(new { mensagem = "Serviço cancelado com sucesso.", servico });
+                    return service.Cancelar(id)
+                        ? Results.Ok(new { mensagem = "Serviço cancelado com sucesso." })
+                        : Results.NotFound();
                 }
                 catch (InvalidOperationException ex)
                 {
-                    return Results.BadRequest(new { erro = ex.Message });
+                    return Results.BadRequest(ex.Message);
                 }
             });
         }
-    }
 
-    // DTO simples com os dados recebidos para criar o serviço
-    public class CriarServicoDto
-    {
-        public Guid IdCliente { get; set; }
-        public Guid IdCategoria { get; set; }
-        public string Titulo { get; set; } = string.Empty;
-        public string Descricao { get; set; } = string.Empty;
-        public DateTime PrazoPropostas { get; set; }
-        public DateTime DataDesejada { get; set; }
+        // Converte a entidade de domínio no DTO de resposta
+        private static ServicoDto ParaDto(Servico s) =>
+            new(s.Id, s.IdCliente, s.IdCategoria, s.Titulo, s.Descricao, s.Estado, s.CriadoEm, s.PrazoPropostas, s.DataDesejada);
     }
 }
