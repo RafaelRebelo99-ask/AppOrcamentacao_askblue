@@ -64,7 +64,7 @@
             }
         }
 
-        private decimal ValorTotal
+        public decimal ValorTotal
         {
             get
             {
