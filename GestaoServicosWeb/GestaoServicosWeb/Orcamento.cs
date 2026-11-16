@@ -11,6 +11,10 @@ namespace GestaoServicosWeb
         Recusado
     }
 
+    /*
+     * Rascunho (pode ser editado / eliminado) > Enviado (Já não pode ser editado) > Aceite / Recusado (pelo cliente)
+     */
+
     public class Orcamento
     {
         private Guid _idPrestador;
