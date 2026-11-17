@@ -14,6 +14,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSingleton<UtilizadorService>();
 builder.Services.AddSingleton<ServicoService>();
 builder.Services.AddSingleton<OrcamentoService>();
+builder.Services.AddSingleton<CategoriaService>();
 
 var app = builder.Build();
 
@@ -38,5 +39,6 @@ app.MapControllers();
 app.MapUtilizadorAPI();
 app.MapServicoAPI();
 app.MapOrcamentoEndpoints();
+app.MapCategoriaAPI();
 
 app.Run();

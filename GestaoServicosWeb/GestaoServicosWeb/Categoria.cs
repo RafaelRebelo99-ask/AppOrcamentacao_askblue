@@ -1,17 +1,29 @@
 namespace GestaoServicosWeb
 {
-    class Categoria
+    public class Categoria
     {
-        public Guid Id { get; }
-        private string Nome { get; set; }
+        public Guid Id { get; private set; }
+        public string Nome { get; private set; } = string.Empty;
 
         public Categoria(string nome)
         {
-            if (string.IsNullOrWhiteSpace(nome.Trim()))
-                throw new ArgumentException(nameof(nome), "Nome de categoria inválido.");
+            if (string.IsNullOrWhiteSpace(nome?.Trim()))
+                throw new ArgumentException("Nome de categoria inválido.", nameof(nome));
 
-            this.Nome = nome.Trim();
+            Id = Guid.NewGuid();
+            Nome = nome.Trim();
+        }
+
+        public Categoria(Guid id, string nome)
+        {
+            if (id == Guid.Empty)
+                throw new ArgumentException("Id de categoria inválido.", nameof(id));
+
+            if (string.IsNullOrWhiteSpace(nome?.Trim()))
+                throw new ArgumentException("Nome de categoria inválido.", nameof(nome));
+
+            Id = id;
+            Nome = nome.Trim();
         }
     }
-
 }
