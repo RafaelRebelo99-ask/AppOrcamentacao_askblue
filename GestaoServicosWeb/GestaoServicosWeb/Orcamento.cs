@@ -8,7 +8,8 @@ namespace GestaoServicosWeb
         Rascunho,
         Enviado,
         Aceite,
-        Recusado
+        Recusado,
+        Expirado
     }
 
     /*
@@ -94,6 +95,11 @@ namespace GestaoServicosWeb
                 _estado = value;
             }
         }
+
+        // válido até ao fim do dia da DataValidade
+        public bool Expirado =>
+            Estado == EstadoOrcamento.Enviado
+            && DateTime.UtcNow.Date > DataValidade.Date;
 
         public Orcamento(Guid idPrestador, Guid idServico, decimal valorSemIVA, decimal taxaIVA,
             DateTime dataValidade, int duracaoDias)
