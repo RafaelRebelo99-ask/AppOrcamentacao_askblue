@@ -2,7 +2,7 @@
 using GestaoServicosWeb.Contratos;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace GestaoServicosWeb.API.OrcamentoAPI;
+namespace GestaoServicosWeb.API;
 
 public static class OrcamentoEndpoints
 {
