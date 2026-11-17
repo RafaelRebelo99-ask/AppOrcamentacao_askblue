@@ -8,8 +8,7 @@ namespace GestaoServicosWeb
         Rascunho,
         Enviado,
         Aceite,
-        Recusado,
-        Expirado
+        Recusado
     }
 
     /*
