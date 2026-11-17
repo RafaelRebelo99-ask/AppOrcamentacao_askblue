@@ -35,5 +35,26 @@ public static class OrcamentoEndpoints
                 return TypedResults.BadRequest<object>(new { erro = erro.Message });
             }
         });
+
+        group.MapPut("/{id:guid}", Results<Ok<OrcamentoResponse>, NotFound, ForbidHttpResult, BadRequest<object>> (
+            Guid id, EditarOrcamentoRequest pedido, OrcamentoService service) =>
+        {
+            try
+            {
+                var orcamento = service.Editar(id, pedido.IdPrestador, pedido.ValorSemIVA,
+                                               pedido.TaxaIVA, pedido.DataValidade, pedido.DuracaoDias);
+                return orcamento is null
+                    ? TypedResults.NotFound()
+                    : TypedResults.Ok(OrcamentoResponse.De(orcamento));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return TypedResults.Forbid();
+            }
+            catch (ArgumentException erro)
+            {
+                return TypedResults.BadRequest<object>(new { erro = erro.Message });
+            }
+        });
     }
 }

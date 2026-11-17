@@ -10,3 +10,6 @@ public record OrcamentoResponse(Guid Id, Guid IdPrestador, Guid IdServico, decim
         new(o.Id, o.IdPrestador, o.IdServico, o.ValorSemIVA, o.TaxaIVA,
             o.ValorTotal, o.DataValidade, o.DuracaoDias);
 }
+
+public record EditarOrcamentoRequest(Guid IdPrestador, decimal ValorSemIVA,
+    decimal TaxaIVA, DateTime DataValidade, int DuracaoDias);
