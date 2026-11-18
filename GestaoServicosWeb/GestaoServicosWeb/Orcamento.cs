@@ -23,6 +23,7 @@ namespace GestaoServicosWeb
         private decimal _taxaIVA;
         private int _duracaoDias;
         private EstadoOrcamento _estado;
+        private String _descricao;
 
         public Guid Id { get; private set; }
 
@@ -72,6 +73,8 @@ namespace GestaoServicosWeb
 
         public DateTime DataValidade { get; private set; }
 
+        public DateTime DataInicio { get; private set; }
+
         public int DuracaoDias
         {
             get => _duracaoDias;
@@ -81,8 +84,23 @@ namespace GestaoServicosWeb
                 _duracaoDias = value;
             }
         }
+
+        public DateTime DataFim => DataInicio.AddDays(DuracaoDias);
+
+        public String Descricao
+        {
+            get => _descricao;
+            private set
+            {
+                if (string.IsNullOrWhiteSpace(value)) _descricao = "Sem descrição.";
+                else _descricao = value;
+            }
+        }
+
         public decimal ValorTotal =>
             Math.Round(ValorSemIVA * (1 + TaxaIVA / 100m), 2);
+
+        public decimal ValorIVA => Math.Round(ValorSemIVA + (ValorSemIVA * TaxaIVA), 2);
 
         public EstadoOrcamento Estado
         {
