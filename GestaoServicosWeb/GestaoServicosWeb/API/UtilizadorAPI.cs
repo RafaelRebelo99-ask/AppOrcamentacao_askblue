@@ -9,7 +9,9 @@ namespace GestaoServicosWeb.API
     {
         public static void MapUtilizadorAPI(this WebApplication app)
         {
-            var grupo = app.MapGroup("/api/utilizadores").WithTags("Utilizadores");
+            var grupo = app.MapGroup("/api/utilizadores")
+                .WithTags("Utilizadores")
+                .RequireAuthorization();
 
             // 1. GET /api/utilizadores?role=Prestador → listar (filtro opcional)
             grupo.MapGet("/", (Role? role, UtilizadorService service) =>
@@ -37,7 +39,9 @@ namespace GestaoServicosWeb.API
                 }
                 catch (ArgumentException ex)          { return Results.BadRequest(ex.Message); }
                 catch (InvalidOperationException ex)  { return Results.Conflict(ex.Message); }
-            });
+            })
+            .AllowAnonymous()
+            .WithName("RegistarUtilizador");
 
             // 4. PUT /api/utilizadores/{id} → atualizar perfil
             grupo.MapPut("/{id:guid}", (Guid id, AtualizarUtilizadorDto dto, UtilizadorService service) =>

@@ -1,6 +1,18 @@
 @GestaoServicosWeb_HostAddress = http://localhost:5126
+@jwtToken = COLE_AQUI_O_ACCESS_TOKEN
 
-GET {{GestaoServicosWeb_HostAddress}}/api/utilizadores/
+### Iniciar sessão e obter um JWT
+POST {{GestaoServicosWeb_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "utilizador@exemplo.pt",
+  "password": "a-password"
+}
+
+### Aceder a uma rota protegida com o JWT
+GET {{GestaoServicosWeb_HostAddress}}/api/categorias/
+Authorization: Bearer {{jwtToken}}
 Accept: application/json
 
 ###

@@ -31,6 +31,20 @@ namespace GestaoServicosWeb.Aplicacao
             }
         }
 
+        public Utilizador? BuscarPorEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            string emailNormalizado = email.Trim();
+
+            lock (bloqueio)
+            {
+                return utilizadores.FirstOrDefault(u =>
+                    string.Equals(u.Email, emailNormalizado, StringComparison.OrdinalIgnoreCase));
+            }
+        }
+
         public Utilizador Criar(CriarUtilizadorDto dto)
         {
             ValidarPassword(dto.Password);

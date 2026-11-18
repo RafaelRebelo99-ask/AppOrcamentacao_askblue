@@ -9,7 +9,9 @@ namespace GestaoServicosWeb.API
     {
         public static void MapCategoriaAPI(this WebApplication app)
         {
-            var grupo = app.MapGroup("/api/categorias").WithTags("Categorias");
+            var grupo = app.MapGroup("/api/categorias")
+                .WithTags("Categorias")
+                .RequireAuthorization();
 
             // 1. GET /api/categorias → listar todas as categorias
             grupo.MapGet("/", (CategoriaService service) =>
