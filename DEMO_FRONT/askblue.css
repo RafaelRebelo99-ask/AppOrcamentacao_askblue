@@ -36,6 +36,7 @@ body {
     box-sizing: border-box;
     font-family: "IBM Plex Sans", sans-serif;
     margin: 0;  
+    font-size: 0.9rem;
 }
 
 p {
@@ -113,7 +114,6 @@ button, select {
     align-items: center;
     justify-content: center;
     width: fit-content;
-    font-size: medium;
     height: 2.25rem;
 }
 
@@ -286,7 +286,7 @@ label {
 i {
     color: var(--primary-blue);
     transition: color 0.1s ease;
-    font-size: large;
+    font-size: medium;
 }
 
 .footer {
@@ -366,4 +366,47 @@ hr {
 
 .rot-180 {
     transform: rotate(180deg);
+}
+
+/* tabela */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table tr {
+    display: grid;
+    grid-template-columns:
+        1.5fr
+        1fr
+        0.8fr
+        1fr
+        1.3fr
+        1.2fr
+        1.5fr;
+    align-items: center;
+    gap: var(--gap);
+    width: 100%;
+}
+
+.table td {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 0.5rem;
+    gap: var(--gap);
+}
+
+.table td.right {
+    justify-content: flex-end;
+}
+
+.table tr.header {
+    color: var(--primary-blue);
+}
+
+.table tr:not(.header) {
+    border-radius: var(--border-radius-md);
+    border: var(--border);
 }

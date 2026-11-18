@@ -23,7 +23,8 @@
                 <button class="wide secondary w-100 justify-start"><i class="bi bi-journals"></i>Trabalhos</button>
                 <button class="wide secondary w-100 justify-start"><i
                         class="bi bi-file-earmark-spreadsheet"></i>Orçamentos</button>
-                <button class="wide secondary w-100 justify-start"><i class="bi bi-plus-lg rotate-right"></i>Novo Serviço</button>
+                <button class="wide secondary w-100 justify-start"><i class="bi bi-plus-lg rotate-right"></i>Novo
+                    Serviço</button>
             </div>
             <div class="box lg column h-100">
                 <div class="row mb-1">
@@ -35,10 +36,18 @@
                     <div class="vl"></div>
                     <button class="wide secondary" id="sortBtn">Ordenar por<i class="bi bi-caret-down"></i></button>
                     <div class="menu" id="sortMenu">
-                        <div class="item wide"><i class="bi bi-sort-alpha-down"></i><p>Nome (A-Z)</p></div>
-                        <div class="item wide"><i class="bi bi-sort-alpha-up"></i><p>Nome (Z-A)</p></div>
-                        <div class="item wide"><i class="bi bi-clock"></i><p>Data (Mais recente)</p></div>
-                        <div class="item wide"><i class="bi bi-clock-history"></i><p>Data (Mais antiga)</p></div>
+                        <div class="item wide"><i class="bi bi-sort-alpha-down"></i>
+                            <p>Nome (A-Z)</p>
+                        </div>
+                        <div class="item wide"><i class="bi bi-sort-alpha-up"></i>
+                            <p>Nome (Z-A)</p>
+                        </div>
+                        <div class="item wide"><i class="bi bi-clock"></i>
+                            <p>Data (Mais recente)</p>
+                        </div>
+                        <div class="item wide"><i class="bi bi-clock-history"></i>
+                            <p>Data (Mais antiga)</p>
+                        </div>
                     </div>
                 </div>
                 <div class="box row">
@@ -56,22 +65,59 @@
                 </div>
 
                 <div class="menu">
-                    <div class="item wide disabled row"><i class="bi bi-pencil"></i><p>Editar</p></div>
-                    <div class="item wide"><i class="bi bi-journal-text"></i><p>Consultar serviço</p></div>
-                    <div class="item wide danger"><i class="bi bi-trash"></i><p>Eliminar</p></div>
+                    <div class="item wide disabled row"><i class="bi bi-pencil"></i>
+                        <p>Editar</p>
+                    </div>
+                    <div class="item wide"><i class="bi bi-journal-text"></i>
+                        <p>Consultar serviço</p>
+                    </div>
+                    <div class="item wide danger"><i class="bi bi-trash"></i>
+                        <p>Eliminar</p>
+                    </div>
                 </div>
 
 
 
                 <div class="menu">
-                    <div class="item wide"><i class="bi bi-file-earmark-spreadsheet"></i><p>Consultar orçamento</p></div>
-                    <div class="item wide"><i class="bi bi-journal-text"></i><p>Ver detalhes</p></div>
-                    <div class="item wide"><i class="bi bi-person"></i><p>Contactar cliente</p></div>
+                    <div class="item wide"><i class="bi bi-file-earmark-spreadsheet"></i>
+                        <p>Consultar orçamento</p>
+                    </div>
+                    <div class="item wide"><i class="bi bi-journal-text"></i>
+                        <p>Ver detalhes</p>
+                    </div>
+                    <div class="item wide"><i class="bi bi-person"></i>
+                        <p>Contactar cliente</p>
+                    </div>
                 </div>
 
-                <div class="row gap-0">
-                    <p>Cliente</p><i class="bi bi-check-lg"></i>
-                </div>
+                <table class="table">
+                    <tr class="header">
+                        <td>Título</td>
+                        <td>Cliente</td>
+                        <td>Estado</td>
+                        <td>Categoria</td>
+                        <td>Prazo de Conclusão</td>
+                        <td>Valor Total (incl. IVA)</td>
+                        <td>Ações</td>
+                    </tr>
+                    <tr>
+                        <td>Serviço de consultoria de IT</td>
+                        <td><div class="row gap-0">
+                            <p>AskBlue</p><i class="bi bi-check-lg"></i>
+                        </div></td>
+                        <td><div class="pill blue">Em curso</div></td>
+                        <td>Tecnologia</td>
+                        <td>20/11/2026 <div class="pill yellow">Em 2 dias</div></td>
+                        <td >12.000,00 €</td>
+                        <td>
+                            <button class="primary wide">Concluir Trabalho</button>
+                            <button class="more-actions">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button></td>
+                    </tr>
+
+                </table>
+
 
 
 
