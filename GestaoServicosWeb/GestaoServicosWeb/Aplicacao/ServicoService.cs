@@ -1,46 +1,36 @@
 using GestaoServicosWeb.Contratos;
+using GestaoServicosWeb.Dados;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestaoServicosWeb.Aplicacao
 {
     public class ServicoService
     {
-        // Armazenamento temporário em memória: não é base de dados definitiva.
-        private readonly List<Servico> servicos = new();
+        private readonly AppDbContext db;
 
-        // O lock evita que múltiplos pedidos em simultâneo alterem a lista ao mesmo tempo
-        private readonly object bloqueio = new();
+        public ServicoService(AppDbContext db)
+        {
+            this.db = db;
+        }
 
         public List<Servico> Listar(EstadoServico? estado = null, Guid? idCategoria = null)
         {
-            lock (bloqueio)
-            {
-                var query = servicos.AsEnumerable();
+            var query = db.Servicos.AsNoTracking();
 
-                if (estado.HasValue)
-                    query = query.Where(s => s.Estado == estado.Value);
+            if (estado.HasValue)
+                query = query.Where(s => s.Estado == estado.Value);
 
-                if (idCategoria.HasValue && idCategoria.Value != Guid.Empty)
-                    query = query.Where(s => s.IdCategoria == idCategoria.Value);
+            if (idCategoria.HasValue && idCategoria.Value != Guid.Empty)
+                query = query.Where(s => s.IdCategoria == idCategoria.Value);
 
-                return query.ToList();
-            }
+            return query.ToList();
         }
 
-        public Servico? Buscar(Guid id)
-        {
-            lock (bloqueio)
-            {
-                return servicos.FirstOrDefault(s => s.Id == id);
-            }
-        }
+        public Servico? Buscar(Guid id) =>
+            db.Servicos.FirstOrDefault(s => s.Id == id);
 
-        public List<Servico> ListarPorCliente(Guid clienteId)
-        {
-            lock (bloqueio)
-            {
-                return servicos.Where(s => s.IdCliente == clienteId).ToList();
-            }
-        }
+        public List<Servico> ListarPorCliente(Guid clienteId) =>
+            db.Servicos.AsNoTracking().Where(s => s.IdCliente == clienteId).ToList();
 
         public Servico Criar(CriarServicoDto dto)
         {
@@ -54,25 +44,31 @@ namespace GestaoServicosWeb.Aplicacao
                 dto.DataDesejada
             );
 
-            lock (bloqueio)
-            {
-                servicos.Add(servico);
-                return servico;
-            }
+            if (servico.Titulo.Length > 200)
+                throw new ArgumentException("O título não pode ter mais de 200 caracteres.");
+
+            // As chaves estrangeiras têm de apontar para registos que existam
+            if (!db.Utilizadores.Any(u => u.Id == dto.IdCliente))
+                throw new ArgumentException("O cliente indicado não existe.");
+
+            if (!db.Categorias.Any(c => c.Id == dto.IdCategoria))
+                throw new ArgumentException("A categoria indicada não existe.");
+
+            db.Servicos.Add(servico);
+            db.SaveChanges();
+            return servico;
         }
 
         // Devolve false se o serviço não existir
         public bool Cancelar(Guid id)
         {
-            lock (bloqueio)
-            {
-                var servico = servicos.FirstOrDefault(s => s.Id == id);
-                if (servico == null)
-                    return false;
+            var servico = db.Servicos.FirstOrDefault(s => s.Id == id);
+            if (servico == null)
+                return false;
 
-                servico.Cancelar();
-                return true;
-            }
+            servico.Cancelar();
+            db.SaveChanges();
+            return true;
         }
     }
 }

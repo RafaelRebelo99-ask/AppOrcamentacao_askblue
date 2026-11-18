@@ -50,9 +50,16 @@ namespace GestaoServicosWeb.API
             // 4. DELETE /api/categorias/{id} → apagar categoria
             grupo.MapDelete("/{id:guid}", (Guid id, CategoriaService service) =>
             {
-                return service.Apagar(id)
-                    ? Results.NoContent()
-                    : Results.NotFound();
+                try
+                {
+                    return service.Apagar(id)
+                        ? Results.NoContent()
+                        : Results.NotFound();
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.Conflict(ex.Message);
+                }
             });
         }
 
