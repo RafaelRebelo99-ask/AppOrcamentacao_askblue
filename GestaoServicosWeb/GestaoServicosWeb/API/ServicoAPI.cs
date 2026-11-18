@@ -9,7 +9,9 @@ namespace GestaoServicosWeb.API
     {
         public static void MapServicoAPI(this WebApplication app)
         {
-            var grupo = app.MapGroup("/api/servicos").WithTags("Serviços");
+            var grupo = app.MapGroup("/api/servicos")
+                .WithTags("Serviços")
+                .RequireAuthorization();
 
             // 1. GET /api/servicos → listar com filtros opcionais (estado, categoria)
             grupo.MapGet("/", (EstadoServico? estado, Guid? idCategoria, ServicoService service) =>

@@ -8,7 +8,9 @@ public static class OrcamentoEndpoints
 {
     public static void MapOrcamentoEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/orcamentos").WithTags("Orçamentos");
+        var group = app.MapGroup("/api/orcamentos")
+            .WithTags("Orçamentos")
+            .RequireAuthorization();
 
         group.MapGet("/", (OrcamentoService service) =>
             TypedResults.Ok(service.Listar().Select(OrcamentoResponse.De)));
