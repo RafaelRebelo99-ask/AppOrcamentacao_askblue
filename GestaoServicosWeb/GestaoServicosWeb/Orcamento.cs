@@ -23,6 +23,7 @@ namespace GestaoServicosWeb
         private decimal _taxaIVA;
         private int _duracaoDias;
         private EstadoOrcamento _estado;
+        private String _descricao;
 
         public Guid Id { get; private set; }
 
@@ -72,6 +73,8 @@ namespace GestaoServicosWeb
 
         public DateTime DataValidade { get; private set; }
 
+        public DateTime DataInicio { get; private set; }
+
         public int DuracaoDias
         {
             get => _duracaoDias;
@@ -81,8 +84,23 @@ namespace GestaoServicosWeb
                 _duracaoDias = value;
             }
         }
+
+        public DateTime DataFim => DataInicio.AddDays(DuracaoDias);
+
+        public String Descricao
+        {
+            get => _descricao;
+            private set
+            {
+                if (string.IsNullOrWhiteSpace(value)) _descricao = "Sem descrição.";
+                else _descricao = value;
+            }
+        }
+
         public decimal ValorTotal =>
             Math.Round(ValorSemIVA * (1 + TaxaIVA / 100m), 2);
+
+        public decimal ValorIVA => Math.Round(ValorSemIVA + (ValorSemIVA * TaxaIVA), 2);
 
         public EstadoOrcamento Estado
         {
@@ -104,7 +122,7 @@ namespace GestaoServicosWeb
         // Sem ele, o EF usaria o construtor público, que rejeita orçamentos com validade no passado.
         private Orcamento() { }
 
-        public Orcamento(Guid idPrestador, Guid idServico, decimal valorSemIVA, decimal taxaIVA,
+        public Orcamento(Guid idPrestador, Guid idServico, string descricao, decimal valorSemIVA, decimal taxaIVA,
             DateTime dataValidade, int duracaoDias)
         {
             ValidarValidade(dataValidade);
@@ -112,6 +130,7 @@ namespace GestaoServicosWeb
             Id = Guid.NewGuid();
             IdPrestador = idPrestador;
             IdServico = idServico;
+            Descricao = descricao;
             ValorSemIVA = valorSemIVA;
             TaxaIVA = taxaIVA;
             DataValidade = dataValidade;
@@ -120,7 +139,7 @@ namespace GestaoServicosWeb
             Estado = EstadoOrcamento.Rascunho;
         }
 
-        public void Atualizar(decimal valorSemIVA, decimal taxaIVA, DateTime dataValidade, int duracaoDias)
+        public void Atualizar(string descricao, decimal valorSemIVA, decimal taxaIVA, DateTime dataValidade, int duracaoDias)
         {
             if (Estado is not (EstadoOrcamento.Rascunho))
                 throw new InvalidOperationException($"Um orçamento {Estado} não pode ser editado.");
@@ -134,6 +153,7 @@ namespace GestaoServicosWeb
             TaxaIVA = taxaIVA;
             DataValidade = dataValidade;
             DuracaoDias = duracaoDias;
+            Descricao = descricao;
         }
 
         public void Enviar()

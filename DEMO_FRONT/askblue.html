@@ -1,0 +1,85 @@
+<html>
+
+<head>
+    <title>AskBlue SGS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="askblue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+</head>
+
+
+<body>
+    <div class="container pad-1" style="min-height: 95%;">
+        <div class="row align-start w-100 h-100">
+            <div class="column fit">
+                <img src="askblue-logo-oficial-rgb.png" alt="AskBlue Logo" class="logo big">
+                <button class="wide secondary w-100 justify-start"><i class="bi bi-search"></i>Pesquisa</button>
+                <button class="wide secondary w-100 justify-start"><i class="bi bi-journals"></i>Trabalhos</button>
+                <button class="wide secondary w-100 justify-start"><i
+                        class="bi bi-file-earmark-spreadsheet"></i>Orçamentos</button>
+                <button class="wide secondary w-100 justify-start"><i class="bi bi-plus-lg rotate-right"></i>Novo Serviço</button>
+            </div>
+            <div class="box lg column h-100">
+                <div class="row mb-1">
+                    <button class="wide-left secondary selected">Selected Filter<div class="counter">122</div></button>
+                    <button class="wide-left secondary">Filter<div class="counter">1</div></button>
+                    <button class="wide-left secondary">Filter<div class="counter">3</div></button>
+                    <button class="wide-left secondary">Filter<div class="counter">21</div></button>
+                    <button class="wide-left secondary">Filter<div class="counter">3</div></button>
+                    <div class="vl"></div>
+                    <button class="wide secondary" id="sortBtn">Ordenar por<i class="bi bi-caret-down"></i></button>
+                    <div class="menu" id="sortMenu">
+                        <div class="item wide"><i class="bi bi-sort-alpha-down"></i><p>Nome (A-Z)</p></div>
+                        <div class="item wide"><i class="bi bi-sort-alpha-up"></i><p>Nome (Z-A)</p></div>
+                        <div class="item wide"><i class="bi bi-clock"></i><p>Data (Mais recente)</p></div>
+                        <div class="item wide"><i class="bi bi-clock-history"></i><p>Data (Mais antiga)</p></div>
+                    </div>
+                </div>
+                <div class="box row">
+                    <button class="wide primary">Primary Button</button>
+                    <button class="wide secondary">Secondary Button</button>
+                    <button class="wide secondary danger">Danger Button</button>
+
+                    <div class="pill blue">Em curso</div>
+                    <div class="pill yellow">Em 4 dias</div>
+                    <div class="pill orange">Em 1 dia</div>
+                    <div class="pill red">Atrasado</div>
+                    <div class="pill gray">Atribuído</div>
+                    <div class="pill primary">Categoria</div>
+                    <button class="more-actions"><i class="bi bi-three-dots-vertical"></i></button>
+                </div>
+
+                <div class="menu">
+                    <div class="item wide disabled row"><i class="bi bi-pencil"></i><p>Editar</p></div>
+                    <div class="item wide"><i class="bi bi-journal-text"></i><p>Consultar serviço</p></div>
+                    <div class="item wide danger"><i class="bi bi-trash"></i><p>Eliminar</p></div>
+                </div>
+
+
+
+                <div class="menu">
+                    <div class="item wide"><i class="bi bi-file-earmark-spreadsheet"></i><p>Consultar orçamento</p></div>
+                    <div class="item wide"><i class="bi bi-journal-text"></i><p>Ver detalhes</p></div>
+                    <div class="item wide"><i class="bi bi-person"></i><p>Contactar cliente</p></div>
+                </div>
+
+                <div class="row gap-0">
+                    <p>Cliente</p><i class="bi bi-check-lg"></i>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="askblue.js" defer></script>
+
+</html>
