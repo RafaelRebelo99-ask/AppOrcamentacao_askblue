@@ -37,7 +37,7 @@ namespace GestaoServicosWeb
                 _idPrestador = value;
             }
         }
-        public Utilizador Prestador { get; private set; }
+        public Utilizador? Prestador { get; private set; }
 
         // FK
         public Guid IdServico
@@ -49,7 +49,7 @@ namespace GestaoServicosWeb
                 _idServico = value;
             }
         }
-        public Servico Servico { get; private set; }
+        public Servico? Servico { get; private set; }
 
         public decimal ValorSemIVA
         {
@@ -117,6 +117,10 @@ namespace GestaoServicosWeb
         public bool Expirado =>
             Estado == EstadoOrcamento.Enviado
             && DateTime.UtcNow.Date > DataValidade.Date;
+
+        // Usado pelo Entity Framework ao ler da base de dados.
+        // Sem ele, o EF usaria o construtor público, que rejeita orçamentos com validade no passado.
+        private Orcamento() { }
 
         public Orcamento(Guid idPrestador, Guid idServico, decimal valorSemIVA, decimal taxaIVA,
             DateTime dataValidade, int duracaoDias)

@@ -1,48 +1,43 @@
 using GestaoServicosWeb.Contratos;
+using GestaoServicosWeb.Dados;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestaoServicosWeb.Aplicacao
 {
 
     public class UtilizadorService
     {
-        // Armazenamento temporário: não é base de dados. Perde-se ao reiniciar a API.
-        private readonly List<Utilizador> utilizadores = new();
+        private readonly AppDbContext db;
         private readonly PasswordHasher<Utilizador> hasher = new();
 
-        // Vários pedidos podem chegar ao mesmo tempo; o lock evita que mexam na lista em simultâneo.
-        private readonly object bloqueio = new();
+        public UtilizadorService(AppDbContext db)
+        {
+            this.db = db;
+        }
 
         public List<Utilizador> Listar(Role? role = null)
         {
-            lock (bloqueio)
-            {
-                return role == null
-                    ? utilizadores.ToList()
-                    : utilizadores.Where(u => u.Role == role).ToList();
-            }
+            var query = db.Utilizadores.AsNoTracking();
+
+            if (role != null)
+                query = query.Where(u => u.Role == role);
+
+            return query.ToList();
         }
 
-        public Utilizador? Buscar(Guid id)
-        {
-            lock (bloqueio)
-            {
-                return utilizadores.FirstOrDefault(u => u.Id == id);
-            }
-        }
+        public Utilizador? Buscar(Guid id) =>
+            db.Utilizadores.FirstOrDefault(u => u.Id == id);
 
         public Utilizador? BuscarPorEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
                 return null;
 
-            string emailNormalizado = email.Trim();
+            // Os emails são guardados sempre em minúsculas (ver Utilizador.Email)
+            string emailNormalizado = email.Trim().ToLower();
 
-            lock (bloqueio)
-            {
-                return utilizadores.FirstOrDefault(u =>
-                    string.Equals(u.Email, emailNormalizado, StringComparison.OrdinalIgnoreCase));
-            }
+            return db.Utilizadores.FirstOrDefault(u => u.Email == emailNormalizado);
         }
 
         public Utilizador Criar(CriarUtilizadorDto dto)
@@ -52,85 +47,74 @@ namespace GestaoServicosWeb.Aplicacao
             if (dto.Role == Role.Empresa)
                 throw new ArgumentException("Não é possível registar-se como Empresa.");
 
-            lock (bloqueio)
-            {
-                if (EmailEmUso(dto.Email))
-                    throw new InvalidOperationException("Já existe um utilizador com esse email.");
+            if (EmailEmUso(dto.Email))
+                throw new InvalidOperationException("Já existe um utilizador com esse email.");
 
-                if (utilizadores.Any(u => u.NIF == dto.Nif?.Trim()))
-                    throw new InvalidOperationException("Já existe um utilizador com esse NIF.");
+            string nif = dto.Nif?.Trim() ?? "";
+            if (db.Utilizadores.Any(u => u.NIF == nif))
+                throw new InvalidOperationException("Já existe um utilizador com esse NIF.");
 
-                string hash = hasher.HashPassword(null!, dto.Password);
+            string hash = hasher.HashPassword(null!, dto.Password);
 
-                // O construtor valida nome, email, NIF e telefone
-                var utilizador = new Utilizador(dto.Nome, dto.Email, hash, dto.Nif, dto.Telefone, dto.Role);
+            // O construtor valida nome, email, NIF e telefone
+            var utilizador = new Utilizador(dto.Nome, dto.Email, hash, nif, dto.Telefone, dto.Role);
 
-                utilizadores.Add(utilizador);
-                return utilizador;
-            }
+            db.Utilizadores.Add(utilizador);
+            db.SaveChanges();
+            return utilizador;
         }
 
         // Devolve null se o utilizador não existir
         public Utilizador? Atualizar(Guid id, AtualizarUtilizadorDto dto)
         {
-            lock (bloqueio)
-            {
-                var utilizador = utilizadores.FirstOrDefault(u => u.Id == id);
-                if (utilizador == null)
-                    return null;
+            var utilizador = db.Utilizadores.FirstOrDefault(u => u.Id == id);
+            if (utilizador == null)
+                return null;
 
-                if (EmailEmUso(dto.Email, ignorarId: id))
-                    throw new InvalidOperationException("Esse email já está a ser usado.");
+            if (EmailEmUso(dto.Email, ignorarId: id))
+                throw new InvalidOperationException("Esse email já está a ser usado.");
 
-                // Guardar os valores antigos: se um campo falhar, os outros não ficam alterados a meio
-                var (nomeAntigo, emailAntigo, telefoneAntigo) =
-                    (utilizador.Nome, utilizador.Email, utilizador.Telefone);
+            // Os setters validam. Se algum falhar, a exceção sai antes do SaveChanges
+            // e nada é gravado na base de dados.
+            utilizador.Nome = dto.Nome;
+            utilizador.Email = dto.Email;
+            utilizador.Telefone = dto.Telefone;
 
-                try
-                {
-                    utilizador.Nome = dto.Nome;           // os setters validam
-                    utilizador.Email = dto.Email;
-                    utilizador.Telefone = dto.Telefone;
-                }
-                catch (ArgumentException)
-                {
-                    utilizador.Nome = nomeAntigo;
-                    utilizador.Email = emailAntigo;
-                    utilizador.Telefone = telefoneAntigo;
-                    throw;
-                }
-
-                return utilizador;
-            }
+            db.SaveChanges();
+            return utilizador;
         }
 
         // Devolve false se o utilizador não existir
         public bool AlterarPassword(Guid id, AlterarPasswordDto dto)
         {
-            lock (bloqueio)
-            {
-                var utilizador = utilizadores.FirstOrDefault(u => u.Id == id);
-                if (utilizador == null)
-                    return false;
+            var utilizador = db.Utilizadores.FirstOrDefault(u => u.Id == id);
+            if (utilizador == null)
+                return false;
 
-                var resultado = hasher.VerifyHashedPassword(utilizador, utilizador.PasswordHash, dto.PasswordAtual);
-                if (resultado == PasswordVerificationResult.Failed)
-                    throw new ArgumentException("A password atual está errada.");
+            var resultado = hasher.VerifyHashedPassword(utilizador, utilizador.PasswordHash, dto.PasswordAtual);
+            if (resultado == PasswordVerificationResult.Failed)
+                throw new ArgumentException("A password atual está errada.");
 
-                ValidarPassword(dto.PasswordNova);
+            ValidarPassword(dto.PasswordNova);
 
-                utilizador.AlterarPassword(hasher.HashPassword(utilizador, dto.PasswordNova));
-                return true;
-            }
+            utilizador.AlterarPassword(hasher.HashPassword(utilizador, dto.PasswordNova));
+            db.SaveChanges();
+            return true;
         }
 
         // Devolve false se o utilizador não existir
         public bool Apagar(Guid id)
         {
-            lock (bloqueio)
-            {
-                return utilizadores.RemoveAll(u => u.Id == id) > 0;
-            }
+            var utilizador = db.Utilizadores.FirstOrDefault(u => u.Id == id);
+            if (utilizador == null)
+                return false;
+
+            if (db.Servicos.Any(s => s.IdCliente == id) || db.Orcamentos.Any(o => o.IdPrestador == id))
+                throw new InvalidOperationException("Não é possível apagar um utilizador com serviços ou orçamentos associados.");
+
+            db.Utilizadores.Remove(utilizador);
+            db.SaveChanges();
+            return true;
         }
 
         // ===== Auxiliares =====
@@ -144,7 +128,7 @@ namespace GestaoServicosWeb.Aplicacao
         private bool EmailEmUso(string? email, Guid? ignorarId = null)
         {
             string normalizado = email?.Trim().ToLower() ?? "";
-            return utilizadores.Any(u => u.Email == normalizado && u.Id != ignorarId);
+            return db.Utilizadores.Any(u => u.Email == normalizado && u.Id != ignorarId);
         }
     }
 }

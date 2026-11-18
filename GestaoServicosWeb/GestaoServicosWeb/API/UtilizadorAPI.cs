@@ -73,9 +73,13 @@ namespace GestaoServicosWeb.API
             // 6. DELETE /api/utilizadores/{id} → apagar
             grupo.MapDelete("/{id:guid}", (Guid id, UtilizadorService service) =>
             {
-                return service.Apagar(id)
-                    ? Results.NoContent()
-                    : Results.NotFound();
+                try
+                {
+                    return service.Apagar(id)
+                        ? Results.NoContent()
+                        : Results.NotFound();
+                }
+                catch (InvalidOperationException ex)  { return Results.Conflict(ex.Message); }
             });
         }
 
