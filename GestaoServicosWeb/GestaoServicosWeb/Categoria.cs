@@ -5,6 +5,9 @@ namespace GestaoServicosWeb
         public Guid Id { get; private set; }
         public string Nome { get; private set; } = string.Empty;
 
+        // Usado pelo Entity Framework ao ler da base de dados
+        private Categoria() { }
+
         public Categoria(string nome)
         {
             if (string.IsNullOrWhiteSpace(nome?.Trim()))

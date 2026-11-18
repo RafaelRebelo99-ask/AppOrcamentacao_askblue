@@ -10,7 +10,7 @@ namespace GestaoServicosWeb
 
         // ===== Propriedades =====
 
-        public Guid Id { get; }   // só get: definido no construtor, nunca muda
+        public Guid Id { get; private set; }   // definido no construtor, nunca muda (private set para o EF)
 
         public string Nome
         {
@@ -94,7 +94,10 @@ namespace GestaoServicosWeb
 
         public Role Role { get; private set; }
 
-        // ===== Construtor =====
+        // ===== Construtores =====
+
+        // Usado pelo Entity Framework ao ler da base de dados
+        private Utilizador() { }
 
         public Utilizador(string nome, string email, string passwordHash,
                           string nif, string? telefone, Role role)

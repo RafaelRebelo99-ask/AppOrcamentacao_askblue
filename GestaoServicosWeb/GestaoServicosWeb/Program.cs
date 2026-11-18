@@ -1,5 +1,7 @@
 using GestaoServicosWeb.API;
 using GestaoServicosWeb.Aplicacao;
+using GestaoServicosWeb.Dados;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi;
 using Microsoft.IdentityModel.Tokens;
@@ -53,13 +55,19 @@ builder.Services.AddOpenApi(opcoes =>
     });
 });
 
-// Uma única instância partilhada: mantém os dados enquanto a aplicação corre
+// Base de dados SQL Server. A connection string fica nos user-secrets (não vai para o Git):
+//   dotnet user-secrets set "ConnectionStrings:Default" "Server=localhost,14330;Database=GestaoServicos;User Id=sa;Password=...;TrustServerCertificate=True"
+var connectionString = builder.Configuration.GetConnectionString("Default")
+    ?? throw new InvalidOperationException("A connection string 'Default' é obrigatória (ver comentário no Program.cs).");
+builder.Services.AddDbContext<AppDbContext>(opcoes => opcoes.UseSqlServer(connectionString));
+
+// Scoped: uma instância por pedido HTTP, tal como o AppDbContext
 builder.Services.AddSingleton(jwtSettings);
-builder.Services.AddSingleton<LoginService>();
-builder.Services.AddSingleton<UtilizadorService>();
-builder.Services.AddSingleton<ServicoService>();
-builder.Services.AddSingleton<OrcamentoService>();
-builder.Services.AddSingleton<CategoriaService>();
+builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<UtilizadorService>();
+builder.Services.AddScoped<ServicoService>();
+builder.Services.AddScoped<OrcamentoService>();
+builder.Services.AddScoped<CategoriaService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opcoes =>
     {

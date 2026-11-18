@@ -1,36 +1,24 @@
 using GestaoServicosWeb.Contratos;
+using GestaoServicosWeb.Dados;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestaoServicosWeb.Aplicacao
 {
     public class CategoriaService
     {
-        // Armazenamento em memória com categorias iniciais para testes imediatos
-        private readonly List<Categoria> categorias = new()
-        {
-            new Categoria(Guid.Parse("11111111-1111-1111-1111-111111111111"), "Pintura e Remodelação"),
-            new Categoria(Guid.Parse("22222222-2222-2222-2222-222222222222"), "Eletricidade"),
-            new Categoria(Guid.Parse("33333333-3333-3333-3333-333333333333"), "Canalização"),
-            new Categoria(Guid.Parse("44444444-4444-4444-4444-444444444444"), "Carpintaria"),
-            new Categoria(Guid.Parse("55555555-5555-5555-5555-555555555555"), "Limpeza e Manutenção")
-        };
+        // As categorias iniciais são criadas pela migração (ver AppDbContext.HasData)
+        private readonly AppDbContext db;
 
-        private readonly object bloqueio = new();
-
-        public List<Categoria> Listar()
+        public CategoriaService(AppDbContext db)
         {
-            lock (bloqueio)
-            {
-                return categorias.ToList();
-            }
+            this.db = db;
         }
 
-        public Categoria? Buscar(Guid id)
-        {
-            lock (bloqueio)
-            {
-                return categorias.FirstOrDefault(c => c.Id == id);
-            }
-        }
+        public List<Categoria> Listar() =>
+            db.Categorias.AsNoTracking().OrderBy(c => c.Nome).ToList();
+
+        public Categoria? Buscar(Guid id) =>
+            db.Categorias.FirstOrDefault(c => c.Id == id);
 
         public Categoria Criar(CriarCategoriaDto dto)
         {
@@ -39,23 +27,31 @@ namespace GestaoServicosWeb.Aplicacao
 
             string nomeLimpo = dto.Nome.Trim();
 
-            lock (bloqueio)
-            {
-                if (categorias.Any(c => c.Nome.Equals(nomeLimpo, StringComparison.OrdinalIgnoreCase)))
-                    throw new InvalidOperationException("Já existe uma categoria com esse nome.");
+            if (nomeLimpo.Length > 100)
+                throw new ArgumentException("O nome da categoria não pode ter mais de 100 caracteres.");
 
-                var novaCategoria = new Categoria(nomeLimpo);
-                categorias.Add(novaCategoria);
-                return novaCategoria;
-            }
+            // A collation do SQL Server não distingue maiúsculas de minúsculas
+            if (db.Categorias.Any(c => c.Nome == nomeLimpo))
+                throw new InvalidOperationException("Já existe uma categoria com esse nome.");
+
+            var novaCategoria = new Categoria(nomeLimpo);
+            db.Categorias.Add(novaCategoria);
+            db.SaveChanges();
+            return novaCategoria;
         }
 
         public bool Apagar(Guid id)
         {
-            lock (bloqueio)
-            {
-                return categorias.RemoveAll(c => c.Id == id) > 0;
-            }
+            var categoria = db.Categorias.FirstOrDefault(c => c.Id == id);
+            if (categoria == null)
+                return false;
+
+            if (db.Servicos.Any(s => s.IdCategoria == id))
+                throw new InvalidOperationException("Não é possível apagar uma categoria com serviços associados.");
+
+            db.Categorias.Remove(categoria);
+            db.SaveChanges();
+            return true;
         }
     }
 }
