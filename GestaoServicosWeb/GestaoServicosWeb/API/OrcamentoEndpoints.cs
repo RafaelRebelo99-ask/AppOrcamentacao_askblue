@@ -28,7 +28,7 @@ public static class OrcamentoEndpoints
         {
             try
             {
-                var orcamento = service.Criar(pedido.IdPrestador, pedido.IdServico, pedido.ValorSemIVA,
+                var orcamento = service.Criar(pedido.IdPrestador, pedido.IdServico, pedido.descricao, pedido.ValorSemIVA,
                                               pedido.TaxaIVA, pedido.DataValidade, pedido.DuracaoDias);
                 return TypedResults.Created($"/api/orcamentos/{orcamento.Id}", OrcamentoResponse.De(orcamento));
             }
@@ -43,7 +43,7 @@ public static class OrcamentoEndpoints
         {
             try
             {
-                var orcamento = service.Editar(id, pedido.IdPrestador, pedido.ValorSemIVA,
+                var orcamento = service.Editar(id, pedido.IdPrestador, pedido.descricao, pedido.ValorSemIVA,
                                                pedido.TaxaIVA, pedido.DataValidade, pedido.DuracaoDias);
                 return orcamento is null
                     ? TypedResults.NotFound()
