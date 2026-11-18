@@ -187,7 +187,7 @@ button.secondary.danger:hover {
 
 .pill {
     border-radius: var(--border-radius-pill);
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 1rem;
     font-size: small;
     display: flex;
     align-items: center;
@@ -382,12 +382,16 @@ hr {
         1fr
         0.8fr
         1fr
-        1.3fr
         1.2fr
+        1fr
         1.5fr;
     align-items: center;
-    gap: var(--gap);
     width: 100%;
+    padding-inline-start: 0.5rem;
+}
+
+.ml-auto {
+    margin-left: auto;
 }
 
 .table td {
@@ -404,9 +408,9 @@ hr {
 
 .table tr.header {
     color: var(--primary-blue);
+    border-bottom: var(--border);
 }
 
 .table tr:not(.header) {
-    border-radius: var(--border-radius-md);
-    border: var(--border);
+    border-bottom: var(--border);
 }

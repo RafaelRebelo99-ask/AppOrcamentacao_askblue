@@ -37,17 +37,24 @@
                     <button class="wide secondary" id="sortBtn">Ordenar por<i class="bi bi-caret-down"></i></button>
                     <div class="menu" id="sortMenu">
                         <div class="item wide"><i class="bi bi-sort-alpha-down"></i>
-                            <p>Nome (A-Z)</p>
+                            <p>Título (A-Z)</p>
                         </div>
                         <div class="item wide"><i class="bi bi-sort-alpha-up"></i>
-                            <p>Nome (Z-A)</p>
+                            <p>Título (Z-A)</p>
                         </div>
                         <div class="item wide"><i class="bi bi-clock"></i>
-                            <p>Data (Mais recente)</p>
+                            <p>Prazo (Mais próximo)</p>
                         </div>
                         <div class="item wide"><i class="bi bi-clock-history"></i>
-                            <p>Data (Mais antiga)</p>
+                            <p>Prazo (Mais distante)</p>
                         </div>
+                        <div class="item wide"><i class="bi bi-sort-numeric-down"></i>
+                            <p>Valor (Mais baixo)</p>
+                        </div>
+                        <div class="item wide"><i class="bi bi-sort-numeric-up"></i>
+                            <p>Valor (Mais alto)</p>
+                        </div>
+                        
                     </div>
                 </div>
                 <div class="box row">
@@ -97,8 +104,8 @@
                         <td>Estado</td>
                         <td>Categoria</td>
                         <td>Prazo de Conclusão</td>
-                        <td>Valor Total (incl. IVA)</td>
-                        <td>Ações</td>
+                        <td class="right">Valor Total (incl. IVA)</td>
+                        <td class="ml-auto"></td>
                     </tr>
                     <tr>
                         <td>Serviço de consultoria de IT</td>
@@ -108,8 +115,8 @@
                         <td><div class="pill blue">Em curso</div></td>
                         <td>Tecnologia</td>
                         <td>20/11/2026 <div class="pill yellow">Em 2 dias</div></td>
-                        <td >12.000,00 €</td>
-                        <td>
+                        <td class="right">12.000,00 €</td>
+                        <td class="ml-auto">
                             <button class="primary wide">Concluir Trabalho</button>
                             <button class="more-actions">
                                 <i class="bi bi-three-dots-vertical"></i>
