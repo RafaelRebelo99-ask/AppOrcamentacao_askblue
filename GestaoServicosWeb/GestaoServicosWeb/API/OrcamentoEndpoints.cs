@@ -15,19 +15,22 @@ public static class OrcamentoEndpoints
 
         // ---------------- Leitura ----------------
 
-        // Prestador: os meus orçamentos
+        // Prestador: os meus orçamentos. Empresa: todos.
         group.MapGet("/", (ClaimsPrincipal user, OrcamentoService service) =>
             Executar(() => TypedResults.Ok(
-                service.ListarDoPrestador(IdDe(user)).Select(OrcamentoResponse.De))));
+                (user.EEmpresa() ? service.ListarTodos() : service.ListarDoPrestador(IdDe(user)))
+                    .Select(OrcamentoResponse.De))))
+        .RequireAuthorization(Politicas.Prestador);
 
-        // Cliente: orçamentos recebidos para um serviço seu
+        // Cliente: orçamentos recebidos para um serviço seu. Empresa: de qualquer serviço.
         group.MapGet("/servico/{servicoId:guid}", (Guid servicoId, ClaimsPrincipal user, OrcamentoService service) =>
             Executar(() => TypedResults.Ok(
-                service.ListarDoServico(servicoId, IdDe(user)).Select(OrcamentoResponse.De))));
+                service.ListarDoServico(servicoId, IdDe(user), user.EEmpresa()).Select(OrcamentoResponse.De))))
+        .RequireAuthorization(Politicas.Cliente);
 
-        // Prestador dono, ou cliente dono do serviço (se não for rascunho)
+        // Prestador dono, cliente dono do serviço (se não for rascunho), ou Empresa
         group.MapGet("/{id:guid}", (Guid id, ClaimsPrincipal user, OrcamentoService service) =>
-            Executar(() => TypedResults.Ok(OrcamentoResponse.De(service.Obter(id, IdDe(user))))));
+            Executar(() => TypedResults.Ok(OrcamentoResponse.De(service.Obter(id, IdDe(user), user.EEmpresa())))));
 
         // ---------------- Prestador ----------------
 
@@ -38,30 +41,36 @@ public static class OrcamentoEndpoints
                 var orcamento = service.Criar(IdDe(user), pedido.IdServico, pedido.descricao, pedido.ValorSemIVA,
                                               pedido.TaxaIVA, pedido.DataValidade, pedido.DataInicio, pedido.DuracaoDias);
                 return TypedResults.Created($"/api/orcamentos/{orcamento.Id}", OrcamentoResponse.De(orcamento));
-            }));
+            }))
+        .RequireAuthorization(p => p.RequireRole(nameof(Role.Prestador)));
 
         group.MapPut("/{id:guid}", (Guid id, EditarOrcamentoRequest pedido, ClaimsPrincipal user, OrcamentoService service) =>
             Executar(() => TypedResults.Ok(OrcamentoResponse.De(
                 service.Editar(id, IdDe(user), pedido.descricao, pedido.ValorSemIVA,
-                               pedido.TaxaIVA, pedido.DataValidade, pedido.DataInicio, pedido.DuracaoDias)))));
+                               pedido.TaxaIVA, pedido.DataValidade, pedido.DataInicio, pedido.DuracaoDias)))))
+        .RequireAuthorization(p => p.RequireRole(nameof(Role.Prestador)));
 
         group.MapPost("/{id:guid}/enviar", (Guid id, ClaimsPrincipal user, OrcamentoService service) =>
-            Executar(() => TypedResults.Ok(OrcamentoResponse.De(service.Enviar(id, IdDe(user))))));
+            Executar(() => TypedResults.Ok(OrcamentoResponse.De(service.Enviar(id, IdDe(user))))))
+        .RequireAuthorization(p => p.RequireRole(nameof(Role.Prestador)));
 
         group.MapDelete("/{id:guid}", (Guid id, ClaimsPrincipal user, OrcamentoService service) =>
             Executar(() =>
             {
-                service.Eliminar(id, IdDe(user));
+                service.Eliminar(id, IdDe(user), user.EEmpresa());
                 return TypedResults.NoContent();
-            }));
+            }))
+        .RequireAuthorization(Politicas.Prestador); // Prestador (os seus rascunhos) ou Empresa (qualquer um)
 
         // ---------------- Cliente ----------------
 
         group.MapPost("/{id:guid}/aceitar", (Guid id, ClaimsPrincipal user, OrcamentoService service) =>
-            Executar(() => TypedResults.Ok(OrcamentoResponse.De(service.Aceitar(id, IdDe(user))))));
+            Executar(() => TypedResults.Ok(OrcamentoResponse.De(service.Aceitar(id, IdDe(user))))))
+        .RequireAuthorization(p => p.RequireRole(nameof(Role.Cliente)));
 
         group.MapPost("/{id:guid}/recusar", (Guid id, ClaimsPrincipal user, OrcamentoService service) =>
-            Executar(() => TypedResults.Ok(OrcamentoResponse.De(service.Recusar(id, IdDe(user))))));
+            Executar(() => TypedResults.Ok(OrcamentoResponse.De(service.Recusar(id, IdDe(user))))))
+        .RequireAuthorization(p => p.RequireRole(nameof(Role.Cliente)));
     }
 
     // O utilizador vem sempre do token, nunca do corpo do pedido

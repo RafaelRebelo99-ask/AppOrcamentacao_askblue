@@ -3,8 +3,8 @@ namespace GestaoServicosWeb.Contratos
     // ===== DTOs do Serviço: o que entra e sai da API =====
 
     // Entrada: dados para criar um novo pedido de serviço
+    // (o cliente não vem aqui: é quem fez login, lido do token)
     public record CriarServicoDto(
-        Guid IdCliente,
         Guid IdCategoria,
         string Titulo,
         string Descricao,

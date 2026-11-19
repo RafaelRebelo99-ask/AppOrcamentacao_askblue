@@ -1,3 +1,4 @@
+using GestaoServicosWeb;
 using GestaoServicosWeb.API;
 using GestaoServicosWeb.Aplicacao;
 using GestaoServicosWeb.Dados;
@@ -56,7 +57,7 @@ builder.Services.AddOpenApi(opcoes =>
 });
 
 // Base de dados SQL Server. A connection string fica nos user-secrets (não vai para o Git):
-//   dotnet user-secrets set "ConnectionStrings:Default" "Server=localhost,14330;Database=GestaoServicos;User Id=sa;Password=...;TrustServerCertificate=True"
+//   dotnet user-secrets set "ConnectionStrings:Default" "Server=127.0.0.1,14330;Database=GestaoServicos;User Id=sa;Password=...;TrustServerCertificate=True"
 var connectionString = builder.Configuration.GetConnectionString("Default")
     ?? throw new InvalidOperationException("A connection string 'Default' é obrigatória (ver comentário no Program.cs).");
 builder.Services.AddDbContext<AppDbContext>(opcoes => opcoes.UseSqlServer(connectionString));
@@ -85,16 +86,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.FromSeconds(30)
         };
     });
-builder.Services.AddAuthorization();
+// Uma policy por role. Usar nos endpoints com .RequireAuthorization(Politicas.Cliente), etc.
+// A Empresa (admin) entra em todas, porque pode fazer tudo.
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(Politicas.Cliente, p => p.RequireRole(nameof(Role.Cliente), nameof(Role.Empresa)))
+    .AddPolicy(Politicas.Prestador, p => p.RequireRole(nameof(Role.Prestador), nameof(Role.Empresa)))
+    .AddPolicy(Politicas.Empresa, p => p.RequireRole(nameof(Role.Empresa)));
 
 var app = builder.Build();
 
-// Garante que a base de dados e as tabelas são criadas automaticamente se não existirem
+// Aplica as migrações em falta (cria a base de dados e as tabelas se ainda não existirem).
+// Usa-se Migrate() e não EnsureCreated(): o EnsureCreated cria as tabelas sem o histórico de
+// migrações, e a partir daí o "dotnet ef database update" deixa de funcionar.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
 }
+
+// Cria as contas de admin que ainda não existirem (dados nos user-secrets, secção "Admins")
+AdminSeeder.CriarAdminsSeNecessario(app.Services);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
