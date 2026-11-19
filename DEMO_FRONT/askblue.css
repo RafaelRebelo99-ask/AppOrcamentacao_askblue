@@ -26,12 +26,12 @@
 }
 
 :root.dark {
-    --primary-blue: #ebebeb;
+    --primary-blue: #ededed;
     --secondary-blue: #cccccc;
     --danger-color: #ff5151;
-    --background-color: rgb(23, 23, 23);
-    --border: 1px solid #4a4a4a;
-    --secondary-hover: #272727;
+    --background-color: rgb(17, 17, 21);
+    --border: 1px solid #46464b;
+    --secondary-hover: #221f26;
     --text-color: white;
 
     --blue-bg: #020aed2f;
