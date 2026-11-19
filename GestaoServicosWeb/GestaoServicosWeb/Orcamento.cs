@@ -98,9 +98,9 @@ namespace GestaoServicosWeb
         }
 
         public decimal ValorTotal =>
-            Math.Round(ValorSemIVA * (1 + TaxaIVA / 100m), 2);
+            Math.Round(ValorSemIVA * (1 + TaxaIVA / 100m), 2, MidpointRounding.AwayFromZero);
 
-        public decimal ValorIVA => Math.Round(ValorSemIVA + (ValorSemIVA * TaxaIVA), 2);
+        public decimal ValorIVA => ValorTotal - ValorSemIVA;
 
         public EstadoOrcamento Estado
         {
@@ -123,9 +123,10 @@ namespace GestaoServicosWeb
         private Orcamento() { }
 
         public Orcamento(Guid idPrestador, Guid idServico, string descricao, decimal valorSemIVA, decimal taxaIVA,
-            DateTime dataValidade, int duracaoDias)
+            DateTime dataValidade, DateTime dataInicio, int duracaoDias)
         {
             ValidarValidade(dataValidade);
+            ValidarInicio(dataInicio);
 
             Id = Guid.NewGuid();
             IdPrestador = idPrestador;
@@ -134,12 +135,13 @@ namespace GestaoServicosWeb
             ValorSemIVA = valorSemIVA;
             TaxaIVA = taxaIVA;
             DataValidade = dataValidade;
+            DataInicio = dataInicio;
             DuracaoDias = duracaoDias;
 
             Estado = EstadoOrcamento.Rascunho;
         }
 
-        public void Atualizar(string descricao, decimal valorSemIVA, decimal taxaIVA, DateTime dataValidade, int duracaoDias)
+        public void Atualizar(string descricao, decimal valorSemIVA, decimal taxaIVA, DateTime dataValidade, DateTime dataInicio, int duracaoDias)
         {
             if (Estado is not (EstadoOrcamento.Rascunho))
                 throw new InvalidOperationException($"Um orçamento {Estado} não pode ser editado.");
@@ -147,11 +149,13 @@ namespace GestaoServicosWeb
             ValidarValor(valorSemIVA);
             ValidarTaxa(taxaIVA);
             ValidarValidade(dataValidade);
+            ValidarInicio(dataInicio);
             ValidarDuracao(duracaoDias);
 
             ValorSemIVA = valorSemIVA;
             TaxaIVA = taxaIVA;
             DataValidade = dataValidade;
+            DataInicio = dataInicio;
             DuracaoDias = duracaoDias;
             Descricao = descricao;
         }
@@ -159,12 +163,18 @@ namespace GestaoServicosWeb
         public void Enviar()
         {
             ExigirEstado(EstadoOrcamento.Rascunho);
+            if (DateTime.UtcNow.Date > DataValidade.Date)
+                throw new InvalidOperationException("A validade já passou. Atualiza-a antes de enviar.");
+            if (DataInicio.Date < DateTime.UtcNow.Date)
+                throw new InvalidOperationException("A data de início já passou. Atualiza-a antes de enviar.");
             Estado = EstadoOrcamento.Enviado;
         }
 
         public void Aceitar()
         {
             ExigirEstado(EstadoOrcamento.Enviado);
+            if (Expirado)
+                throw new InvalidOperationException("Este orçamento já expirou.");
             Estado = EstadoOrcamento.Aceite;
         }
 
@@ -208,6 +218,12 @@ namespace GestaoServicosWeb
         {
             if (data.Date <= DateTime.UtcNow.Date)
                 throw new ArgumentOutOfRangeException(nameof(data), "A validade tem de ser no futuro.");
+        }
+
+        private static void ValidarInicio(DateTime data)
+        {
+            if (data.Date < DateTime.UtcNow.Date)
+                throw new ArgumentOutOfRangeException(nameof(data), "A data de início não pode ser no passado.");
         }
 
         private static void ValidarDuracao(int dias)
