@@ -89,6 +89,13 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Garante que a base de dados e as tabelas são criadas automaticamente se não existirem
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

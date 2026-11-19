@@ -75,7 +75,34 @@ namespace GestaoServicosWeb
             Categoria = categoria;
         }
         
-        // Métodos de mudança de estado
+        // Métodos de atualização e mudança de estado
+        public void Atualizar(Guid idCategoria, string titulo, string descricao, DateTime prazoPropostas, DateTime dataDesejada)
+        {
+            if (Estado != EstadoServico.PorAprovar)
+                throw new InvalidOperationException("Apenas serviços no estado 'PorAprovar' podem ser editados.");
+
+            if (idCategoria == Guid.Empty)
+                throw new ArgumentException("A categoria é obrigatória.", nameof(idCategoria));
+
+            if (string.IsNullOrWhiteSpace(titulo))
+                throw new ArgumentException("O título não pode estar vazio.", nameof(titulo));
+
+            if (string.IsNullOrWhiteSpace(descricao))
+                throw new ArgumentException("A descrição não pode estar vazia.", nameof(descricao));
+
+            if (prazoPropostas <= DateTime.Now)
+                throw new ArgumentException("O prazo de propostas deve ser uma data futura.", nameof(prazoPropostas));
+
+            if (dataDesejada < prazoPropostas)
+                throw new ArgumentException("A data desejada para o serviço deve ser posterior ao prazo de propostas.", nameof(dataDesejada));
+
+            IdCategoria = idCategoria;
+            Titulo = titulo.Trim();
+            Descricao = descricao.Trim();
+            PrazoPropostas = prazoPropostas;
+            DataDesejada = dataDesejada;
+        }
+
         public void Aprovar()
         {
             if (Estado != EstadoServico.PorAprovar)

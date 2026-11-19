@@ -19,7 +19,13 @@ namespace GestaoServicosWeb.API
                 return Results.Ok(service.Listar(estado, idCategoria).Select(ParaDto));
             });
 
-            // 2. GET /api/servicos/{id} → ver um serviço por Id
+            // 2. GET /api/servicos/disponiveis → listar serviços abertos a propostas (PorAprovar)
+            grupo.MapGet("/disponiveis", (Guid? idCategoria, ServicoService service) =>
+            {
+                return Results.Ok(service.ListarDisponiveis(idCategoria).Select(ParaDto));
+            });
+
+            // 3. GET /api/servicos/{id} → ver um serviço por Id
             grupo.MapGet("/{id:guid}", (Guid id, ServicoService service) =>
             {
                 var s = service.Buscar(id);
@@ -29,13 +35,13 @@ namespace GestaoServicosWeb.API
                     : Results.Ok(ParaDto(s));
             });
 
-            // 3. GET /api/servicos/cliente/{clienteId} → ver serviços de um determinado cliente
+            // 4. GET /api/servicos/cliente/{clienteId} → ver serviços de um determinado cliente
             grupo.MapGet("/cliente/{clienteId:guid}", (Guid clienteId, ServicoService service) =>
             {
                 return Results.Ok(service.ListarPorCliente(clienteId).Select(ParaDto));
             });
 
-            // 4. POST /api/servicos → criar novo serviço
+            // 5. POST /api/servicos → criar novo serviço
             grupo.MapPost("/", (CriarServicoDto dto, ServicoService service) =>
             {
                 try
@@ -49,13 +55,48 @@ namespace GestaoServicosWeb.API
                 }
             });
 
-            // 5. PUT /api/servicos/{id}/cancelar → cancelar serviço
+            // 6. PUT /api/servicos/{id} → editar serviço (apenas enquanto PorAprovar)
+            grupo.MapPut("/{id:guid}", (Guid id, AtualizarServicoDto dto, ServicoService service) =>
+            {
+                try
+                {
+                    var s = service.Atualizar(id, dto);
+                    return s == null
+                        ? Results.NotFound()
+                        : Results.Ok(ParaDto(s));
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
+            });
+
+            // 7. PUT /api/servicos/{id}/cancelar → cancelar serviço
             grupo.MapPut("/{id:guid}/cancelar", (Guid id, ServicoService service) =>
             {
                 try
                 {
                     return service.Cancelar(id)
                         ? Results.Ok(new { mensagem = "Serviço cancelado com sucesso." })
+                        : Results.NotFound();
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
+            });
+
+            // 8. PUT /api/servicos/{id}/concluir → concluir serviço (apenas se EmCurso)
+            grupo.MapPut("/{id:guid}/concluir", (Guid id, ServicoService service) =>
+            {
+                try
+                {
+                    return service.Concluir(id)
+                        ? Results.Ok(new { mensagem = "Serviço concluído com sucesso." })
                         : Results.NotFound();
                 }
                 catch (InvalidOperationException ex)
