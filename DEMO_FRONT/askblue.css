@@ -25,6 +25,28 @@
     --on-red: #960000;
 }
 
+:root.dark {
+    --primary-blue: #ffffff;
+    --secondary-blue: #cccccc;
+    --danger-color: #ff5151;
+    --background-color: rgb(23, 23, 23);
+    --border: 1px solid #4a4a4a;
+    --secondary-hover: #272727;
+    --text-color: white;
+
+    --blue-bg: #ffffff;
+    --on-blue: #000354;
+    --gray-bg: #9f9f9f60;
+    --on-gray: #bebebe;
+    --yellow-bg: #ffd00029;
+    --on-yellow: #ffc876;
+    --orange-bg: #ff6a0049;
+    --on-orange: #ff9360;
+    --red-bg: #ff3d3d32;
+    --on-red: #ff4a4a;
+}
+
+
 body {
     background-color: var(--background-color);
     display: flex;
@@ -42,6 +64,26 @@ body {
 p {
     transition: transform 0.15s ease-in-out;
     color: var(--text-color);
+}
+
+.pad-1 {
+    padding: 1rem;
+}
+
+.pad-05 {
+    padding: 0.5rem;
+}
+
+.pad-025 {
+    padding: 0.25rem;
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
+}
+
+.mb-2 {
+    margin-bottom: 2rem;
 }
 
 .container {
@@ -92,7 +134,6 @@ p {
 
 .box {
     border: var(--border);
-    padding: 0.5rem;
     border-radius: var(--border-radius-md);
 }
 
@@ -163,20 +204,12 @@ button.secondary.danger:hover {
     border-color: transparent;
 }
 
-.pad-1 {
-    padding: 1rem;
-}
-
-.mb-1 {
-    margin-bottom: 1rem;
-}
-
 .counter {
     display: flex;
     align-items: center;
     border-radius: var(--border-radius-xs);
     background-color: var(--blue-bg);
-    color: var(--primary-blue);
+    color: var(--on-blue);
     padding: 0.25rem;
     height: 1.5rem;
     font-size: small;
@@ -202,7 +235,7 @@ button.secondary.danger:hover {
 
 .pill.blue {
     background-color: var(--blue-bg);
-    color: var(--primary-blue);
+    color: var(--on-blue);
 }
 
 .pill.yellow {
@@ -262,6 +295,9 @@ button.secondary.danger:hover {
 
 .menu .item.danger:hover {
     background-color: var(--red-bg);
+    i, p {
+        color: var(--on-red);
+    }
 }
 
 .menu .item:hover {
@@ -400,6 +436,7 @@ hr {
     min-width: 0;
     padding: 0.5rem;
     gap: var(--gap);
+    color: var(--text-color);
 }
 
 .table td.right {
@@ -413,4 +450,12 @@ hr {
 
 .table tr:not(.header) {
     border-bottom: var(--border);
+}
+
+.disable-transitions,
+.disable-transitions *,
+.disable-transitions *::before,
+.disable-transitions *::after {
+    transition: none !important;
+    animation: none !important;
 }

@@ -1,4 +1,4 @@
-<html>
+<html class="dark">
 
 <head>
     <title>AskBlue SGS</title>
@@ -18,7 +18,7 @@
     <div class="container pad-1" style="min-height: 95%;">
         <div class="row align-start w-100 h-100">
             <div class="column fit">
-                <img src="askblue-logo-oficial-rgb.png" alt="AskBlue Logo" class="logo big">
+                <img src="askblue-logo-oficial-rgb.png" alt="AskBlue Logo" id="logo" class="logo big">
                 <button class="wide secondary w-100 justify-start"><i class="bi bi-search"></i>Pesquisa</button>
                 <button class="wide secondary w-100 justify-start"><i class="bi bi-journals"></i>Trabalhos</button>
                 <button class="wide secondary w-100 justify-start"><i
@@ -26,7 +26,7 @@
                 <button class="wide secondary w-100 justify-start"><i class="bi bi-plus-lg rotate-right"></i>Novo
                     Serviço</button>
             </div>
-            <div class="box lg column h-100">
+            <div class="box lg column h-100 pad-1">
                 <div class="row mb-1">
                     <button class="wide-left secondary selected">Selected Filter<div class="counter">122</div></button>
                     <button class="wide-left secondary">Filter<div class="counter">1</div></button>
@@ -54,10 +54,11 @@
                         <div class="item wide"><i class="bi bi-sort-numeric-up"></i>
                             <p>Valor (Mais alto)</p>
                         </div>
-                        
                     </div>
+
+                    <button id="themeBtn" class="more-actions"><i class="bi bi-sun"></i></button>
                 </div>
-                <div class="box row">
+                <div class="box row pad-05">
                     <button class="wide primary">Primary Button</button>
                     <button class="wide secondary">Secondary Button</button>
                     <button class="wide secondary danger">Danger Button</button>
