@@ -29,7 +29,7 @@ namespace GestaoServicosWeb.API
                     : Results.Ok(ParaDto(c));
             });
 
-            // 3. POST /api/categorias → criar nova categoria
+            // 3. POST /api/categorias → criar nova categoria (só Empresa)
             grupo.MapPost("/", (CriarCategoriaDto dto, CategoriaService service) =>
             {
                 try
@@ -45,9 +45,10 @@ namespace GestaoServicosWeb.API
                 {
                     return Results.Conflict(ex.Message);
                 }
-            });
+            })
+            .RequireAuthorization(Politicas.Empresa);
 
-            // 4. DELETE /api/categorias/{id} → apagar categoria
+            // 4. DELETE /api/categorias/{id} → apagar categoria (só Empresa)
             grupo.MapDelete("/{id:guid}", (Guid id, CategoriaService service) =>
             {
                 try
@@ -60,7 +61,8 @@ namespace GestaoServicosWeb.API
                 {
                     return Results.Conflict(ex.Message);
                 }
-            });
+            })
+            .RequireAuthorization(Politicas.Empresa);
         }
 
         // Converte a entidade de domínio no DTO de resposta

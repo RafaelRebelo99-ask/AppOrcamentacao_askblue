@@ -37,26 +37,33 @@ namespace GestaoServicosWeb.Aplicacao
                 .OrderBy(o => o.DataValidade)
                 .ToArray();
 
-        // Ecrã de comparação (cliente): nunca inclui rascunhos
-        public Orcamento[] ListarDoServico(Guid idServico, Guid idCliente)
+        // Empresa (admin): todos os orçamentos
+        public Orcamento[] ListarTodos() =>
+            db.Orcamentos.AsNoTracking()
+                .OrderBy(o => o.DataValidade)
+                .ToArray();
+
+        // Ecrã de comparação (cliente): nunca inclui rascunhos. A Empresa vê os de qualquer serviço.
+        public Orcamento[] ListarDoServico(Guid idServico, Guid idCliente, bool eEmpresa = false)
         {
             var servico = db.Servicos.AsNoTracking().FirstOrDefault(s => s.Id == idServico);
-            if (servico is null || servico.IdCliente != idCliente)
+            if (servico is null || (!eEmpresa && servico.IdCliente != idCliente))
                 throw new NaoEncontradoException("Serviço não encontrado.");
 
             return db.Orcamentos.AsNoTracking()
-                .Where(o => o.IdServico == idServico && o.Estado != EstadoOrcamento.Rascunho)
+                .Where(o => o.IdServico == idServico && (eEmpresa || o.Estado != EstadoOrcamento.Rascunho))
                 .OrderBy(o => o.ValorSemIVA * (1 + o.TaxaIVA / 100m))
                 .ToArray();
         }
 
-        // Visível ao prestador dono e, se não for rascunho, ao cliente dono do serviço
-        public Orcamento Obter(Guid id, Guid idUtilizador)
+        // Visível ao prestador dono, à Empresa e, se não for rascunho, ao cliente dono do serviço
+        public Orcamento Obter(Guid id, Guid idUtilizador, bool eEmpresa = false)
         {
             var o = db.Orcamentos.AsNoTracking().Include(x => x.Servico).FirstOrDefault(x => x.Id == id);
 
             var visivel = o is not null &&
-                (o.IdPrestador == idUtilizador ||
+                (eEmpresa ||
+                 o.IdPrestador == idUtilizador ||
                  (o.Servico!.IdCliente == idUtilizador && o.Estado != EstadoOrcamento.Rascunho));
 
             return visivel ? o! : throw new NaoEncontradoException("Orçamento não encontrado.");
@@ -118,9 +125,19 @@ namespace GestaoServicosWeb.Aplicacao
             return orcamento;
         }
 
-        // Só rascunhos
-        public void Eliminar(Guid id, Guid idPrestador)
+        // Prestador: só os seus rascunhos. Empresa: qualquer orçamento.
+        public void Eliminar(Guid id, Guid idPrestador, bool eEmpresa = false)
         {
+            if (eEmpresa)
+            {
+                var qualquer = db.Orcamentos.FirstOrDefault(o => o.Id == id)
+                    ?? throw new NaoEncontradoException("Orçamento não encontrado.");
+
+                db.Orcamentos.Remove(qualquer);
+                db.SaveChanges();
+                return;
+            }
+
             var orcamento = ObterDoPrestador(id, idPrestador);
 
             if (orcamento.Estado != EstadoOrcamento.Rascunho)
