@@ -26,7 +26,7 @@
 }
 
 :root.dark {
-    --primary-blue: #ffffff;
+    --primary-blue: #ebebeb;
     --secondary-blue: #cccccc;
     --danger-color: #ff5151;
     --background-color: rgb(23, 23, 23);
@@ -36,13 +36,13 @@
 
     --blue-bg: #020aed2f;
     --on-blue: #b6b9ff;
-    --gray-bg: #9f9f9f60;
+    --gray-bg: #9f9f9f36;
     --on-gray: #bebebe;
     --yellow-bg: #ffd00029;
     --on-yellow: #ffc876;
     --orange-bg: #ff6a0049;
     --on-orange: #ff9360;
-    --red-bg: #ff3d3d32;
+    --red-bg: #ff3d3d24;
     --on-red: #ff4a4a;
 }
 
