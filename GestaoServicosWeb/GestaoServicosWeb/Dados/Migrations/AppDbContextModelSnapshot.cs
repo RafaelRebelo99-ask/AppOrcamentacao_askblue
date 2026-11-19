@@ -72,8 +72,14 @@ namespace GestaoServicosWeb.Dados.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("DataInicio")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DataValidade")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Descricao")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DuracaoDias")
                         .HasColumnType("int");

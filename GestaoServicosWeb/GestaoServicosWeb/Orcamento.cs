@@ -87,7 +87,7 @@ namespace GestaoServicosWeb
 
         public DateTime DataFim => DataInicio.AddDays(DuracaoDias);
 
-        public String Descricao
+        public String? Descricao
         {
             get => _descricao;
             private set
