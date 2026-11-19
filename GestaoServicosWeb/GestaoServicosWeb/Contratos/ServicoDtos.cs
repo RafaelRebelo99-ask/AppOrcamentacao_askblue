@@ -12,6 +12,15 @@ namespace GestaoServicosWeb.Contratos
         DateTime DataDesejada
     );
 
+    // Entrada: dados para editar um pedido de serviço existente
+    public record AtualizarServicoDto(
+        Guid IdCategoria,
+        string Titulo,
+        string Descricao,
+        DateTime PrazoPropostas,
+        DateTime DataDesejada
+    );
+
     // Saída: formato devolvido pela API
     public record ServicoDto(
         Guid Id,

@@ -59,6 +59,24 @@ namespace GestaoServicosWeb.Aplicacao
             return servico;
         }
 
+        // Devolve o serviço atualizado, ou null se não existir
+        public Servico? Atualizar(Guid id, AtualizarServicoDto dto)
+        {
+            var servico = db.Servicos.FirstOrDefault(s => s.Id == id);
+            if (servico == null)
+                return null;
+
+            if (dto.Titulo.Length > 200)
+                throw new ArgumentException("O título não pode ter mais de 200 caracteres.");
+
+            if (!db.Categorias.Any(c => c.Id == dto.IdCategoria))
+                throw new ArgumentException("A categoria indicada não existe.");
+
+            servico.Atualizar(dto.IdCategoria, dto.Titulo, dto.Descricao, dto.PrazoPropostas, dto.DataDesejada);
+            db.SaveChanges();
+            return servico;
+        }
+
         // Devolve false se o serviço não existir
         public bool Cancelar(Guid id)
         {
@@ -70,5 +88,21 @@ namespace GestaoServicosWeb.Aplicacao
             db.SaveChanges();
             return true;
         }
+
+        // Devolve false se o serviço não existir
+        public bool Concluir(Guid id)
+        {
+            var servico = db.Servicos.FirstOrDefault(s => s.Id == id);
+            if (servico == null)
+                return false;
+
+            servico.Concluir();
+            db.SaveChanges();
+            return true;
+        }
+
+        // Lista serviços abertos a propostas (PorAprovar), com filtro opcional por categoria
+        public List<Servico> ListarDisponiveis(Guid? idCategoria = null) =>
+            Listar(EstadoServico.PorAprovar, idCategoria);
     }
 }
