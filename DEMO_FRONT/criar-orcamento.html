@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <title>AskBlue SGS | Novo orçamento</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="askblue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <main>
+        <div class="orcamento">
+            <h1 class="mb-1">Novo orçamento</h1>
+
+            <!-- Resumo do serviço: o prestador consulta o que está a orçamentar.
+             TODO: preencher com os dados de GET /api/servicos/{id} -->
+            <section aria-labelledby="titulo-servico">
+                <h2 id="titulo-servico" class="mb-05">Título do serviço</h2>
+
+                <div class="row wrap mb-1">
+                    <div class="pill primary">Tecnologia</div>
+                    <p>Propostas até: <div class="date">25/11/2026</div></p>
+                    <p>Data desejada: <div class="date">23/12/2026</div></p>
+                </div>
+
+            </section>
+
+            <hr>
+
+            <form id="form-orcamento">
+                <div class="column">
+                    <section aria-labelledby="titulo-partes">
+                        <div class="row wrap">
+                            <div class="input-group column">
+                                <div class="row">
+                                    <p>Nome:</p>
+                                    <p>Prestador</p>
+                                </div>
+
+                                <div class="row">
+                                    <p>NIF: </p>
+                                    <p>123456789</p>
+                                </div>
+
+                                <div class="row">
+                                    <p>Email: </p>
+                                    <p>prestador@email.com</p>
+                                </div>
+
+                                <div class="row">
+                                    <p>Telefone: </p>
+                                    <p>+351 912345678</p>
+                                </div>
+                            </div>
+
+                            <div class="input-group column">
+                                <div class="row">
+                                    <p>Nome:</p>
+                                    <p>Cliente</p>
+                                </div>
+
+                                <div class="row">
+                                    <p>NIF: </p>
+                                    <p>Disponível após aceitação</p>
+                                </div>
+
+                                <div class="row">
+                                    <p>Email: </p>
+                                    <p>Disponível após aceitação</p>
+                                </div>
+
+                                <div class="row">
+                                    <p>Telefone: </p>
+                                    <p>Disponível após aceitação</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <hr>
+
+                    <!-- Âmbito -->
+                    <section aria-labelledby="titulo-ambito" class="mb-1">
+                        <div class="field">
+                            <label for="descricao">Descrição *</label>
+                            <textarea id="descricao" name="descricao" required maxlength="2000"
+                                aria-describedby="ajuda-descricao"
+                                placeholder="O que vai ser feito, e o que não está incluído."></textarea>
+                        </div>
+                    </section>
+
+
+                    <!-- Preço -->
+                    <section aria-labelledby="titulo-preco">
+                        <div class="row mb-1">
+                            <div class="field">
+                                <label for="valor">Valor sem IVA (€) *</label>
+                                <input id="valor" name="valor" type="number" inputmode="decimal" min="0.01" step="0.01"
+                                    required placeholder="0,00">
+                            </div>
+
+                            <div class="field">
+                                <label for="taxa">Taxa de IVA *</label>
+                                <select id="taxa" name="taxa" required aria-describedby="ajuda-taxa">
+                                    <option value="23" selected>23%</option>
+                                    <option value="13">13%</option>
+                                    <option value="6">6%</option>
+                                    <option value="0">0% (isento)</option>
+                                </select>
+                            </div>
+
+                            <div class="calculado">
+                                <label for="valor-iva">Valor do IVA</label>
+                                <output id="valor-iva" for="valor taxa">—</output>
+                            </div>
+                            <div class="calculado total">
+                                <label for="valor-total">Valor total (incl. IVA)</label>
+                                <output id="valor-total" for="valor taxa">—</output>
+                            </div>
+                        </div>
+                    </section>
+
+                    <hr>
+
+                    <!-- Prazos -->
+                    <section aria-labelledby="titulo-prazos">
+                        <div class="row wrap mb-1">
+                            <div class="field">
+                                <label for="inicio">Data de início *</label>
+                                <input id="inicio" name="inicio" type="date" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="duracao">Duração (dias) *</label>
+                                <input id="duracao" name="duracao" type="number" inputmode="numeric" min="1" step="1"
+                                    required placeholder="0">
+                            </div>
+
+                            <div class="calculado">
+                                <label for="data-fim">Data de fim</label>
+                                <output id="data-fim" for="inicio duracao">—</output>
+                            </div>
+                        </div>
+
+                        <div class="field mb-1" style="max-width: 20rem;">
+                            <label for="validade">Validade da proposta *</label>
+                            <input id="validade" class="mb-1" name="validade" type="date" required
+                                aria-describedby="ajuda-validade">
+                            <p class="hint" id="ajuda-validade">Depois desta data a
+                                proposta deixa de ser válida.</p>
+                        </div>
+                    </section>
+
+
+                    <!-- Mensagens do envio -->
+                    <div id="estado" class="mensagem" role="status" aria-live="polite" hidden></div>
+
+                    <!-- Ações -->
+                    <section>
+                        <div class="row" style="justify-content: space-between;">
+                            <div class="row">
+                                <button type="button" class="wide secondary" id="guardar">Guardar rascunho</button>
+                                <button type="submit" class="wide primary" id="enviar">Enviar orçamento</button>
+                            </div>
+                            <button class="wide secondary danger">Cancelar</button>
+                        </div>
+                    </section>
+                </div>
+            </form>
+        </div>
+
+        </form>
+
+    </main>
+
+    <!-- Confirmação antes de enviar -->
+    <dialog id="confirmar" aria-labelledby="titulo-confirmar">
+        <form method="dialog">
+            <h2 id="titulo-confirmar">Enviar orçamento?</h2>
+            <p>Depois de enviado, o orçamento <strong>não pode ser editado</strong> e vincula-te até à data de validade.
+                O cliente pode aceitá-lo ou recusá-lo.</p>
+            <div class="row apart">
+                <button value="cancelar" class="secondary">Voltar</button>
+                <button value="confirmar" class="primary">Enviar</button>
+            </div>
+        </form>
+    </dialog>
+</body>
+
+</html>

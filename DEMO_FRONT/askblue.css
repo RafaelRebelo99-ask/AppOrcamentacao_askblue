@@ -1,6 +1,6 @@
 :root {
     --primary-blue: #020AED;
-    --secondary-blue: #020081;
+    --secondary-blue: #0300a5;
     --danger-color: #ff0000;
     --background-color: rgb(255, 255, 255);
     --border: 1px solid #c4c4c4;
@@ -12,9 +12,10 @@
     --secondary-hover: #f1f1f1;
     --gap: 0.5rem;
     --gap-sm: 0.25rem;
-    --text-color: black;
+    --text-color: rgb(0, 0, 0);
 
     --blue-bg: #020aed25;
+    --on-blue: #000469;
     --gray-bg: #9f9f9f50;
     --on-gray: #333333;
     --yellow-bg: #FFE64650;
@@ -57,13 +58,21 @@ body {
 * {
     box-sizing: border-box;
     font-family: "IBM Plex Sans", sans-serif;
-    margin: 0;  
+    margin: 0;
     font-size: .95rem;
 }
 
 p {
     transition: transform 0.15s ease-in-out;
     color: var(--text-color);
+}
+
+.gap {
+    gap: var(--gap);
+}
+
+.gap-sm {
+    gap: var(--gap-sm);
 }
 
 .pad-1 {
@@ -76,6 +85,10 @@ p {
 
 .pad-025 {
     padding: 0.25rem;
+}
+
+.mb-05 {
+    margin-bottom: 0.5rem;
 }
 
 .mb-1 {
@@ -141,9 +154,9 @@ p {
     border-radius: var(--border-radius-lg);
 }
 
-button, select {
+button,
+select {
     background-color: var(--background-color);
-    color: var(--primary-blue);
     border: var(--border);
     padding: 0.25rem;
     border-radius: var(--border-radius-sm);
@@ -156,6 +169,17 @@ button, select {
     justify-content: center;
     width: fit-content;
     height: 2.25rem;
+}
+
+.estado, .date{
+    padding: 0.4rem 0.5rem;
+    border-radius: var(--border-radius-xs);
+    background-color: var(--secondary-hover);
+    font-size: small;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .wide {
@@ -180,13 +204,24 @@ button.primary:hover {
     background-color: var(--secondary-blue);
 }
 
-button.secondary, select {
-    border-color: var(--primary-blue);
+.button.wide.secondary, button.secondary {
+    color: var(--text-color);
 }
 
-button.secondary:hover, button.secondary.selected {
+
+button.secondary:hover{
+    background-color: var(--secondary-hover);
+
+    .counter {
+        background-color: var(--background-color);
+    }
+
+}
+
+button.secondary.selected {
     background-color: var(--primary-blue);
-    color: var(--background-color);
+    border-color: var(--primary-blue);
+    color:var(--background-color);
 
     .counter {
         background-color: var(--background-color);
@@ -196,20 +231,20 @@ button.secondary:hover, button.secondary.selected {
     i {
         color: var(--background-color);
     }
-
 }
 
 button.secondary.danger:hover {
-    background-color: var(--danger-color);
+    background-color: var(--red-bg);
     border-color: transparent;
+    color: var(--on-red);
 }
 
 .counter {
     display: flex;
     align-items: center;
     border-radius: var(--border-radius-xs);
-    background-color: var(--blue-bg);
-    color: var(--on-blue);
+    background-color: var(--secondary-hover);
+    color: var(--text-color);
     padding: 0.25rem;
     height: 1.5rem;
     font-size: small;
@@ -220,40 +255,39 @@ button.secondary.danger:hover {
 
 .pill {
     border-radius: var(--border-radius-pill);
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem;
     font-size: small;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 2.25rem;
 }
 
-.pill.primary {
+.pill.primary, .estado.primary {
     background-color: var(--primary-blue);
     color: var(--background-color);
 }
 
-.pill.blue {
+.pill.blue, .estado.blue {
     background-color: var(--blue-bg);
     color: var(--on-blue);
 }
 
-.pill.yellow {
+.pill.yellow, .estado.yellow {
     background-color: var(--yellow-bg);
     color: var(--on-yellow);
 }
 
-.pill.orange {
+.pill.orange, .estado.orange {
     background-color: var(--orange-bg);
     color: var(--on-orange);
 }
 
-.pill.red {
+.pill.red, .estado.red {
     background-color: var(--red-bg);
     color: var(--on-red);
 }
 
-.pill.gray {
+.pill.gray, .estado.gray {
     background-color: var(--gray-bg);
     color: var(--on-gray);
 }
@@ -278,6 +312,7 @@ button.secondary.danger:hover {
     border-radius: var(--border-radius-sm);
     cursor: pointer;
     transition: background-color 0.1s ease, color 0.1s ease;
+    text-wrap: nowrap;
 }
 
 .menu .item.disabled {
@@ -286,16 +321,19 @@ button.secondary.danger:hover {
 }
 
 .menu .item.danger {
-    color: var(--danger-color); 
+    color: var(--danger-color);
 
-    i, p {
+    i,
+    p {
         color: var(--danger-color);
     }
 }
 
 .menu .item.danger:hover {
     background-color: var(--red-bg);
-    i, p {
+
+    i,
+    p {
         color: var(--on-red);
     }
 }
@@ -309,7 +347,6 @@ button.secondary.danger:hover {
 }
 
 label {
-    font-size: small;
     color: var(--primary-blue);
     display: block;
     margin-bottom: 0.25rem;
@@ -327,16 +364,20 @@ i {
 
 .footer {
     width: 100%;
-    background-color: var(--primary-blue);
+    background-color: var(--secondary-hover);
 
-    p, i {
-        color: var(--background-color);
+    p,
+    i {
+        color: var(--text-color);
         margin: 0;
+        font-size: small;
     }
+
+    border-top: var(--border);
 
     justify-content: space-between;
     align-items: center;
-    padding-inline-end: 2rem;
+    padding: 0.5rem 1.5rem;
     margin-top: auto;
 }
 
@@ -361,15 +402,34 @@ i {
     i {
         font-size: large;
     }
+
+    .menu {
+        top: calc(100% + 0.25rem);
+        right: 0;
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-0.25rem);
+        transition: transform 0.1s ease, opacity 0.1s ease;
+    }
 }
 
-.more-actions:hover, .more-actions:active {
+.more-actions:hover,
+.more-actions:active {
     background-color: var(--secondary-hover);
+
+    .menu {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+    }
 }
 
 hr {
+    border: none;
     border-top: var(--border);
     margin: 0.5rem 0;
+    border-width: 2px;
 }
 
 .vl {
@@ -391,7 +451,11 @@ hr {
     left: anchor(left);
     margin-top: var(--gap-sm);
     transition: opacity 0.05s ease, transform 0.1s ease;
-    
+
+}
+
+.pos-rel {
+    position: relative;
 }
 
 .hidden {
@@ -414,37 +478,35 @@ hr {
 .table tr {
     display: grid;
     grid-template-columns:
-        1.5fr
-        1fr
-        0.8fr
-        1fr
-        1.2fr
-        1fr
-        1.5fr;
+        .5fr .25fr 1.5fr 0.8fr 0.8fr 1.2fr 1fr 1.5fr;
     align-items: center;
     width: 100%;
-    padding-inline-start: 0.5rem;
 }
 
 .ml-auto {
     margin-left: auto;
 }
 
-.table td {
+.table td, th {
     display: flex;
     align-items: center;
     min-width: 0;
     padding: 0.5rem;
     gap: var(--gap);
     color: var(--text-color);
+    font-weight: normal;
 }
 
-.table td.right {
+.table th {
+    color: var(--primary-blue);
+}
+
+.table td.right, .table th.right {
     justify-content: flex-end;
+    font-variant-numeric: tabular-nums;
 }
 
 .table tr.header {
-    color: var(--primary-blue);
     border-bottom: var(--border);
 }
 
@@ -458,4 +520,53 @@ hr {
 .disable-transitions *::after {
     transition: none !important;
     animation: none !important;
+}
+
+input,
+textarea {
+    padding: 0.5rem;
+    border-radius: var(--border-radius-sm);
+    border: var(--border);
+    outline: none;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.1s ease;
+}
+
+textarea {
+    width: 100%;
+    min-height:10rem;
+    resize: none;
+}
+
+input:focus, input:hover {
+    background-color: var(--secondary-hover);
+}
+
+.orcamento {
+    padding: 2em;
+    border-radius: var(--border-radius-md);
+    border: var(--border);
+    width: 60vw;
+}
+
+main {
+    justify-content: center;
+    display: flex;
+    padding: 1rem;
+}
+
+h2 {
+    font-size: larger;
+    font-weight: normal;
+}
+
+h1 {
+    font-size: x-large;
+    font-weight: normal;
+}
+
+.hint {
+    opacity: 0.5;
+    font-size: small;
 }

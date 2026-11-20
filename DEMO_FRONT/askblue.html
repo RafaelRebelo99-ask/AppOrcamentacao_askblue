@@ -1,4 +1,4 @@
-<html class="dark">
+<html>
 
 <head>
     <title>AskBlue SGS</title>
@@ -23,6 +23,7 @@
                 <button class="wide secondary w-100 justify-start"><i class="bi bi-journals"></i>Trabalhos</button>
                 <button class="wide secondary w-100 justify-start"><i
                         class="bi bi-file-earmark-spreadsheet"></i>Orçamentos</button>
+                <hr noshade>
                 <button class="wide secondary w-100 justify-start"><i class="bi bi-plus-lg rotate-right"></i>Novo
                     Serviço</button>
             </div>
@@ -56,82 +57,98 @@
                         </div>
                     </div>
 
-                    <button id="themeBtn" class="more-actions"><i class="bi bi-sun"></i></button>
+                    <button id="themeBtn" class="more-actions"><i class="bi bi-moon"></i></button>
                 </div>
-                <div class="box row pad-05">
-                    <button class="wide primary">Primary Button</button>
-                    <button class="wide secondary">Secondary Button</button>
-                    <button class="wide secondary danger">Danger Button</button>
-
-                    <div class="pill blue">Em curso</div>
-                    <div class="pill yellow">Em 4 dias</div>
-                    <div class="pill orange">Em 1 dia</div>
-                    <div class="pill red">Atrasado</div>
-                    <div class="pill gray">Atribuído</div>
-                    <div class="pill primary">Categoria</div>
-                    <button class="more-actions"><i class="bi bi-three-dots-vertical"></i></button>
-                </div>
-
-                <div class="menu">
-                    <div class="item wide disabled row"><i class="bi bi-pencil"></i>
-                        <p>Editar</p>
-                    </div>
-                    <div class="item wide"><i class="bi bi-journal-text"></i>
-                        <p>Consultar serviço</p>
-                    </div>
-                    <div class="item wide danger"><i class="bi bi-trash"></i>
-                        <p>Eliminar</p>
-                    </div>
-                </div>
-
-
-
-                <div class="menu">
-                    <div class="item wide"><i class="bi bi-file-earmark-spreadsheet"></i>
-                        <p>Consultar orçamento</p>
-                    </div>
-                    <div class="item wide"><i class="bi bi-journal-text"></i>
-                        <p>Ver detalhes</p>
-                    </div>
-                    <div class="item wide"><i class="bi bi-person"></i>
-                        <p>Contactar cliente</p>
-                    </div>
-                </div>
-
                 <table class="table">
                     <tr class="header">
-                        <td>Título</td>
-                        <td>Cliente</td>
-                        <td>Estado</td>
-                        <td>Categoria</td>
-                        <td>Prazo de Conclusão</td>
-                        <td class="right">Valor Total (incl. IVA)</td>
-                        <td class="ml-auto"></td>
+                        <th></th>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Cliente</th>
+                        <th>Categoria</th>
+                        <th>Prazo de Conclusão</th>
+                        <th class="right">Valor Total (incl. IVA)</th>
+                        <th class="ml-auto"></th>
                     </tr>
                     <tr>
+                        <td><div class="estado blue">Em curso</div></td>
+                        <td>1</td>
                         <td>Serviço de consultoria de IT</td>
-                        <td><div class="row gap-0">
-                            <p>AskBlue</p><i class="bi bi-check-lg"></i>
-                        </div></td>
-                        <td><div class="pill blue">Em curso</div></td>
+                        <td>
+                            <div class="row gap-0">
+                                <p>AskBlue</p><i class="bi bi-check-lg"></i>
+                            </div>
+                        </td>
                         <td>Tecnologia</td>
-                        <td>20/11/2026 <div class="pill yellow">Em 2 dias</div></td>
+                        <td>20/11/2026 <div class="pill yellow">Em 2 dias</div>
+                        </td>
                         <td class="right">12.000,00 €</td>
                         <td class="ml-auto">
                             <button class="primary wide">Concluir Trabalho</button>
-                            <button class="more-actions">
+                            <button class="more-actions pos-rel">
                                 <i class="bi bi-three-dots-vertical"></i>
-                            </button></td>
+                                <div class="menu">
+                                    <div class="item wide disabled row"><i class="bi bi-pencil"></i>
+                                        <p>Editar</p>
+                                    </div>
+                                    <div class="item wide"><i class="bi bi-journal-text"></i>
+                                        <p>Consultar serviço</p>
+                                    </div>
+                                    <div class="item wide danger"><i class="bi bi-trash"></i>
+                                        <p>Eliminar</p>
+                                    </div>
+                                </div>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><div class="estado gray">Atribuído</div></td>
+                        <td>2</td>
+                        <td>Serviço de consultoria de IT</td>
+                        <td>
+                            <div class="row gap-0">
+                                <p>AskBlue</p><i class="bi bi-check-lg"></i>
+                            </div>
+                        </td>
+                        <td>Tecnologia</td>
+                        <td>18/11/2026 <div class="pill red">Atrasado</div>
+                        </td>
+                        <td class="right">52.000,00 €</td>
+                        <td class="ml-auto">
+                            <button class="primary wide">Começar Trabalho</button>
+                            <button class="more-actions pos-rel">
+                                <i class="bi bi-three-dots-vertical"></i>
+                                <div class="menu">
+                                    <div class="item wide disabled row"><i class="bi bi-pencil"></i>
+                                        <p>Editar</p>
+                                    </div>
+                                    <div class="item wide"><i class="bi bi-journal-text"></i>
+                                        <p>Consultar serviço</p>
+                                    </div>
+                                    <div class="item wide danger"><i class="bi bi-trash"></i>
+                                        <p>Eliminar</p>
+                                    </div>
+                                </div>
+                            </button>
+                        </td>
                     </tr>
 
                 </table>
 
-
-
+                <form>
+                    <input placeholder="Email" type="email">
+                    <input placeholder="Password" type="password">
+                </form>
 
             </div>
         </div>
     </div>
+
+    <footer class="row footer">
+        <p>Academia .NET - Sistema de Gestão de Serviços</p>
+        <p>AskBlue, 2026</p>
+    </footer>
 </body>
 
 <script src="askblue.js" defer></script>
