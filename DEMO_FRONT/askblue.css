@@ -3,13 +3,14 @@
     --secondary-blue: #0300a5;
     --danger-color: #ff0000;
     --background-color: rgb(255, 255, 255);
+    --sec-background-color: #f4f4f4;
     --border: 1px solid #c4c4c4;
     --border-radius-lg: 1rem;
     --border-radius-md: 0.75rem;
     --border-radius-sm: 0.5rem;
     --border-radius-xs: 0.25rem;
     --border-radius-pill: 20rem;
-    --secondary-hover: #f1f1f1;
+    --secondary-hover: #fafafa;
     --gap: 0.5rem;
     --gap-sm: 0.25rem;
     --text-color: rgb(0, 0, 0);
@@ -30,9 +31,10 @@
     --primary-blue: #ededed;
     --secondary-blue: #cccccc;
     --danger-color: #ff5151;
-    --background-color: rgb(17, 17, 21);
-    --border: 1px solid #46464b;
-    --secondary-hover: #221f26;
+    --background-color: rgb(10, 10, 12);
+    --sec-background-color: rgb(0, 0, 0);
+    --border: 1px solid #29292c;
+    --secondary-hover: #161518;
     --text-color: white;
 
     --blue-bg: #020aed2f;
@@ -49,7 +51,7 @@
 
 
 body {
-    background-color: var(--background-color);
+    background-color: var(--sec-background-color);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -148,6 +150,7 @@ p {
 .box {
     border: var(--border);
     border-radius: var(--border-radius-md);
+    background-color: var(--background-color);
 }
 
 .box.lg {
@@ -172,14 +175,16 @@ select {
 }
 
 .estado, .date{
-    padding: 0.4rem 0.5rem;
-    border-radius: var(--border-radius-xs);
-    background-color: var(--secondary-hover);
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    background-color: var(--sec-background-color);
     font-size: small;
     width: fit-content;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: var(--border);
+    text-wrap: nowrap;
 }
 
 .wide {
@@ -212,10 +217,6 @@ button.primary:hover {
 button.secondary:hover{
     background-color: var(--secondary-hover);
 
-    .counter {
-        background-color: var(--background-color);
-    }
-
 }
 
 button.secondary.selected {
@@ -224,8 +225,7 @@ button.secondary.selected {
     color:var(--background-color);
 
     .counter {
-        background-color: var(--background-color);
-        color: var(--primary-blue);
+        color: var(--background-blue);
     }
 
     i {
@@ -242,19 +242,21 @@ button.secondary.danger:hover {
 .counter {
     display: flex;
     align-items: center;
-    border-radius: var(--border-radius-xs);
-    background-color: var(--secondary-hover);
+    background-color: transparent;
+    border-left: var(--border);
+    border-width: 2px;
     color: var(--text-color);
-    padding: 0.25rem;
+    padding: 0 0.5rem;
     height: 1.5rem;
     font-size: small;
     min-width: 1.5rem;
     justify-content: center;
-    transition: background-color 0.1s ease, color 0.1s ease;
+    transition: color 0.1s ease;
 }
 
 .pill {
     border-radius: var(--border-radius-pill);
+    border: var(--border);
     padding: 0.4rem 0.8rem;
     font-size: small;
     display: flex;
@@ -262,34 +264,40 @@ button.secondary.danger:hover {
     justify-content: center;
 }
 
-.pill.primary, .estado.primary {
+.pill.primary {
     background-color: var(--primary-blue);
     color: var(--background-color);
+    border-color: var(--primary-blue);
 }
 
-.pill.blue, .estado.blue {
+.pill.blue {
     background-color: var(--blue-bg);
     color: var(--on-blue);
+    border-color: var(--on-blue);
 }
 
-.pill.yellow, .estado.yellow {
+.pill.yellow {
     background-color: var(--yellow-bg);
     color: var(--on-yellow);
+    border-color: var(--on-yellow);
 }
 
-.pill.orange, .estado.orange {
+.pill.orange {
     background-color: var(--orange-bg);
     color: var(--on-orange);
+    border-color: var(--on-orange);
 }
 
-.pill.red, .estado.red {
+.pill.red{
     background-color: var(--red-bg);
     color: var(--on-red);
+    border-color: var(--on-red);
 }
 
-.pill.gray, .estado.gray {
+.pill.gray {
     background-color: var(--gray-bg);
     color: var(--on-gray);
+    border-color: var(--on-gray);
 }
 
 .menu {
@@ -364,7 +372,7 @@ i {
 
 .footer {
     width: 100%;
-    background-color: var(--secondary-hover);
+    background-color: var(--background-color);
 
     p,
     i {
@@ -382,12 +390,12 @@ i {
 }
 
 .logo {
-    width: 8rem;
+    width: 6rem;
     height: auto;
 }
 
 .logo.big {
-    width: 12rem;
+    width: 10rem;
 }
 
 .more-actions {
@@ -478,7 +486,7 @@ hr {
 .table tr {
     display: grid;
     grid-template-columns:
-        .5fr .25fr 1.5fr 0.8fr 0.8fr 1.2fr 1fr 1.5fr;
+        .25fr 1.2fr .6fr 0.8fr 0.8fr 1.2fr 1fr 1.5fr;
     align-items: center;
     width: 100%;
 }
