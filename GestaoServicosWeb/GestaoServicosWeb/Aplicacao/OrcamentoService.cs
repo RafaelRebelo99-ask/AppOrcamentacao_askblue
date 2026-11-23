@@ -1,21 +1,18 @@
-﻿using GestaoServicosWeb.Dados;
+﻿
+using GestaoServicosWeb.Dados;
+using GestaoServicosWeb;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Data;
+using System.Linq;
 
 namespace GestaoServicosWeb.Aplicacao
 {
-    // 404: não existe, ou existe mas não é do utilizador (não revelamos qual dos casos)
     public class NaoEncontradoException : Exception
     {
         public NaoEncontradoException(string mensagem) : base(mensagem) { }
     }
 
-    /*
-     Convenção de exceções (traduzidas para HTTP nos endpoints):
-       NaoEncontradoException       -> 404
-       UnauthorizedAccessException  -> 403 (papel errado)
-       InvalidOperationException    -> 409 (transição de estado inválida, conflito)
-       ArgumentException            -> 400 (dados inválidos)
-    */
     public class OrcamentoService
     {
         private readonly AppDbContext db;
@@ -25,156 +22,234 @@ namespace GestaoServicosWeb.Aplicacao
             this.db = db;
         }
 
-        // ------------------------------------------------------------------
-        // Leitura
-        // ------------------------------------------------------------------
-
-        // Ecrã "Os meus orçamentos" (prestador)
-        public Orcamento[] ListarDoPrestador(Guid idPrestador) =>
-            db.Orcamentos.AsNoTracking()
-                .Include(o => o.Servico)
-                .Where(o => o.IdPrestador == idPrestador)
-                .OrderBy(o => o.DataValidade)
-                .ToArray();
-
-        // Empresa (admin): todos os orçamentos
-        public Orcamento[] ListarTodos() =>
-            db.Orcamentos.AsNoTracking()
-                .OrderBy(o => o.DataValidade)
-                .ToArray();
-
-        // Ecrã de comparação (cliente): nunca inclui rascunhos. A Empresa vê os de qualquer serviço.
-        public Orcamento[] ListarDoServico(Guid idServico, Guid idCliente, bool eEmpresa = false)
+        // leitura
+        public Orcamento[] ListarDoCriador(Guid idCriador)
         {
-            var servico = db.Servicos.AsNoTracking().FirstOrDefault(s => s.Id == idServico);
-            if (servico is null || (!eEmpresa && servico.IdCliente != idCliente))
-                throw new NaoEncontradoException("Serviço não encontrado.");
+            ExigirColaborador(idCriador);
 
-            return db.Orcamentos.AsNoTracking()
-                .Where(o => o.IdServico == idServico && (eEmpresa || o.Estado != EstadoOrcamento.Rascunho))
-                .OrderBy(o => o.ValorSemIVA * (1 + o.TaxaIVA / 100m))
+            return db.Orcamentos
+                .AsNoTracking()
+                .Where(o => o.IdCriador == idCriador)
+                .OrderByDescending(o => o.DataCriacao)
                 .ToArray();
         }
 
-        // Visível ao prestador dono, à Empresa e, se não for rascunho, ao cliente dono do serviço
-        public Orcamento Obter(Guid id, Guid idUtilizador, bool eEmpresa = false)
+        // Todas as propostas (administrador)
+        public Orcamento[] ListarTodos(Guid idUtilizador)
         {
-            var o = db.Orcamentos.AsNoTracking().Include(x => x.Servico).FirstOrDefault(x => x.Id == id);
+            ExigirAdministrador(idUtilizador);
 
-            var visivel = o is not null &&
-                (eEmpresa ||
-                 o.IdPrestador == idUtilizador ||
-                 (o.Servico!.IdCliente == idUtilizador && o.Estado != EstadoOrcamento.Rascunho));
-
-            return visivel ? o! : throw new NaoEncontradoException("Orçamento não encontrado.");
+            return db.Orcamentos
+                .AsNoTracking()
+                .OrderByDescending(o => o.DataCriacao)
+                .ToArray();
         }
 
-        // ------------------------------------------------------------------
-        // Prestador
-        // ------------------------------------------------------------------
-
-        public Orcamento Criar(Guid idPrestador, Guid idServico, string descricao, decimal valorSemIVA, decimal taxaIVA,
-            DateTime dataValidade, DateTime dataInicio, int duracaoDias)
+        // Propostas de uma oportunidade (cliente)
+        public Orcamento[] ListarDaOportunidade(
+            Guid idOportunidade,
+            Guid idCliente)
         {
-            var prestador = db.Utilizadores.AsNoTracking().FirstOrDefault(u => u.Id == idPrestador)
-                ?? throw new NaoEncontradoException("O prestador indicado não existe.");
+            var oportunidade = db.Oportunidades
+                .AsNoTracking()
+                .FirstOrDefault(o => o.Id == idOportunidade);
 
-            if (prestador.Role != Role.Prestador)
-                throw new UnauthorizedAccessException("Apenas prestadores podem enviar orçamentos.");
+            if (oportunidade is null ||
+                oportunidade.IdCliente != idCliente)
+            {
+                throw new NaoEncontradoException(
+                    "Oportunidade não encontrada.");
+            }
 
-            var servico = db.Servicos.AsNoTracking().FirstOrDefault(s => s.Id == idServico)
-                ?? throw new NaoEncontradoException("O serviço indicado não existe.");
+            return db.Orcamentos
+                .AsNoTracking()
+                .Where(o =>
+                    o.IdOportunidade == idOportunidade &&
+                    o.Estado != EstadoOrcamento.Rascunho)
+                .OrderBy(o => o.ValorSemIVA)
+                .ToArray();
+        }
 
-            ExigirServicoAberto(servico);
+        // Colaborador/admin vê propostas internas.
+        // Cliente só vê propostas enviadas das suas oportunidades.
+        public Orcamento Obter(Guid id, Guid idUtilizador)
+        {
+            var orcamento = db.Orcamentos
+                .AsNoTracking()
+                .Include(o => o.Oportunidade)
+                .FirstOrDefault(o => o.Id == id);
 
-            var jaTemAtivo = db.Orcamentos.Any(o =>
-                o.IdServico == idServico && o.IdPrestador == idPrestador &&
-                (o.Estado == EstadoOrcamento.Rascunho ||
-                 o.Estado == EstadoOrcamento.Enviado ||
-                 o.Estado == EstadoOrcamento.Aceite));
-            if (jaTemAtivo)
-                throw new InvalidOperationException("Já tens um orçamento ativo para este serviço.");
+            if (orcamento is null)
+                throw new NaoEncontradoException(
+                    "Orçamento não encontrado.");
 
-            var orcamento = new Orcamento(idPrestador, idServico, descricao, valorSemIVA, taxaIVA, dataValidade, dataInicio, duracaoDias);
+            var utilizador = ObterUtilizador(idUtilizador);
+
+            bool eColaborador =
+                utilizador.Role is Role.Colaborador or Role.Administrador
+                && utilizador.EmpresaId.HasValue;
+
+            if (eColaborador)
+                return orcamento;
+
+            bool eCliente =
+                utilizador.Role == Role.Cliente &&
+                orcamento.IdOportunidade != Guid.Empty &&
+                orcamento.Oportunidade?.IdCliente == idUtilizador &&
+                orcamento.Estado != EstadoOrcamento.Rascunho;
+
+            if (eCliente)
+                return orcamento;
+
+            throw new NaoEncontradoException(
+                "Orçamento não encontrado.");
+        }
+
+        // criação e edição
+
+        public Orcamento Criar(
+            Guid idCriador,
+            Guid idOportunidade,
+            string descricao,
+            decimal valorSemIVA,
+            decimal taxaIVA,
+            DateTime dataValidade,
+            DateTime dataInicio,
+            int duracaoDias)
+        {
+            ExigirColaborador(idCriador);
+
+            var oportunidade = ObterOportunidade(idOportunidade);
+
+            ExigirOportunidadeAberta(oportunidade);
+
+            var orcamento = new Orcamento(
+                idOportunidade,
+                idCriador,
+                descricao,
+                valorSemIVA,
+                taxaIVA,
+                dataValidade,
+                dataInicio,
+                duracaoDias);
 
             db.Orcamentos.Add(orcamento);
             db.SaveChanges();
+
             return orcamento;
         }
 
-        public Orcamento Editar(Guid id, Guid idPrestador, string descricao, decimal valorSemIVA, decimal taxaIVA,
-            DateTime dataValidade, DateTime dataInicio, int duracaoDias)
+        public Orcamento Editar(
+            Guid id,
+            Guid idUtilizador,
+            string descricao,
+            decimal valorSemIVA,
+            decimal taxaIVA,
+            DateTime dataValidade,
+            DateTime dataInicio,
+            int duracaoDias)
         {
-            var orcamento = ObterDoPrestador(id, idPrestador);
+            ExigirColaborador(idUtilizador);
 
-            orcamento.Atualizar(descricao, valorSemIVA, taxaIVA, dataValidade, dataInicio, duracaoDias); // só rascunhos
+            var orcamento = ObterDoCriadorOuAdministrador(
+                id,
+                idUtilizador);
+
+            var oportunidade = ObterOportunidade(
+                orcamento.IdOportunidade);
+
+            ExigirOportunidadeAberta(oportunidade);
+
+            orcamento.Atualizar(
+                descricao,
+                valorSemIVA,
+                taxaIVA,
+                dataValidade,
+                dataInicio,
+                duracaoDias);
+
             db.SaveChanges();
+
             return orcamento;
         }
 
-        // Rascunho -> Enviado (fica congelado)
-        public Orcamento Enviar(Guid id, Guid idPrestador)
+        // envio
+
+        public Orcamento Enviar(Guid id, Guid idUtilizador)
         {
-            var orcamento = ObterDoPrestador(id, idPrestador);
+            ExigirColaborador(idUtilizador);
 
-            var servico = db.Servicos.AsNoTracking().First(s => s.Id == orcamento.IdServico);
-            ExigirServicoAberto(servico);
+            var orcamento = ObterDoCriadorOuAdministrador(
+                id,
+                idUtilizador);
 
-            orcamento.Enviar(); // valida estado Rascunho e validade futura
+            var oportunidade = ObterOportunidade(
+                orcamento.IdOportunidade);
+
+            ExigirOportunidadeAberta(oportunidade);
+
+            orcamento.Enviar();
+
+            // Atualiza o estado comercial da oportunidade.
+            oportunidade.RegistarPropostaEnviada();
+
             db.SaveChanges();
+
             return orcamento;
         }
 
-        // Prestador: só os seus rascunhos. Empresa: qualquer orçamento.
-        public void Eliminar(Guid id, Guid idPrestador, bool eEmpresa = false)
+        // eliminar
+
+        // Apenas rascunhos podem ser eliminados.
+        // O administrador pode eliminar rascunhos de qualquer colaborador.
+        public void Eliminar(Guid id, Guid idUtilizador)
         {
-            if (eEmpresa)
-            {
-                var qualquer = db.Orcamentos.FirstOrDefault(o => o.Id == id)
-                    ?? throw new NaoEncontradoException("Orçamento não encontrado.");
+            ExigirColaborador(idUtilizador);
 
-                db.Orcamentos.Remove(qualquer);
-                db.SaveChanges();
-                return;
-            }
-
-            var orcamento = ObterDoPrestador(id, idPrestador);
+            var orcamento = ObterDoCriadorOuAdministrador(
+                id,
+                idUtilizador);
 
             if (orcamento.Estado != EstadoOrcamento.Rascunho)
-                throw new InvalidOperationException("Só é possível eliminar rascunhos.");
+                throw new InvalidOperationException(
+                    "Só é possível eliminar propostas em rascunho.");
 
             db.Orcamentos.Remove(orcamento);
             db.SaveChanges();
         }
 
-        // ------------------------------------------------------------------
-        // Cliente
-        // ------------------------------------------------------------------
+        // decis~eos do cliente
 
-        // Tudo ou nada: aceitar um orçamento recusa os restantes e coloca o serviço em curso
         public Orcamento Aceitar(Guid id, Guid idCliente)
         {
-            using var transacao = db.Database.BeginTransaction();
+            // Serializable ajuda a impedir duas aceitações simultâneas.
+            using var transacao = db.Database.BeginTransaction(
+                IsolationLevel.Serializable);
 
-            var (orcamento, servico) = ObterDoCliente(id, idCliente);
+            var (orcamento, oportunidade) =
+                ObterDoCliente(id, idCliente);
 
-            if (servico.Estado != EstadoServico.PorAprovar)
-                throw new InvalidOperationException("O serviço já não está aberto.");
+            orcamento.Aceitar();
 
-            orcamento.Aceitar(); // exige Enviado e não expirado
-
-            var outros = db.Orcamentos
-                .Where(o => o.IdServico == servico.Id &&
-                            o.Id != orcamento.Id &&
-                            o.Estado == EstadoOrcamento.Enviado)
+            // Todas as outras propostas enviadas são recusadas.
+            // Rascunhos ficam intactos.
+            var outrasPropostas = db.Orcamentos
+                .Where(o =>
+                    o.IdOportunidade == oportunidade.Id &&
+                    o.Id != orcamento.Id &&
+                    o.Estado == EstadoOrcamento.Enviado)
                 .ToList();
-            foreach (var outro in outros)
-                outro.Recusar();
 
-            servico.Aprovar(); // PorAprovar -> EmCurso
+            foreach (var outra in outrasPropostas)
+            {
+                outra.RecusarPorAceitacaoDeOutraProposta();
+            }
 
-            db.SaveChanges();   // um aceite concorrente falha aqui (RowVersion / índice único)
+            oportunidade.MarcarComoGanha();
+
+            db.SaveChanges();
             transacao.Commit();
+
             return orcamento;
         }
 
@@ -182,42 +257,128 @@ namespace GestaoServicosWeb.Aplicacao
         {
             var (orcamento, _) = ObterDoCliente(id, idCliente);
 
-            orcamento.Recusar(); // exige Enviado
+            orcamento.Recusar();
+
             db.SaveChanges();
+
             return orcamento;
         }
 
-        // ------------------------------------------------------------------
-        // Auxiliares
-        // ------------------------------------------------------------------
-
-        private Orcamento ObterDoPrestador(Guid id, Guid idPrestador) =>
-            db.Orcamentos.FirstOrDefault(o => o.Id == id && o.IdPrestador == idPrestador)
-            ?? throw new NaoEncontradoException("Orçamento não encontrado.");
-
-        // O cliente só vê (e decide sobre) orçamentos não-rascunho dos seus serviços
-        private (Orcamento orcamento, Servico servico) ObterDoCliente(Guid id, Guid idCliente)
+        // aux
+        private Utilizador ObterUtilizador(Guid id)
         {
-            var orcamento = db.Orcamentos.FirstOrDefault(o => o.Id == id);
-            var servico = orcamento is null
-                ? null
-                : db.Servicos.FirstOrDefault(s => s.Id == orcamento.IdServico);
-
-            if (orcamento is null || servico is null ||
-                servico.IdCliente != idCliente ||
-                orcamento.Estado == EstadoOrcamento.Rascunho)
-                throw new NaoEncontradoException("Orçamento não encontrado.");
-
-            return (orcamento, servico);
+            return db.Utilizadores
+                .FirstOrDefault(u => u.Id == id && u.Ativo)
+                ?? throw new NaoEncontradoException(
+                    "Utilizador não encontrado.");
         }
 
-        private static void ExigirServicoAberto(Servico servico)
+        private void ExigirColaborador(Guid id)
         {
-            if (servico.Estado != EstadoServico.PorAprovar)
-                throw new InvalidOperationException("O serviço já não aceita orçamentos.");
+            var utilizador = ObterUtilizador(id);
 
-            if (servico.PrazoPropostas.Date < DateTime.UtcNow.Date)
-                throw new InvalidOperationException("O prazo para propostas terminou.");
+            if (utilizador.Role is not (
+                Role.Colaborador or Role.Administrador) ||
+                !utilizador.EmpresaId.HasValue)
+            {
+                throw new UnauthorizedAccessException(
+                    "Apenas colaboradores da AskBlue podem realizar esta operação.");
+            }
+        }
+
+        private void ExigirAdministrador(Guid id)
+        {
+            var utilizador = ObterUtilizador(id);
+
+            if (utilizador.Role != Role.Administrador ||
+                !utilizador.EmpresaId.HasValue)
+            {
+                throw new UnauthorizedAccessException(
+                    "Apenas administradores podem realizar esta operação.");
+            }
+        }
+
+        private Orcamento ObterDoCriadorOuAdministrador(
+            Guid id,
+            Guid idUtilizador)
+        {
+            var orcamento = db.Orcamentos
+                .FirstOrDefault(o => o.Id == id);
+
+            if (orcamento is null)
+                throw new NaoEncontradoException(
+                    "Orçamento não encontrado.");
+
+            var utilizador = ObterUtilizador(idUtilizador);
+
+            bool eAdministrador =
+                utilizador.Role == Role.Administrador &&
+                utilizador.EmpresaId.HasValue;
+
+            if (!eAdministrador && orcamento.IdCriador != idUtilizador)
+            {
+                throw new NaoEncontradoException(
+                    "Orçamento não encontrado.");
+            }
+
+            return orcamento;
+        }
+
+        private (Orcamento orcamento, Oportunidade oportunidade)
+            ObterDoCliente(Guid id, Guid idCliente)
+        {
+            var orcamento = db.Orcamentos
+                .FirstOrDefault(o => o.Id == id);
+
+            if (orcamento is null ||
+                orcamento.Estado == EstadoOrcamento.Rascunho)
+            {
+                throw new NaoEncontradoException(
+                    "Orçamento não encontrado.");
+            }
+
+            var utilizador = ObterUtilizador(idCliente);
+
+            if (utilizador.Role != Role.Cliente)
+                throw new UnauthorizedAccessException(
+                    "Apenas clientes podem decidir sobre propostas.");
+
+            var oportunidade = ObterOportunidade(
+                orcamento.IdOportunidade);
+
+            if (oportunidade.IdCliente != idCliente)
+                throw new NaoEncontradoException(
+                    "Orçamento não encontrado.");
+
+            return (orcamento, oportunidade);
+        }
+
+        private Oportunidade ObterOportunidade(Guid id)
+        {
+            return db.Oportunidades
+                .FirstOrDefault(o => o.Id == id)
+                ?? throw new NaoEncontradoException(
+                    "Oportunidade não encontrada.");
+        }
+
+        private static void ExigirOportunidadeAberta(
+            Oportunidade oportunidade)
+        {
+            if (oportunidade.Estado is
+                EstadoOportunidade.Ganha or
+                EstadoOportunidade.Perdida or
+                EstadoOportunidade.Cancelada)
+            {
+                throw new InvalidOperationException(
+                    "A oportunidade já não está disponível para propostas.");
+            }
+
+            if (oportunidade.PrazoProposta.HasValue &&
+                oportunidade.PrazoProposta.Value.Date < DateTime.UtcNow.Date)
+            {
+                throw new InvalidOperationException(
+                    "O prazo para apresentação de propostas terminou.");
+            }
         }
     }
 }

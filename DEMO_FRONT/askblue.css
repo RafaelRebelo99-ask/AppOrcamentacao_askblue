@@ -225,6 +225,7 @@ button.icon {
     justify-content: center;
     border: var(--border);
     text-wrap: nowrap;
+    color: var(--text-color);
 }
 
 .wide-left {
@@ -360,6 +361,8 @@ button.secondary.danger:hover {
     cursor: pointer;
     transition: background-color 0.1s ease, color 0.1s ease;
     text-wrap: nowrap;
+    border: var(--border);
+    border-color: transparent;
 }
 
 .menu .item.disabled {
@@ -378,7 +381,7 @@ button.secondary.danger:hover {
 
 .menu .item.danger:hover {
     background-color: var(--red-bg);
-
+    border-color: transparent;
     i,
     p {
         color: var(--on-red);
@@ -387,6 +390,7 @@ button.secondary.danger:hover {
 
 .menu .item:hover {
     background-color: var(--secondary-hover);
+    border-color: var(--border-color);
 }
 
 label {
@@ -451,7 +455,6 @@ i {
     cursor: pointer;
     padding: 0.5rem;
     border-radius: var(--border-radius-sm);
-    margin-left: auto;
 
     i {
         font-size: large;
@@ -537,6 +540,10 @@ hr {
 
 .ml-auto {
     margin-left: auto;
+}
+
+.mr-auto {
+    margin-right: auto;
 }
 
 .table td,
@@ -722,4 +729,12 @@ form {
 
 .space-between {
     justify-content: space-between !important;
+}
+
+.flex-end {
+    justify-content: flex-end;
+}
+
+.border {
+    border: var(--border);
 }

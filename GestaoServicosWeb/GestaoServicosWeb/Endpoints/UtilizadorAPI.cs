@@ -25,7 +25,7 @@ namespace GestaoServicosWeb.API
             {
                 return Results.Ok(service.Listar(role).Select(ParaDto));
             })
-            .RequireAuthorization(Politicas.Empresa);
+            .RequireAuthorization(Politicas.Administrador);
 
             // 2. GET /api/utilizadores/eu → o perfil de quem fez login
             grupo.MapGet("/eu", (ClaimsPrincipal user, UtilizadorService service) =>
@@ -112,14 +112,14 @@ namespace GestaoServicosWeb.API
                 }
                 catch (InvalidOperationException ex)  { return Results.Conflict(ex.Message); }
             })
-            .RequireAuthorization(Politicas.Empresa);
+            .RequireAuthorization(Politicas.Administrador);
         }
 
         private static bool EOProprioOuEmpresa(ClaimsPrincipal user, Guid id) =>
-            user.ObterId() == id || user.EEmpresa();
+            user.ObterId() == id || user.EAdmin();
 
         // Converte a entidade em DTO (nunca expõe o PasswordHash)
         private static UtilizadorDto ParaDto(Utilizador u) =>
-            new(u.Id, u.Nome, u.Email, u.NIF, u.Telefone, u.Role);
+            new(u.Id, u.Nome, u.Email, u.Role);
     }
 }

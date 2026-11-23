@@ -66,7 +66,7 @@ builder.Services.AddDbContext<AppDbContext>(opcoes => opcoes.UseSqlServer(connec
 builder.Services.AddSingleton(jwtSettings);
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<UtilizadorService>();
-builder.Services.AddScoped<ServicoService>();
+builder.Services.AddScoped<OportunidadeService>();
 builder.Services.AddScoped<OrcamentoService>();
 builder.Services.AddScoped<CategoriaService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -87,11 +87,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 // Uma policy por role. Usar nos endpoints com .RequireAuthorization(Politicas.Cliente), etc.
-// A Empresa (admin) entra em todas, porque pode fazer tudo.
+// O admin entra em todas, porque pode fazer tudo.
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy(Politicas.Cliente, p => p.RequireRole(nameof(Role.Cliente), nameof(Role.Empresa)))
-    .AddPolicy(Politicas.Prestador, p => p.RequireRole(nameof(Role.Prestador), nameof(Role.Empresa)))
-    .AddPolicy(Politicas.Empresa, p => p.RequireRole(nameof(Role.Empresa)));
+    .AddPolicy(Politicas.Cliente, p =>
+        p.RequireRole(nameof(Role.Cliente), nameof(Role.Administrador)))
+    .AddPolicy(Politicas.Colaborador, p =>
+        p.RequireRole(nameof(Role.Colaborador), nameof(Role.Administrador)))
+    .AddPolicy(Politicas.Administrador, p =>
+        p.RequireRole(nameof(Role.Administrador)));
 
 var app = builder.Build();
 
@@ -128,7 +131,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapLoginAPI();
 app.MapUtilizadorAPI();
-app.MapServicoAPI();
+app.MapOportunidadeAPI();
 app.MapOrcamentoEndpoints();
 app.MapCategoriaAPI();
 

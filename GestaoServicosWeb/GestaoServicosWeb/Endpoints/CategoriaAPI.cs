@@ -46,7 +46,7 @@ namespace GestaoServicosWeb.API
                     return Results.Conflict(ex.Message);
                 }
             })
-            .RequireAuthorization(Politicas.Empresa);
+            .RequireAuthorization(Politicas.Administrador);
 
             // 4. DELETE /api/categorias/{id} → apagar categoria (só Empresa)
             grupo.MapDelete("/{id:guid}", (Guid id, CategoriaService service) =>
@@ -62,7 +62,7 @@ namespace GestaoServicosWeb.API
                     return Results.Conflict(ex.Message);
                 }
             })
-            .RequireAuthorization(Politicas.Empresa);
+            .RequireAuthorization(Politicas.Administrador);
         }
 
         // Converte a entidade de domínio no DTO de resposta

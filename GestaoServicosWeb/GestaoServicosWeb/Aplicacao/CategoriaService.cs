@@ -46,7 +46,7 @@ namespace GestaoServicosWeb.Aplicacao
             if (categoria == null)
                 return false;
 
-            if (db.Servicos.Any(s => s.IdCategoria == id))
+            if (db.Oportunidades.Any(s => s.IdCategoria == id))
                 throw new InvalidOperationException("Não é possível apagar uma categoria com serviços associados.");
 
             db.Categorias.Remove(categoria);

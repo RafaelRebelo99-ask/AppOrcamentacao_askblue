@@ -7,8 +7,8 @@ namespace GestaoServicosWeb.API
     public static class Politicas
     {
         public const string Cliente = nameof(Role.Cliente);
-        public const string Prestador = nameof(Role.Prestador);
-        public const string Empresa = nameof(Role.Empresa);
+        public const string Colaborador = nameof(Role.Colaborador);
+        public const string Administrador = nameof(Role.Administrador);
     }
 
     // ===== Ajudas para ler o utilizador autenticado a partir do token JWT =====
@@ -30,7 +30,7 @@ namespace GestaoServicosWeb.API
                 ? role
                 : throw new InvalidOperationException("O token não tem um role válido.");
 
-        public static bool EEmpresa(this ClaimsPrincipal user) =>
-            user.IsInRole(nameof(Role.Empresa));
+        public static bool EAdmin(this ClaimsPrincipal user) =>
+            user.IsInRole(nameof(Role.Administrador));
     }
 }

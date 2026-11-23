@@ -1,20 +1,25 @@
+
 namespace GestaoServicosWeb
 {
+    /*
+     removi o NIF e telefone. Como o negócio vai funcionar a partir da empresa, ela é que vai ter os dados fiscais.
+    Esta classe fica só como um uitlizador do sistema (trabalhador).
+     */
     public class Utilizador
     {
-        // ===== Campos privados (onde os valores ficam realmente guardados) =====
         private string _nome = "";
         private string _email = "";
-        private string _nif = "";
-        private string? _telefone;
 
-        // ===== Propriedades =====
+        // qual empresa a que o utilzador pertence (neste caso vai ser a askblue)
+        public Guid? EmpresaId { get; private set; }
 
-        public Guid Id { get; private set; }   // definido no construtor, nunca muda (private set para o EF)
+        public Empresa? Empresa { get; private set; }
+
+        public Guid Id { get; private set; }
 
         public string Nome
         {
-            get { return _nome; }
+            get => _nome;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -23,7 +28,8 @@ namespace GestaoServicosWeb
                 string nome = value.Trim();
 
                 if (nome.Length < 2 || nome.Length > 100)
-                    throw new ArgumentException("O nome deve ter entre 2 e 100 caracteres.");
+                    throw new ArgumentException(
+                        "O nome deve ter entre 2 e 100 caracteres.");
 
                 _nome = nome;
             }
@@ -31,62 +37,20 @@ namespace GestaoServicosWeb
 
         public string Email
         {
-            get { return _email; }
+            get => _email;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException("O email é obrigatório.");
 
-                string email = value.Trim().ToLower();
+                string email = value.Trim().ToLowerInvariant();
 
                 int arroba = email.IndexOf('@');
-                if (arroba <= 0 || email.LastIndexOf('.') < arroba)
+
+                if (arroba <= 0 || email.LastIndexOf('.') <= arroba)
                     throw new ArgumentException("Email inválido.");
 
                 _email = email;
-            }
-        }
-
-        public string NIF
-        {
-            get { return _nif; }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("O NIF é obrigatório.");
-
-                string nif = value.Trim();
-
-                if (nif.Length != 9 || !nif.All(char.IsDigit))
-                    throw new ArgumentException("O NIF deve ter 9 dígitos.");
-
-                if (!NifValido(nif))
-                    throw new ArgumentException("NIF inválido.");
-
-                _nif = nif;
-            }
-        }
-
-        public string? Telefone   // opcional
-        {
-            get { return _telefone; }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    _telefone = null;
-                    return;
-                }
-
-                string tel = value.Replace(" ", "");
-
-                if (tel.Length != 9 || !tel.All(char.IsDigit))
-                    throw new ArgumentException("O telefone deve ter 9 dígitos.");
-
-                if (tel[0] != '9' && tel[0] != '2' && tel[0] != '3')
-                    throw new ArgumentException("O telefone deve começar por 9, 2 ou 3.");
-
-                _telefone = tel;
             }
         }
 
@@ -94,29 +58,39 @@ namespace GestaoServicosWeb
 
         public Role Role { get; private set; }
 
-        // ===== Construtores =====
+        public bool Ativo { get; private set; } = true;
 
-        // Usado pelo Entity Framework ao ler da base de dados
         private Utilizador() { }
 
-        public Utilizador(string nome, string email, string passwordHash,
-                          string nif, string? telefone, Role role)
+        public Utilizador(
+    string nome,
+    string email,
+    string passwordHash,
+    Role role,
+    Empresa? empresa = null)
         {
             Id = Guid.NewGuid();
 
-            // Atribuir através das propriedades faz correr as validações
             Nome = nome;
             Email = email;
-            NIF = nif;
-            Telefone = telefone;
             AlterarPassword(passwordHash);
 
             if (!Enum.IsDefined(typeof(Role), role))
                 throw new ArgumentException("Role inválido.");
-            Role = role;
-        }
 
-        // ===== Métodos =====
+            if (role == Role.Cliente && empresa != null)
+                throw new ArgumentException(
+                    "Um cliente externo não pode pertencer à empresa.");
+
+            if (role != Role.Cliente && empresa == null)
+                throw new ArgumentException(
+                    "Um colaborador deve estar associado à empresa.");
+
+            Role = role;
+            Empresa = empresa;
+            EmpresaId = empresa?.Id;
+            Ativo = true;
+        }
 
         public void AlterarPassword(string novoHash)
         {
@@ -126,24 +100,31 @@ namespace GestaoServicosWeb
             PasswordHash = novoHash;
         }
 
-        // Algoritmo do dígito de controlo do NIF português
-        private static bool NifValido(string nif)
+        public void AlterarNome(string nome)
         {
-            int soma = 0;
-            for (int i = 0; i < 8; i++)
-                soma += (nif[i] - '0') * (9 - i);
+            Nome = nome;
+        }
 
-            int resto = soma % 11;
-            int controlo = resto < 2 ? 0 : 11 - resto;
+        public void AlterarEmail(string email)
+        {
+            Email = email;
+        }
 
-            return controlo == (nif[8] - '0');
+        public void Ativar()
+        {
+            Ativo = true;
+        }
+
+        public void Desativar()
+        {
+            Ativo = false;
         }
     }
 
     public enum Role
     {
-        Cliente,
-        Prestador,
-        Empresa // admin
+        Colaborador, // trabalha na empresa
+        Administrador, //trabalha na empresa e é admin
+        Cliente // externo
     }
 }

@@ -1,17 +1,63 @@
+using GestaoServicosWeb;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestaoServicosWeb.Dados
 {
-    // Ligação entre as entidades e a base de dados SQL Server (via Entity Framework Core)
-    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+    public class AppDbContext(DbContextOptions<AppDbContext> options)
+        : DbContext(options)
     {
         public DbSet<Utilizador> Utilizadores => Set<Utilizador>();
+        public DbSet<Empresa> Empresas => Set<Empresa>();
         public DbSet<Categoria> Categorias => Set<Categoria>();
-        public DbSet<Servico> Servicos => Set<Servico>();
+        public DbSet<Oportunidade> Oportunidades => Set<Oportunidade>();
         public DbSet<Orcamento> Orcamentos => Set<Orcamento>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            // ===== Empresa =====
+            modelBuilder.Entity<Empresa>(e =>
+            {
+                e.ToTable("Empresas");
+                e.HasKey(x => x.Id);
+                e.Property(x => x.Id).ValueGeneratedNever();
+
+                e.Property(x => x.Nome)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                e.Property(x => x.NIF)
+                    .HasField("_nif")
+                    .UsePropertyAccessMode(PropertyAccessMode.Field)
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                e.HasIndex(x => x.NIF).IsUnique();
+
+                e.Property(x => x.Email)
+                    .HasMaxLength(254)
+                    .IsRequired();
+
+                e.Property(x => x.Telefone)
+                    .HasMaxLength(30);
+
+                e.Property(x => x.Ativa).IsRequired();
+                e.Property(x => x.DataCriacao).IsRequired();
+
+                e.HasData(
+                    new
+                    {
+                        Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                        Nome = "AskBlue",
+                        NIF = "123456789",
+                        Email = "empresa@askblue.com",
+                        Telefone = (string?)null,
+                        DataCriacao = new DateTime(2026, 1, 1),
+                        Ativa = true
+                    });
+            });
+
             // ===== Utilizador =====
             modelBuilder.Entity<Utilizador>(u =>
             {
@@ -19,16 +65,30 @@ namespace GestaoServicosWeb.Dados
                 u.HasKey(x => x.Id);
                 u.Property(x => x.Id).ValueGeneratedNever();
 
-                // Ao ler da BD, o EF escreve diretamente nos campos privados (não volta a correr as validações)
-                u.Property(x => x.Nome).HasField("_nome").HasMaxLength(100).IsRequired();
-                u.Property(x => x.Email).HasField("_email").HasMaxLength(256).IsRequired();
-                u.Property(x => x.NIF).HasField("_nif").HasMaxLength(9).IsFixedLength().IsRequired();
-                u.Property(x => x.Telefone).HasField("_telefone").HasMaxLength(9);
-                u.Property(x => x.PasswordHash).IsRequired();
-                u.Property(x => x.Role).HasConversion<string>().HasMaxLength(20);
+                u.Property(x => x.Nome)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                u.Property(x => x.Email)
+                    .HasMaxLength(254)
+                    .IsRequired();
 
                 u.HasIndex(x => x.Email).IsUnique();
-                u.HasIndex(x => x.NIF).IsUnique();
+
+                u.Property(x => x.PasswordHash)
+                    .IsRequired();
+
+                u.Property(x => x.Role)
+                    .HasConversion<string>()
+                    .HasMaxLength(30)
+                    .IsRequired();
+
+                u.Property(x => x.Ativo).IsRequired();
+
+                u.HasOne(x => x.Empresa)
+                    .WithMany()
+                    .HasForeignKey(x => x.EmpresaId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // ===== Categoria =====
@@ -37,32 +97,68 @@ namespace GestaoServicosWeb.Dados
                 c.ToTable("Categorias");
                 c.HasKey(x => x.Id);
                 c.Property(x => x.Id).ValueGeneratedNever();
-                c.Property(x => x.Nome).HasMaxLength(100).IsRequired();
+
+                c.Property(x => x.Nome)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
                 c.HasIndex(x => x.Nome).IsUnique();
 
-                // Categorias iniciais (as mesmas que existiam em memória)
                 c.HasData(
-                    new { Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Nome = "Pintura e Remodelação" },
-                    new { Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), Nome = "Eletricidade" },
-                    new { Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), Nome = "Canalização" },
-                    new { Id = Guid.Parse("44444444-4444-4444-4444-444444444444"), Nome = "Carpintaria" },
-                    new { Id = Guid.Parse("55555555-5555-5555-5555-555555555555"), Nome = "Limpeza e Manutenção" });
+                    new
+                    {
+                        Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                        Nome = "Monitorização e Suporte Aplicacional"
+                    },
+                    new
+                    {
+                        Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                        Nome = "Quality Assurance"
+                    },
+                    new
+                    {
+                        Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                        Nome = "Desenvolvimento Aplicacional"
+                    },
+                    new
+                    {
+                        Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                        Nome = "Design de Serviços"
+                    }
+                );
             });
 
-            // ===== Servico =====
-            modelBuilder.Entity<Servico>(s =>
+            // ===== Oportunidade =====
+            modelBuilder.Entity<Oportunidade>(o =>
             {
-                s.ToTable("Servicos");
-                s.HasKey(x => x.Id);
-                s.Property(x => x.Id).ValueGeneratedNever();
-                s.Property(x => x.Titulo).HasMaxLength(200).IsRequired();
-                s.Property(x => x.Descricao).IsRequired();
-                s.Property(x => x.Estado).HasConversion<string>().HasMaxLength(20);
+                o.ToTable("Oportunidades");
+                o.HasKey(x => x.Id);
+                o.Property(x => x.Id).ValueGeneratedNever();
 
-                // Restrict: não se pode apagar um cliente/categoria que tenha serviços
-                s.HasOne(x => x.Cliente).WithMany().HasForeignKey(x => x.IdCliente)
+                o.Property(x => x.Titulo)
+                    .HasMaxLength(200)
+                    .IsRequired();
+
+                o.Property(x => x.Descricao).IsRequired();
+
+                o.Property(x => x.Estado)
+                    .HasConversion<string>()
+                    .HasMaxLength(30)
+                    .IsRequired();
+
+                o.HasOne(x => x.Cliente)
+                    .WithMany()
+                    .HasForeignKey(x => x.IdCliente)
                     .OnDelete(DeleteBehavior.Restrict);
-                s.HasOne(x => x.Categoria).WithMany().HasForeignKey(x => x.IdCategoria)
+
+                o.HasOne(x => x.Categoria)
+                    .WithMany()
+                    .HasForeignKey(x => x.IdCategoria)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                o.HasOne(x => x.Responsavel)
+                    .WithMany()
+                    .HasForeignKey(x => x.IdResponsavel)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -72,18 +168,39 @@ namespace GestaoServicosWeb.Dados
                 o.ToTable("Orcamentos");
                 o.HasKey(x => x.Id);
                 o.Property(x => x.Id).ValueGeneratedNever();
-                o.Property(x => x.ValorSemIVA).HasPrecision(18, 2);
-                o.Property(x => x.TaxaIVA).HasPrecision(5, 2);
-                o.Property(x => x.Estado).HasConversion<string>().HasMaxLength(20);
 
-                // Calculados em C#, não são guardados
+                o.Property(x => x.ValorSemIVA)
+                    .HasPrecision(18, 2);
+
+                o.Property(x => x.TaxaIVA)
+                    .HasPrecision(5, 2);
+
+                o.Property(x => x.Descricao)
+                    .HasMaxLength(4000)
+                    .IsRequired();
+
+                o.Property(x => x.Estado)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                o.HasOne(x => x.Criador)
+                    .WithMany()
+                    .HasForeignKey(x => x.IdCriador)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                o.HasOne(x => x.Oportunidade)
+                    .WithMany()
+                    .HasForeignKey(x => x.IdOportunidade)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                o.HasIndex(x => x.IdOportunidade);
+
+                // propriedades derivadas
                 o.Ignore(x => x.ValorTotal);
+                o.Ignore(x => x.ValorIVA);
                 o.Ignore(x => x.Expirado);
-
-                o.HasOne(x => x.Prestador).WithMany().HasForeignKey(x => x.IdPrestador)
-                    .OnDelete(DeleteBehavior.Restrict);
-                o.HasOne(x => x.Servico).WithMany().HasForeignKey(x => x.IdServico)
-                    .OnDelete(DeleteBehavior.Restrict);
+                o.Ignore(x => x.DataFim);
             });
         }
     }
