@@ -68,17 +68,17 @@
 
                                 <div class="row">
                                     <p>NIF: </p>
-                                    <p>Disponível após aceitação</p>
+                                    <p class="weak">Disponível após aceitação</p>
                                 </div>
 
                                 <div class="row">
                                     <p>Email: </p>
-                                    <p>Disponível após aceitação</p>
+                                    <p class="weak">Disponível após aceitação</p>
                                 </div>
 
                                 <div class="row">
                                     <p>Telefone: </p>
-                                    <p>Disponível após aceitação</p>
+                                    <p class="weak">Disponível após aceitação</p>
                                 </div>
                             </div>
                         </div>
@@ -101,9 +101,14 @@
                     <section aria-labelledby="titulo-preco">
                         <div class="row mb-1">
                             <div class="field">
-                                <label for="valor">Valor sem IVA (€) *</label>
-                                <input id="valor" name="valor" type="number" inputmode="decimal" min="0.01" step="0.01"
+                                <label for="valor">Valor sem IVA *</label>
+                                <div class="empty-box">
+                                    <p class="weak">€</p>
+                                    <input id="valor" name="valor" inputmode="decimal"
                                     required placeholder="0,00">
+                                    <p>EUR</p>
+                                </div>
+                                
                             </div>
 
                             <div class="field">
