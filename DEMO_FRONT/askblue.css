@@ -605,11 +605,13 @@ main {
 h2 {
     font-size: larger;
     font-weight: normal;
+    color: var(--text-color);
 }
 
 h1 {
     font-size: x-large;
     font-weight: normal;
+    color: var(--text-color);
 }
 
 .hint {
@@ -658,7 +660,7 @@ button.checkbox.selected {
     border-color: var(--primary-blue);
 
     i {
-        color: white;
+        color: var(--background-color);
         opacity: 1;
     }
 }

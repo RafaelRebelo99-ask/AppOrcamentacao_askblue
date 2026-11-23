@@ -17,9 +17,11 @@
     <div class="container align-center">
         <div class="card column" style="padding: 4rem;">
             <div class="row center mb-1">
-                <img src="askblue-logo-oficial-rgb.png" class="logo" style="width: 15rem;">
+                <img id="logo" src="askblue-logo-oficial-rgb.png" class="logo" style="width: 15rem;">
             </div>
-            <h1 class="mb-1">Log In</h1>
+            <div class="row mb-1">
+                <h1>Log In</h1><button id="themeBtn" class="more-actions"><i class="bi bi-moon"></i></button>
+            </div>
             <form>
                 <div class="input-group">
                     <label for="password">Email</label>
@@ -49,5 +51,6 @@
     </div>
 
     <script src="login.js"></script>
+    <script src="dark-mode.js" defer></script>
 
 </body>
