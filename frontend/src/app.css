@@ -1,0 +1,18 @@
+/* Estilos próprios da aplicação React que não existem no askblue.css. */
+
+/* Altura total do ecrã, para o .container conseguir centrar na vertical.
+   - html: com <!doctype html> o browser não lhe dá altura sozinho
+     (o DEMO_FRONT não tinha doctype, por isso lá funcionava).
+   - #root: é a div onde o React desenha; fica entre o <body> e o .container. */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* O askblue.css põe o <body> em coluna flex (conteúdo em cima, rodapé em baixo).
+   Em React as páginas ficam dentro do #root, por isso ele tem de se comportar igual. */
+#root {
+  display: flex;
+  flex-direction: column;
+}
