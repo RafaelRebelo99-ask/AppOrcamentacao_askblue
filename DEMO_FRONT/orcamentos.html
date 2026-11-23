@@ -1,0 +1,132 @@
+<html>
+
+<head>
+    <title>AskBlue SGS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="askblue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container pad-05" style="min-height: 95%;">
+        <div class="row align-start w-100 h-100">
+            <div class="column fit gap nav">
+                <img src="askblue-logo-oficial-rgb.png" alt="AskBlue Logo" id="logo" class="logo big">
+                <a href="index.html" class="transparent secondary w-100 justify-start"><i class="bi bi-search"></i>Pesquisa</a>
+                <a href="trabalhos.html" class="transparent secondary w-100 justify-start"><i
+                        class="bi bi-journals"></i>Trabalhos</a>
+                <a href="#" class="transparent secondary w-100 justify-start selected"><i
+                        class="bi bi-file-earmark-spreadsheet"></i>Orçamentos</a>
+            </div>
+            <div class="box lg column h-100 pad-1">
+                <div class="row mb-1">
+                    <button class="wide-left secondary selected">Todos<div class="counter">3</div></button>
+                    <button class="wide-left secondary">Aceite<div class="counter">2</div></button>
+                    <button class="wide-left secondary">Recusado<div class="counter">1</div></button>
+                    <button class="wide-left secondary">Enviado<div class="counter">0</div></button>
+                    <button class="wide-left secondary">Rascunho<div class="counter">0</div></button>
+                    <div class="vl"></div>
+                    <button class="wide secondary" id="sortBtn">Ordenar por<i class="bi bi-caret-down"></i></button>
+                    <div class="menu" id="sortMenu">
+                        <div class="item wide"><i class="bi bi-clock"></i>
+                            <p>Data (Mais recente)</p>
+                        </div>
+                        <div class="item wide"><i class="bi bi-clock-history"></i>
+                            <p>Data (Mais antigo)</p>
+                        </div>
+                        <div class="item wide"><i class="bi bi-sort-numeric-down"></i>
+                            <p>Valor (Mais baixo)</p>
+                        </div>
+                        <div class="item wide"><i class="bi bi-sort-numeric-up"></i>
+                            <p>Valor (Mais alto)</p>
+                        </div>
+                    </div>
+                    <button id="themeBtn" class="more-actions"><i class="bi bi-moon"></i></button>
+                </div>
+
+                <div class="grid">
+                    <div class="card column">
+                        <div class="row space-between">
+                            <div class="id">ORC-2026-001</div>
+                            <div class="estado">Aceite</div>
+                        </div>
+                        <div class="column">
+                            <h2 class="mb-05">Serviço</h2>
+                            <div class="row">
+                                <div class="pill primary">Tecnologias</div>
+                                <div class="row gap-0">
+                                    <p>AskBlue</p><i class="bi bi-check-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <hr noshade>
+                        <div class="row">
+                            <button class="primary">Abrir</button>
+                            <button class="secondary danger">Eliminar</button>
+                        </div>
+                    </div>
+                    <div class="card column">
+                        <div class="row space-between">
+                            <div class="id">ORC-2026-002</div>
+                            <div class="estado">Recusado</div>
+                        </div>
+                        <div class="column">
+                            <h2 class="mb-05">Serviço</h2>
+                            <div class="row">
+                                <div class="pill primary">Tecnologias</div>
+                                <div class="row gap-0">
+                                    <p>Ageas</p><i class="bi bi-check-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <hr noshade>
+                        <div class="row">
+                            <button class="primary">Abrir</button>
+                            <button class="secondary danger">Eliminar</button>
+                        </div>
+                    </div>
+                    <div class="card column">
+                        <div class="row space-between">
+                            <div class="id">ORC-2026-003</div>
+                            <div class="estado">Aceite</div>
+                        </div>
+                        <div class="column">
+                            <h2 class="mb-05">Serviço</h2>
+                            <div class="row">
+                                <div class="pill primary">Tecnologias</div>
+                                <div class="row gap-0">
+                                    <p>Santander</p><i class="bi bi-check-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <hr noshade>
+                        <div class="row">
+                            <button class="primary">Abrir</button>
+                            <button class="secondary danger">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer class="row footer">
+        <p>Academia .NET - Sistema de Gestão de Serviços</p>
+        <div class="row">
+            <a href="https://askblue.com" rel="_blank">AskBlue</a><i class="bi bi-dot"></i>
+            <p>2026</p>
+        </div>
+    </footer>
+</body>
+
+<script src="askblue.js" defer></script>
+<script src="dark-mode.js" defer></script>
+
+</html>
