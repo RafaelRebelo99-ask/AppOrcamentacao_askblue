@@ -160,6 +160,8 @@ namespace GestaoServicosWeb.Dados
                     .WithMany()
                     .HasForeignKey(x => x.IdResponsavel)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                o.HasIndex(x => x.IdCliente);
             });
 
             // ===== Orcamento =====
@@ -194,7 +196,9 @@ namespace GestaoServicosWeb.Dados
                     .HasForeignKey(x => x.IdOportunidade)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                o.HasIndex(x => x.IdOportunidade);
+                o.HasIndex(x => x.IdOportunidade)
+                    .IsUnique()
+                    .HasFilter("[Estado] = 'Aceite'");
 
                 // propriedades derivadas
                 o.Ignore(x => x.ValorTotal);

@@ -210,7 +210,9 @@ namespace GestaoServicosWeb.Dados.Migrations
 
                     b.HasIndex("IdCriador");
 
-                    b.HasIndex("IdOportunidade");
+                    b.HasIndex("IdOportunidade")
+                        .IsUnique()
+                        .HasFilter("[Estado] = 'Aceite'");
 
                     b.ToTable("Orcamentos", (string)null);
                 });
