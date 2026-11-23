@@ -17,20 +17,21 @@
 <body>
     <div class="container pad-05" style="min-height: 95%;">
         <div class="row align-start w-100 h-100">
-            <div class="column fit">
+            <div class="column fit gap nav">
                 <img src="askblue-logo-oficial-rgb.png" alt="AskBlue Logo" id="logo" class="logo big">
-                <button class="wide secondary w-100 justify-start"><i class="bi bi-search"></i>Pesquisa</button>
-                <button class="wide secondary w-100 justify-start"><i class="bi bi-journals"></i>Trabalhos</button>
-                <button class="wide secondary w-100 justify-start"><i
-                        class="bi bi-file-earmark-spreadsheet"></i>Orçamentos</button>
+                <a href="index.html" class="transparent secondary w-100 justify-start"><i class="bi bi-search"></i>Pesquisa</a>
+                <a href="#" class="transparent secondary w-100 justify-start selected"><i
+                        class="bi bi-journals"></i>Trabalhos</a>
+                <a href="orcamentos.html" class="transparent secondary w-100 justify-start"><i
+                        class="bi bi-file-earmark-spreadsheet"></i>Orçamentos</a>
             </div>
             <div class="box lg column h-100 pad-1">
                 <div class="row mb-1">
-                    <button class="wide-left secondary selected">Selected Filter<div class="counter">122</div></button>
-                    <button class="wide-left secondary">Filter<div class="counter">1</div></button>
-                    <button class="wide-left secondary">Filter<div class="counter">3</div></button>
-                    <button class="wide-left secondary">Filter<div class="counter">21</div></button>
-                    <button class="wide-left secondary">Filter<div class="counter">3</div></button>
+                    <button class="wide-left secondary selected">Todos<div class="counter">2</div></button>
+                    <button class="wide-left secondary">Atribuído<div class="counter">1</div></button>
+                    <button class="wide-left secondary">Em Curso<div class="counter">1</div></button>
+                    <button class="wide-left secondary">Concluído<div class="counter">0</div></button>
+                    <button class="wide-left secondary">Por Aprovar<div class="counter">0</div></button>
                     <div class="vl"></div>
                     <button class="wide secondary" id="sortBtn">Ordenar por<i class="bi bi-caret-down"></i></button>
                     <div class="menu" id="sortMenu">
@@ -53,7 +54,6 @@
                             <p>Valor (Mais alto)</p>
                         </div>
                     </div>
-
                     <button id="themeBtn" class="more-actions"><i class="bi bi-moon"></i></button>
                 </div>
                 <table class="table">
@@ -70,7 +70,9 @@
                     <tr>
                         <td>1</td>
                         <td>Serviço de consultoria de IT</td>
-                        <td><div class="estado">Em curso</div></td>
+                        <td>
+                            <div class="estado">Em curso</div>
+                        </td>
                         <td>
                             <div class="row gap-0">
                                 <p>AskBlue</p><i class="bi bi-check-lg"></i>
@@ -102,7 +104,9 @@
                     <tr>
                         <td>2</td>
                         <td>Serviço de consultoria de IT</td>
-                        <td><div class="estado">Atribuído</div></td>
+                        <td>
+                            <div class="estado">Atribuído</div>
+                        </td>
                         <td>
                             <div class="row gap-0">
                                 <p>AskBlue</p><i class="bi bi-check-lg"></i>
@@ -139,7 +143,10 @@
 
     <footer class="row footer">
         <p>Academia .NET - Sistema de Gestão de Serviços</p>
-        <p>AskBlue, 2026</p>
+        <div class="row">
+            <a href="https://askblue.com" rel="_blank">AskBlue</a><i class="bi bi-dot"></i>
+            <p>2026</p>
+        </div>
     </footer>
 </body>
 
