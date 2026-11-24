@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
 import Filters from '../components/Filters';
 import Sort from '../components/Sort';
+import OrcamentoCard from '../components/orcamentos/OrcamentoCard';
 
 const orcamentosExemplo = [
   {
@@ -91,31 +92,9 @@ export default function Orcamentos() {
       <div className="grid">
         {orcamentosFiltrados.length > 0 ? (
           orcamentosFiltrados.map(orcamento => (
-            <div className="card column" key={orcamento.id}>
-              <div className="row space-between">
-                <div className="id">{orcamento.id}</div>
-                <div className="estado">{orcamento.estado}</div>
-              </div>
-
-              <div className="column">
-                <h2 className="mb-05">{orcamento.titulo}</h2>
-
-                <div className="row">
-                  <div className="pill primary">{orcamento.categoria}</div>
-                  <div className="row gap-0">
-                    <p>{orcamento.cliente}</p>
-                    <i className="bi bi-check-lg"></i>
-                  </div>
-                </div>
-              </div>
-
-              <hr />
-
-              <div className="row">
-                <button className="primary">Abrir</button>
-                <button className="secondary danger">Eliminar</button>
-              </div>
-            </div>
+            <OrcamentoCard
+            orcamento={orcamento}
+            />
           ))
         ) : (
           <p>Não existem propostas neste estado.</p>
