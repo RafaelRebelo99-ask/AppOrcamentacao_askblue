@@ -120,8 +120,11 @@ p {
     display: flex;
     gap: var(--gap);
     flex-direction: row;
-    align-items: center;
     height: fit-content;
+}
+
+.row.scroll {
+    overflow-x: auto;
 }
 
 .gap-0 {
@@ -349,17 +352,27 @@ button.secondary.danger:hover {
     width: fit-content;
     z-index: 2;
     background-color: var(--background-color);
+    position: absolute;
+    margin-top: 0.5rem;
+}
+
+.wrap {
+    flex-wrap: wrap;
 }
 
 .menu .item {
     display: flex;
     align-items: center;
     gap: var(--gap);
-    padding: 0.5rem;
+    padding: var(--py) var(--px);
     border-radius: var(--border-radius-sm);
     cursor: pointer;
     transition: background-color 0.1s ease, color 0.1s ease;
     text-wrap: nowrap;
+    width: 100%;
+    border-color: transparent;
+    color: var(--text-color);
+    justify-content: start;
 }
 
 .menu .item.disabled {
@@ -387,6 +400,7 @@ button.secondary.danger:hover {
 
 .menu .item:hover {
     background-color: var(--secondary-hover);
+    border-color: var(--border-color);
 }
 
 label {
@@ -530,7 +544,7 @@ hr {
 .table tr {
     display: grid;
     grid-template-columns:
-        .5fr 1.2fr .6fr 0.8fr 0.8fr 1.2fr 1fr 1.5fr;
+        .25fr 1.5fr 1fr 0.8fr 0.8fr 1.2fr .8fr 1.5fr;
     align-items: center;
     width: 100%;
 }

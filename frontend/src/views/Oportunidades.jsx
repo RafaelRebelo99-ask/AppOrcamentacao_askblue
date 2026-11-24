@@ -1,50 +1,98 @@
-// ===== VIEW: Trabalhos =====
-// Só o visual, passado do DEMO_FRONT/trabalhos.html. Ainda sem lógica:
-// filtros por estado, "Ordenar por", tema e os botões das linhas não fazem nada.
-// Os dados abaixo são de exemplo; vão ser substituídos pelos da API.
-import Layout from '../components/Layout'
+
+import { useState } from 'react';
+import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
-import { useTheme } from '../controllers/ThemeController'
+import Filters from '../components/Filters';
+import OportunidadeRow from '../components/oportunidades/OportunidadeRow';
+import Sort from '../components/Sort';
 
+// vai se buscar à API
+const oportunidades = [
+  {
+    id: 1,
+    titulo: 'Implementação de solução tecnológica',
+    estado: 'EmPreparacao',
+    cliente: 'Cliente A',
+    categoria: 'Tecnologia',
+    prazo: '20/11/2026',
+    aviso: { texto: 'Em 2 dias', cor: 'yellow' },
+    valor: '12.000,00 €',
+  },
+  {
+    id: 2,
+    titulo: 'Desenvolvimento de aplicação',
+    estado: 'Registada',
+    cliente: 'Cliente B',
+    categoria: 'Tecnologia',
+    prazo: '18/11/2026',
+    aviso: { texto: 'Atrasado', cor: 'red' },
+    valor: '52.000,00 €',
+  },
+];
+
+//isto pode ser hardcoded
+const opcoesOrdenacao = [
+  { label: 'Data (Mais recente)', value: 'data-desc' },
+  { label: 'Data (Mais antigo)', value: 'data-asc' },
+  { label: 'Prazo (Mais próximo)', value: 'prazo-asc' },
+  { label: 'Prazo (Mais distante)', value: 'prazo-desc' },
+];
+
+// vai se buscar à API (são os estados)
 const filtros = [
-  { nome: 'Todos', total: 2, selecionado: true },
-  { nome: 'Atribuído', total: 1 },
-  { nome: 'Em Curso', total: 1 },
-  { nome: 'Concluído', total: 0 },
-  { nome: 'Por Aprovar', total: 0 },
-]
+  { label: 'Todas', value: 'Todas' },
+  { label: 'Registadas', value: 'Registada' },
+  { label: 'Em análise', value: 'EmAnalise' },
+  { label: 'Em preparação', value: 'EmPreparacao' },
+  { label: 'Proposta enviada', value: 'PropostaEnviada' },
+  { label: 'Ganhas', value: 'Ganha' },
+  { label: 'Perdidas', value: 'Perdida' },
+  { label: 'Canceladas', value: 'Cancelada' },
+];
 
-const trabalhosExemplo = [
-  { id: 1, titulo: 'Serviço de consultoria de IT', estado: 'Em curso', cliente: 'AskBlue', categoria: 'Tecnologia', prazo: '20/11/2026', aviso: { texto: 'Em 2 dias', cor: 'yellow' }, valor: '12.000,00 €', acao: 'Concluir Trabalho' },
-  { id: 2, titulo: 'Serviço de consultoria de IT', estado: 'Atribuído', cliente: 'AskBlue', categoria: 'Tecnologia', prazo: '18/11/2026', aviso: { texto: 'Atrasado', cor: 'red' }, valor: '52.000,00 €', acao: 'Começar Trabalho' },
-]
-
+const contagens = {
+  Todas: oportunidades.length,
+  Registada: oportunidades.filter(o => o.estado === 'Registada').length,
+  EmAnalise: oportunidades.filter(o => o.estado === 'EmAnalise').length,
+  EmPreparacao: oportunidades.filter(o => o.estado === 'EmPreparacao').length,
+  PropostaEnviada: oportunidades.filter(o => o.estado === 'PropostaEnviada').length,
+  Ganha: oportunidades.filter(o => o.estado === 'Ganha').length,
+  Perdida: oportunidades.filter(o => o.estado === 'Perdida').length,
+  Cancelada: oportunidades.filter(o => o.estado === 'Cancelada').length,
+};
 
 export default function Oportunidades() {
-  const { darkMode, toggleTheme } = useTheme();
+  const [estadoSelecionado, setEstadoSelecionado] = useState('Todas');
+
+  const oportunidadesFiltradas = oportunidades.filter(oportunidade =>
+    estadoSelecionado === 'Todas' ||
+    oportunidade.estado === estadoSelecionado
+  );
+
+  const [ordenacao, setOrdenacao] = useState('');
 
   return (
     <Layout>
-      <div className="row mb-1">
-        {filtros.map((f) => (
-          <button key={f.nome} className={'wide-left secondary' + (f.selecionado ? ' selected' : '')}>
-            {f.nome}<div className="counter">{f.total}</div>
-          </button>
-        ))}
-        <div className="vl"></div>
-        <button className="wide secondary" id="sortBtn">Ordenar por<i className="bi bi-caret-down"></i></button>
-        <div className="menu hidden" id="sortMenu">
-          <div className="item wide"><i className="bi bi-sort-alpha-down"></i><p>Título (A-Z)</p></div>
-          <div className="item wide"><i className="bi bi-sort-alpha-up"></i><p>Título (Z-A)</p></div>
-          <div className="item wide"><i className="bi bi-clock"></i><p>Prazo (Mais próximo)</p></div>
-          <div className="item wide"><i className="bi bi-clock-history"></i><p>Prazo (Mais distante)</p></div>
-          <div className="item wide"><i className="bi bi-sort-numeric-down"></i><p>Valor (Mais baixo)</p></div>
-          <div className="item wide"><i className="bi bi-sort-numeric-up"></i><p>Valor (Mais alto)</p></div>
+      <div className="row mb-1 align-center">
+        <Filters
+          filtros={filtros}
+          estadoSelecionado={estadoSelecionado}
+          contagens={contagens}
+          onEstadoChange={setEstadoSelecionado}
+        />
+
+        <div className='vl'>
         </div>
-        <ThemeToggle/>
+
+        <Sort
+        opcoes={opcoesOrdenacao}
+          ordenacao={ordenacao}
+          onOrdenacaoChange={setOrdenacao}
+        />
+
+        <ThemeToggle />
       </div>
 
-      {/* Em React a tabela precisa de <thead>/<tbody>; o aspeto é o mesmo */}
       <table className="table">
         <thead>
           <tr className="header">
@@ -53,41 +101,29 @@ export default function Oportunidades() {
             <th>Estado</th>
             <th>Cliente</th>
             <th>Categoria</th>
-            <th>Prazo de Conclusão</th>
-            <th className="right">Valor Total (incl. IVA)</th>
-            <th className="ml-auto"></th>
+            <th>Prazo da proposta</th>
+            <th className="right">Valor total</th>
+            <th></th>
           </tr>
         </thead>
+
         <tbody>
-          {trabalhosExemplo.map((t) => (
-            <tr key={t.id}>
-              <td>{t.id}</td>
-              <td>{t.titulo}</td>
-              <td><div className="estado">{t.estado}</div></td>
-              <td>
-                <div className="row gap-0">
-                  <p>{t.cliente}</p><i className="bi bi-check-lg"></i>
-                </div>
-              </td>
-              <td>{t.categoria}</td>
-              <td>{t.prazo} <div className={'pill ' + t.aviso.cor}>{t.aviso.texto}</div></td>
-              <td className="right">{t.valor}</td>
-              <td className="ml-auto">
-                <button className="primary wide">{t.acao}</button>
-                {/* O menu abre ao passar o rato (só CSS, já vem do askblue.css) */}
-                <button className="more-actions pos-rel">
-                  <i className="bi bi-three-dots-vertical"></i>
-                  <div className="menu">
-                    <div className="item wide disabled row"><i className="bi bi-pencil"></i><p>Editar</p></div>
-                    <div className="item wide"><i className="bi bi-journal-text"></i><p>Consultar serviço</p></div>
-                    <div className="item wide danger"><i className="bi bi-trash"></i><p>Eliminar</p></div>
-                  </div>
-                </button>
+          {oportunidadesFiltradas.length > 0 ? (
+            oportunidadesFiltradas.map(oportunidade => (
+              <OportunidadeRow
+                key={oportunidade.id}
+                oportunidade={oportunidade}
+              />
+            ))
+          ) : (
+            <tr>
+              <td colSpan="8" style={{ textAlign: 'center' }}>
+                Não existem oportunidades neste estado.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </Layout>
-  )
+  );
 }
