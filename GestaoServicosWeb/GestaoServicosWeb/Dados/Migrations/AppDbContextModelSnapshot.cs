@@ -43,84 +43,83 @@ namespace GestaoServicosWeb.Dados.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Nome = "Pintura e Remodelação"
+                            Nome = "Monitorização e Suporte Aplicacional"
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Nome = "Eletricidade"
+                            Nome = "Quality Assurance"
                         },
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Nome = "Canalização"
+                            Nome = "Desenvolvimento Aplicacional"
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            Nome = "Carpintaria"
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            Nome = "Limpeza e Manutenção"
+                            Nome = "Design de Serviços"
                         });
                 });
 
-            modelBuilder.Entity("GestaoServicosWeb.Orcamento", b =>
+            modelBuilder.Entity("GestaoServicosWeb.Empresa", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DataInicio")
+                    b.Property<bool>("Ativa")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DataValidade")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
 
-                    b.Property<string>("Descricao")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DuracaoDias")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Estado")
+                    b.Property<string>("NIF")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<Guid>("IdPrestador")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-                    b.Property<Guid>("IdServico")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("TaxaIVA")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<decimal>("ValorSemIVA")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("Telefone")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdPrestador");
+                    b.HasIndex("NIF")
+                        .IsUnique();
 
-                    b.HasIndex("IdServico");
+                    b.ToTable("Empresas", (string)null);
 
-                    b.ToTable("Orcamentos", (string)null);
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            Ativa = true,
+                            DataCriacao = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "empresa@askblue.com",
+                            NIF = "123456789",
+                            Nome = "AskBlue"
+                        });
                 });
 
-            modelBuilder.Entity("GestaoServicosWeb.Servico", b =>
+            modelBuilder.Entity("GestaoServicosWeb.Oportunidade", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CriadoEm")
+                    b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DataDesejada")
+                    b.Property<DateTime?>("DataPretendida")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Descricao")
@@ -129,8 +128,8 @@ namespace GestaoServicosWeb.Dados.Migrations
 
                     b.Property<string>("Estado")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<Guid>("IdCategoria")
                         .HasColumnType("uniqueidentifier");
@@ -138,7 +137,10 @@ namespace GestaoServicosWeb.Dados.Migrations
                     b.Property<Guid>("IdCliente")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("PrazoPropostas")
+                    b.Property<Guid>("IdResponsavel")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("PrazoProposta")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Titulo")
@@ -152,7 +154,67 @@ namespace GestaoServicosWeb.Dados.Migrations
 
                     b.HasIndex("IdCliente");
 
-                    b.ToTable("Servicos", (string)null);
+                    b.HasIndex("IdResponsavel");
+
+                    b.ToTable("Oportunidades", (string)null);
+                });
+
+            modelBuilder.Entity("GestaoServicosWeb.Orcamento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DataDecisao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DataEnvio")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataInicio")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataValidade")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<int>("DuracaoDias")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("IdCriador")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("IdOportunidade")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("TaxaIVA")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("ValorSemIVA")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdCriador");
+
+                    b.HasIndex("IdOportunidade")
+                        .IsUnique()
+                        .HasFilter("[Estado] = 'Aceite'");
+
+                    b.ToTable("Orcamentos", (string)null);
                 });
 
             modelBuilder.Entity("GestaoServicosWeb.Utilizador", b =>
@@ -160,16 +222,16 @@ namespace GestaoServicosWeb.Dados.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
 
-                    b.Property<string>("NIF")
-                        .IsRequired()
-                        .HasMaxLength(9)
-                        .HasColumnType("nchar(9)")
-                        .IsFixedLength();
+                    b.Property<Guid?>("EmpresaId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -182,44 +244,20 @@ namespace GestaoServicosWeb.Dados.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Telefone")
-                        .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("NIF")
-                        .IsUnique();
+                    b.HasIndex("EmpresaId");
 
                     b.ToTable("Utilizadores", (string)null);
                 });
 
-            modelBuilder.Entity("GestaoServicosWeb.Orcamento", b =>
-                {
-                    b.HasOne("GestaoServicosWeb.Utilizador", "Prestador")
-                        .WithMany()
-                        .HasForeignKey("IdPrestador")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("GestaoServicosWeb.Servico", "Servico")
-                        .WithMany()
-                        .HasForeignKey("IdServico")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Prestador");
-
-                    b.Navigation("Servico");
-                });
-
-            modelBuilder.Entity("GestaoServicosWeb.Servico", b =>
+            modelBuilder.Entity("GestaoServicosWeb.Oportunidade", b =>
                 {
                     b.HasOne("GestaoServicosWeb.Categoria", "Categoria")
                         .WithMany()
@@ -233,9 +271,46 @@ namespace GestaoServicosWeb.Dados.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("GestaoServicosWeb.Utilizador", "Responsavel")
+                        .WithMany()
+                        .HasForeignKey("IdResponsavel")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Categoria");
 
                     b.Navigation("Cliente");
+
+                    b.Navigation("Responsavel");
+                });
+
+            modelBuilder.Entity("GestaoServicosWeb.Orcamento", b =>
+                {
+                    b.HasOne("GestaoServicosWeb.Utilizador", "Criador")
+                        .WithMany()
+                        .HasForeignKey("IdCriador")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestaoServicosWeb.Oportunidade", "Oportunidade")
+                        .WithMany()
+                        .HasForeignKey("IdOportunidade")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Criador");
+
+                    b.Navigation("Oportunidade");
+                });
+
+            modelBuilder.Entity("GestaoServicosWeb.Utilizador", b =>
+                {
+                    b.HasOne("GestaoServicosWeb.Empresa", "Empresa")
+                        .WithMany()
+                        .HasForeignKey("EmpresaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Empresa");
                 });
 #pragma warning restore 612, 618
         }

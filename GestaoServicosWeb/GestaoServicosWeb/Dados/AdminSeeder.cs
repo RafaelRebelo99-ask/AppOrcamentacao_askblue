@@ -1,57 +1,77 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestaoServicosWeb.Dados
 {
-    // ===== Cria as contas de administrador (Empresa) ao arrancar a aplicação =====
-    // Os dados vêm da configuração (user-secrets em desenvolvimento, variáveis de ambiente em produção),
-    // numa lista "Admins" (0, 1, 2, ...):
-    //   dotnet user-secrets set "Admins:0:Nome" "Administrador"
-    //   dotnet user-secrets set "Admins:0:Email" "admin@askblue.pt"
-    //   dotnet user-secrets set "Admins:0:Password" "..."
-    //   dotnet user-secrets set "Admins:0:Nif" "123456789"
-    // Cada admin só é criado se ainda não existir um utilizador com esse email.
+
+    /**
+     * dotnet user-secrets set "Admins:0:Nome" "Administrador"
+dotnet user-secrets set "Admins:0:Email" "admin@askblue.pt"
+dotnet user-secrets set "Admins:0:Password" "your-development-password"
+    */
     public static class AdminSeeder
     {
-        private sealed record AdminConfig(string? Nome, string? Email, string? Password, string? Nif);
+        private sealed record AdminConfig(
+            string? Nome,
+            string? Email,
+            string? Password);
 
         public static void CriarAdminsSeNecessario(IServiceProvider services)
         {
             using var scope = services.CreateScope();
+
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-            var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(AdminSeeder));
+            var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(nameof(AdminSeeder));
 
             var admins = config.GetSection("Admins").Get<List<AdminConfig>>() ?? [];
 
             if (admins.Count == 0)
             {
-                if (!db.Utilizadores.Any(u => u.Role == Role.Empresa))
-                    logger.LogWarning("Não existe nenhum admin e a secção 'Admins' não está configurada. Ver comentário em AdminSeeder.cs.");
+                logger.LogWarning("A secção Admins não está configurada.");
                 return;
             }
+
+            var empresa = db.Empresas.SingleOrDefault(e => e.Nome == "AskBlue");
+
+            if (empresa == null || !empresa.Ativa)
+                throw new InvalidOperationException(
+                    "A empresa AskBlue não existe ou está inativa.");
 
             var hasher = new PasswordHasher<Utilizador>();
 
             foreach (var a in admins)
             {
-                if (string.IsNullOrWhiteSpace(a.Email) || string.IsNullOrWhiteSpace(a.Password) || string.IsNullOrWhiteSpace(a.Nif))
+                if (string.IsNullOrWhiteSpace(a.Email) ||
+                    string.IsNullOrWhiteSpace(a.Password))
                 {
-                    logger.LogWarning("Admin ignorado: faltam Email, Password ou Nif na configuração.");
+                    logger.LogWarning("Admin ignorado: faltam Email ou Password.");
                     continue;
                 }
 
-                string email = a.Email.Trim().ToLower();
+                var email = a.Email.Trim().ToLowerInvariant();
+
                 if (db.Utilizadores.Any(u => u.Email == email))
                     continue;
 
                 if (a.Password.Length < 8)
-                    throw new InvalidOperationException($"A password do admin {email} deve ter pelo menos 8 caracteres.");
+                    throw new InvalidOperationException(
+                        $"A password do admin {email} deve ter pelo menos 8 caracteres.");
 
-                string hash = hasher.HashPassword(null!, a.Password);
-                var admin = new Utilizador(a.Nome ?? "Administrador", email, hash, a.Nif, null, Role.Empresa);
+                var hash = hasher.HashPassword(null!, a.Password);
+
+                var admin = new Utilizador(
+                    a.Nome ?? "Administrador",
+                    email,
+                    hash,
+                    Role.Administrador,
+                    empresa);
 
                 db.Utilizadores.Add(admin);
-                logger.LogInformation("Conta de admin criada ({Email}).", admin.Email);
+
+                logger.LogInformation(
+                    "Conta de administrador criada: {Email}", email);
             }
 
             db.SaveChanges();

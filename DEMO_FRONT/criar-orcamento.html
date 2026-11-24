@@ -15,7 +15,8 @@
 </head>
 
 <body>
-    <main>
+    <main class="row space-between align-start">
+        <button id="back" class="more-actions mr-auto"><i class="bi bi-arrow-left"></i></button>
         <div class="orcamento">
             <h1 class="mb-1">Novo orçamento</h1>
 
@@ -26,8 +27,12 @@
 
                 <div class="row wrap mb-1">
                     <div class="pill primary">Tecnologia</div>
-                    <p>Propostas até: <div class="date">25/11/2026</div></p>
-                    <p>Data desejada: <div class="date">23/12/2026</div></p>
+                    <p>Propostas até:
+                    <div class="date">25/11/2026</div>
+                    </p>
+                    <p>Data desejada:
+                    <div class="date">23/12/2026</div>
+                    </p>
                 </div>
 
             </section>
@@ -103,22 +108,17 @@
                             <div class="field">
                                 <label for="valor">Valor sem IVA *</label>
                                 <div class="empty-box">
+                                    <input id="valor" name="valor" inputmode="decimal" required
+                                        placeholder="123.456,78">
                                     <p class="weak">€</p>
-                                    <input id="valor" name="valor" inputmode="decimal"
-                                    required placeholder="0,00">
-                                    <p>EUR</p>
                                 </div>
-                                
+
                             </div>
 
                             <div class="field">
                                 <label for="taxa">Taxa de IVA *</label>
-                                <select id="taxa" name="taxa" required aria-describedby="ajuda-taxa">
-                                    <option value="23" selected>23%</option>
-                                    <option value="13">13%</option>
-                                    <option value="6">6%</option>
-                                    <option value="0">0% (isento)</option>
-                                </select>
+                                <button type="button" id="taxa" class="secondary">23% <i
+                                        class="bi bi-caret-down"></i></button>
                             </div>
 
                             <div class="calculado">
@@ -144,8 +144,10 @@
 
                             <div class="field">
                                 <label for="duracao">Duração (dias) *</label>
-                                <input id="duracao" name="duracao" type="number" inputmode="numeric" min="1" step="1"
-                                    required placeholder="0">
+                                <div class="row">
+                                    <input id="duracao" name="duracao" required placeholder="0">
+                                </div>
+
                             </div>
 
                             <div class="calculado">
@@ -182,6 +184,8 @@
         </div>
 
         </form>
+        <button id="themeBtn" class="ml-auto more-actions"><i class="bi bi-moon"></i></button>
+
 
     </main>
 
@@ -198,5 +202,7 @@
         </form>
     </dialog>
 </body>
+
+<script src="dark-mode.js"></script>
 
 </html>
