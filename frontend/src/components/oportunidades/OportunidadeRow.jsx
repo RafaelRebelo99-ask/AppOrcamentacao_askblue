@@ -1,95 +1,109 @@
 import { useState } from 'react';
 
-export default function OportunidadeRow({ oportunidade, onConsultar, onEditar, onEliminar }) {
+// Estados finais: já não há nada a fazer com a oportunidade
+const ESTADOS_FINAIS = ['Ganha', 'Perdida', 'Cancelada'];
+
+export default function OportunidadeRow({
+  oportunidade,
+  podeGerir,
+  emCurso,
+  onIniciarAnalise,
+  onIniciarPreparacao,
+  onPerdida,
+  onCancelar,
+}) {
   const [menuAberto, setMenuAberto] = useState(false);
+
+  const mostrarAcoes = podeGerir && !ESTADOS_FINAIS.includes(oportunidade.estado);
 
   return (
     <tr>
-      <td>{oportunidade.id}</td>
+      {/* O id é um Guid: mostra só o início, e o resto ao passar o rato */}
+      <td title={oportunidade.id}>{oportunidade.id.slice(0, 4)}</td>
 
       <td>{oportunidade.titulo}</td>
 
       <td>
-        <div className="estado">{oportunidade.estado}</div>
+        <div className="estado">{oportunidade.estadoTexto}</div>
       </td>
 
-      <td>
-        <div className="row gap-0">
-          <p>{oportunidade.cliente}</p>
-          {oportunidade.clienteVerificado && (
-            <i className="bi bi-check-lg"></i>
-          )}
-        </div>
-      </td>
+      <td>{oportunidade.cliente}</td>
 
       <td>{oportunidade.categoria}</td>
 
       <td>
         {oportunidade.prazo}
-        <div className={`pill ${oportunidade.aviso.cor}`}>
-          {oportunidade.aviso.texto}
-        </div>
+        {oportunidade.aviso && (
+          <div className={`pill ${oportunidade.aviso.cor}`}>
+            {oportunidade.aviso.texto}
+          </div>
+        )}
       </td>
 
-      <td className="right">{oportunidade.valor}</td>
+      <td>{oportunidade.dataPretendida}</td>
 
       <td className="ml-auto">
-        <div className="row">
-          <button
-            className="primary wide"
-            onClick={() => onConsultar?.(oportunidade)}
-          >
-            Concluir Trabalho
-          </button>
-
-          <div className="pos-rel">
-            <button
-              className="more-actions"
-              onClick={() => setMenuAberto(!menuAberto)}
-              aria-label="Mais ações"
-              aria-expanded={menuAberto}
-            >
-              <i className="bi bi-three-dots-vertical"></i>
-            </button>
-
-            {menuAberto && (
-              <div className="menu right">
-                <button
-                  className="item wide"
-                  onClick={() => {
-                    setMenuAberto(false);
-                    onEditar?.(oportunidade);
-                  }}
-                >
-                  <i className="bi bi-pencil"></i>
-                  <p>Editar</p>
-                </button>
-
-                <button
-                  className="item wide"
-                  onClick={() => {
-                    setMenuAberto(false);
-                    onConsultar?.(oportunidade);
-                  }}
-                >
-                  <i className="bi bi-journal-text"></i>
-                  <p>Consultar</p>
-                </button>
-
-                <button
-                  className="item wide danger"
-                  onClick={() => {
-                    setMenuAberto(false);
-                    onEliminar?.(oportunidade);
-                  }}
-                >
-                  <i className="bi bi-trash"></i>
-                  <p>Eliminar</p>
-                </button>
-              </div>
+        {mostrarAcoes && (
+          <div className="row">
+            {oportunidade.estado === 'Registada' && (
+              <button
+                className="primary wide"
+                disabled={emCurso}
+                onClick={() => onIniciarAnalise(oportunidade)}
+              >
+                Iniciar análise
+              </button>
             )}
+
+            {oportunidade.estado === 'EmAnalise' && (
+              <button
+                className="primary wide"
+                disabled={emCurso}
+                onClick={() => onIniciarPreparacao(oportunidade)}
+              >
+                Iniciar preparação
+              </button>
+            )}
+
+            <div className="pos-rel">
+              <button
+                className="more-actions"
+                disabled={emCurso}
+                onClick={() => setMenuAberto(!menuAberto)}
+                aria-label="Mais ações"
+                aria-expanded={menuAberto}
+              >
+                <i className="bi bi-three-dots-vertical"></i>
+              </button>
+
+              {menuAberto && (
+                <div className="menu right">
+                  <button
+                    className="item wide danger"
+                    onClick={() => {
+                      setMenuAberto(false);
+                      onPerdida(oportunidade);
+                    }}
+                  >
+                    <i className="bi bi-x-circle"></i>
+                    <p>Marcar como perdida</p>
+                  </button>
+
+                  <button
+                    className="item wide danger"
+                    onClick={() => {
+                      setMenuAberto(false);
+                      onCancelar(oportunidade);
+                    }}
+                  >
+                    <i className="bi bi-slash-circle"></i>
+                    <p>Cancelar oportunidade</p>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </td>
     </tr>
   );

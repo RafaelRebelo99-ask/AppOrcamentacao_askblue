@@ -38,6 +38,17 @@ namespace GestaoServicosWeb.API
                     : Results.Ok(ParaDto(u));
             });
 
+            // GET /api/utilizadores/clientes → id e nome dos clientes ativos — Colaborador e Administrador
+            // Serve para escolher o cliente ao criar uma oportunidade, sem expor os outros dados.
+            grupo.MapGet("/clientes", (UtilizadorService service) =>
+            {
+                return Results.Ok(service.Listar(Role.Cliente)
+                    .Where(u => u.Ativo)
+                    .OrderBy(u => u.Nome)
+                    .Select(u => new ClienteResumoDto(u.Id, u.Nome)));
+            })
+            .RequireAuthorization(Politicas.Colaborador);
+
             // 3. GET /api/utilizadores/{id} → ver um utilizador — o próprio, ou Empresa
             grupo.MapGet("/{id:guid}", (Guid id, ClaimsPrincipal user, UtilizadorService service) =>
             {
