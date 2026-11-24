@@ -3,6 +3,7 @@
 // filtros por estado, "Ordenar por", tema, "Abrir" e "Eliminar" não fazem nada.
 // Os dados abaixo são de exemplo; vão ser substituídos pelos de GET /api/orcamentos.
 import Layout from '../components/Layout'
+import ThemeToggle from '../components/ThemeToggle'
 import { ThemeProvider, useTheme } from '../controllers/ThemeController'
 
 const filtros = [
