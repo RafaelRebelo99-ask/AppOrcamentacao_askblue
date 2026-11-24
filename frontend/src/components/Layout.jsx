@@ -80,7 +80,7 @@ export default function Layout({ children }) {
 
             <div className="user mt-auto">
               <div className="column gap-1">
-                <div className="row align-center">
+                <div className="row align-center wide-left">
                   <div className="photo">
                     {iniciais}
                   </div>

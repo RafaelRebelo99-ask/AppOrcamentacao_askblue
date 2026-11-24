@@ -8,7 +8,7 @@ export default function ThemeToggle() {
   return (
     <button
       type="button"
-      className="more-actions"
+      className="more-actions ml-auto"
       onClick={toggleTheme}
       title={darkMode ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
       aria-label={darkMode ? 'Mudar para tema claro' : 'Mudar para tema escuro'}

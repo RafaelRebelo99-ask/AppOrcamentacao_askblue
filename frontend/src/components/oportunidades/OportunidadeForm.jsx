@@ -1,3 +1,5 @@
+import Select from "../Select";
+
 export default function OportunidadeForm({
     dados,
     clientes,
@@ -42,37 +44,43 @@ export default function OportunidadeForm({
                     <h2 className="mb-05">Classificação</h2>
 
                     <label>Cliente *</label>
-                    <select
+                    <Select
+                    className="mb-05"
                         name="idCliente"
                         value={dados.idCliente}
-                        onChange={onChange}
-                        required
-                        className="mb-05"
-                    >
-                        <option value="">Selecionar cliente</option>
-
-                        {clientes.map(cliente => (
-                            <option key={cliente.id} value={cliente.id}>
-                                {cliente.nome}
-                            </option>
-                        ))}
-                    </select>
+                        onChange={(value) =>
+                            onChange({
+                                target: {
+                                    name: 'idCliente',
+                                    value
+                                }
+                            })
+                        }
+                        placeholder="Selecionar cliente"
+                        options={clientes.map(cliente => ({
+                            value: cliente.id,
+                            label: cliente.nome
+                        }))}
+                    />
 
                     <label>Categoria *</label>
-                    <select
-                        name="idCategoria"
+                    <Select
+                    name="idCategoria"
                         value={dados.idCategoria}
-                        onChange={onChange}
-                        required
-                    >
-                        <option value="">Selecionar categoria</option>
-
-                        {categorias.map(categoria => (
-                            <option key={categoria.id} value={categoria.id}>
-                                {categoria.nome}
-                            </option>
-                        ))}
-                    </select>
+                        onChange={(value) =>
+                            onChange({
+                                target: {
+                                    name: 'idCategoria',
+                                    value
+                                }
+                            })
+                        }
+                        placeholder="Selecionar categoria"
+                        options={categorias.map(categorias => ({
+                            value: categorias.id,
+                            label: categorias.nome
+                        }))}
+                    />
                 </div>
 
                 <div className="column">

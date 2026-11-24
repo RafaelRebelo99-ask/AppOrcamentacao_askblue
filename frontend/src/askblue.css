@@ -85,6 +85,10 @@ p {
     gap: var(--gap-sm);
 }
 
+.pad {
+    padding: var(--py) var(--px);
+}
+
 .pad-1 {
     padding: 1rem;
 }
@@ -367,7 +371,7 @@ button.secondary.danger:hover {
     flex-wrap: wrap;
 }
 
-.menu .item {
+.menu .item, .option {
     display: flex;
     align-items: center;
     gap: var(--gap);
@@ -382,12 +386,12 @@ button.secondary.danger:hover {
     justify-content: start;
 }
 
-.menu .item.disabled {
+.menu .item.disabled, option.disabled {
     opacity: 0.5;
     pointer-events: none;
 }
 
-.menu .item.danger {
+.menu .item.danger, .option.danger {
     color: var(--danger-color);
 
     i,
@@ -396,7 +400,7 @@ button.secondary.danger:hover {
     }
 }
 
-.menu .item.danger:hover {
+.menu .item.danger:hover, option.danger:hover {
     background-color: var(--red-bg);
     border-color: var(--red-bg);
 
