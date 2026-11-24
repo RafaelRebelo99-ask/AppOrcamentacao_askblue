@@ -7,7 +7,7 @@ import ThemeToggle from '../components/ThemeToggle';
 
 export default function Login() {
 
-  const {darkMode, toggleTheme} = useTheme();
+  const { darkMode } = useTheme();
 
   const {
     passwordVisible,
@@ -15,6 +15,7 @@ export default function Login() {
     email,
     password,
     error,
+    loading,
     setEmail,
     setPassword,
     togglePasswordVisibility,
@@ -107,8 +108,8 @@ export default function Login() {
 
           {error && <p className="error">{error}</p>}
 
-          <button type="submit" className="primary w-100">
-            Log In
+          <button type="submit" className="primary w-100" disabled={loading}>
+            {loading ? 'A entrar...' : 'Log In'}
           </button>
 
         </form>
