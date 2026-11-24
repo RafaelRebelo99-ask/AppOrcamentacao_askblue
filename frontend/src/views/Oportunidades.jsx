@@ -113,6 +113,9 @@ export default function Oportunidades() {
               <OportunidadeRow
                 key={oportunidade.id}
                 oportunidade={oportunidade}
+                handleConsultar = {handleConsultar}
+                handleEditar = {handleEditar}
+                handleEliminar = {handleEliminar}
               />
             ))
           ) : (
@@ -127,3 +130,16 @@ export default function Oportunidades() {
     </Layout>
   );
 }
+
+// chamar a API aqui
+const handleConsultar = (oportunidade) => {
+  console.log('Consultar:', oportunidade.id);
+};
+
+const handleEditar = (oportunidade) => {
+  console.log('Editar:', oportunidade.id);
+};
+
+const handleEliminar = (oportunidade) => {
+  console.log('Eliminar:', oportunidade.id);
+};
