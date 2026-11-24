@@ -1,44 +1,10 @@
-
-import { useState } from 'react';
 import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
 import Filters from '../components/Filters';
-import OportunidadeRow from '../components/oportunidades/OportunidadeRow';
 import Sort from '../components/Sort';
+import OportunidadeRow from '../components/oportunidades/OportunidadeRow';
+import useOportunidadesController from '../controllers/useOportunidades';
 
-// vai se buscar à API
-const oportunidades = [
-  {
-    id: 1,
-    titulo: 'Implementação de solução tecnológica',
-    estado: 'EmPreparacao',
-    cliente: 'Cliente A',
-    categoria: 'Tecnologia',
-    prazo: '20/11/2026',
-    aviso: { texto: 'Em 2 dias', cor: 'yellow' },
-    valor: '12.000,00 €',
-  },
-  {
-    id: 2,
-    titulo: 'Desenvolvimento de aplicação',
-    estado: 'Registada',
-    cliente: 'Cliente B',
-    categoria: 'Tecnologia',
-    prazo: '18/11/2026',
-    aviso: { texto: 'Atrasado', cor: 'red' },
-    valor: '52.000,00 €',
-  },
-];
-
-//isto pode ser hardcoded
-const opcoesOrdenacao = [
-  { label: 'Data (Mais recente)', value: 'data-desc' },
-  { label: 'Data (Mais antigo)', value: 'data-asc' },
-  { label: 'Prazo (Mais próximo)', value: 'prazo-asc' },
-  { label: 'Prazo (Mais distante)', value: 'prazo-desc' },
-];
-
-// vai se buscar à API (são os estados)
 const filtros = [
   { label: 'Todas', value: 'Todas' },
   { label: 'Registadas', value: 'Registada' },
@@ -50,26 +16,23 @@ const filtros = [
   { label: 'Canceladas', value: 'Cancelada' },
 ];
 
-const contagens = {
-  Todas: oportunidades.length,
-  Registada: oportunidades.filter(o => o.estado === 'Registada').length,
-  EmAnalise: oportunidades.filter(o => o.estado === 'EmAnalise').length,
-  EmPreparacao: oportunidades.filter(o => o.estado === 'EmPreparacao').length,
-  PropostaEnviada: oportunidades.filter(o => o.estado === 'PropostaEnviada').length,
-  Ganha: oportunidades.filter(o => o.estado === 'Ganha').length,
-  Perdida: oportunidades.filter(o => o.estado === 'Perdida').length,
-  Cancelada: oportunidades.filter(o => o.estado === 'Cancelada').length,
-};
+const opcoesOrdenacao = [
+  { label: 'Prazo (Mais próximo)', value: 'prazo-asc' },
+  { label: 'Prazo (Mais distante)', value: 'prazo-desc' },
+];
 
 export default function Oportunidades() {
-  const [estadoSelecionado, setEstadoSelecionado] = useState('Todas');
-
-  const oportunidadesFiltradas = oportunidades.filter(oportunidade =>
-    estadoSelecionado === 'Todas' ||
-    oportunidade.estado === estadoSelecionado
-  );
-
-  const [ordenacao, setOrdenacao] = useState('');
+  const {
+    oportunidadesFiltradas,
+    estadoSelecionado,
+    setEstadoSelecionado,
+    ordenacao,
+    setOrdenacao,
+    contagens,
+    handleConsultar,
+    handleEditar,
+    handleEliminar,
+  } = useOportunidadesController();
 
   return (
     <Layout>
@@ -81,11 +44,10 @@ export default function Oportunidades() {
           onEstadoChange={setEstadoSelecionado}
         />
 
-        <div className='vl'>
-        </div>
+        <div className="vl"></div>
 
         <Sort
-        opcoes={opcoesOrdenacao}
+          opcoes={opcoesOrdenacao}
           ordenacao={ordenacao}
           onOrdenacaoChange={setOrdenacao}
         />
@@ -113,9 +75,9 @@ export default function Oportunidades() {
               <OportunidadeRow
                 key={oportunidade.id}
                 oportunidade={oportunidade}
-                handleConsultar = {handleConsultar}
-                handleEditar = {handleEditar}
-                handleEliminar = {handleEliminar}
+                onConsultar={handleConsultar}
+                onEditar={handleEditar}
+                onEliminar={handleEliminar}
               />
             ))
           ) : (
@@ -130,16 +92,3 @@ export default function Oportunidades() {
     </Layout>
   );
 }
-
-// chamar a API aqui
-const handleConsultar = (oportunidade) => {
-  console.log('Consultar:', oportunidade.id);
-};
-
-const handleEditar = (oportunidade) => {
-  console.log('Editar:', oportunidade.id);
-};
-
-const handleEliminar = (oportunidade) => {
-  console.log('Eliminar:', oportunidade.id);
-};
