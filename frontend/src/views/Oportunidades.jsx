@@ -29,10 +29,15 @@ export default function Oportunidades() {
     ordenacao,
     setOrdenacao,
     contagens,
-    handleConsultar,
-    handleEditar,
-    handleEliminar,
-  } = useOportunidadesController();
+    loading,
+    erro,
+    idEmCurso,
+    podeGerir,
+    handleIniciarAnalise,
+    handleIniciarPreparacao,
+    handlePerdida,
+    handleCancelar,
+  } =useOportunidadesController();
 
   return (
     <Layout>
@@ -55,7 +60,10 @@ export default function Oportunidades() {
         <ThemeToggle />
       </div>
 
-      <table className="table">
+      {erro && <p className="error mb-05">{erro}</p>}
+      {loading && <p>A carregar oportunidades...</p>}
+
+      <table className="table" hidden={loading}>
         <thead>
           <tr className="header">
             <th>ID</th>
@@ -64,7 +72,7 @@ export default function Oportunidades() {
             <th>Cliente</th>
             <th>Categoria</th>
             <th>Prazo da proposta</th>
-            <th className="right">Valor total</th>
+            <th>Data pretendida</th>
             <th></th>
           </tr>
         </thead>
@@ -75,9 +83,12 @@ export default function Oportunidades() {
               <OportunidadeRow
                 key={oportunidade.id}
                 oportunidade={oportunidade}
-                onConsultar={handleConsultar}
-                onEditar={handleEditar}
-                onEliminar={handleEliminar}
+                podeGerir={podeGerir}
+                emCurso={idEmCurso === oportunidade.id}
+                onIniciarAnalise={handleIniciarAnalise}
+                onIniciarPreparacao={handleIniciarPreparacao}
+                onPerdida={handlePerdida}
+                onCancelar={handleCancelar}
               />
             ))
           ) : (

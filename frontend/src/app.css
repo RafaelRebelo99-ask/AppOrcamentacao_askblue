@@ -16,3 +16,9 @@ body,
   display: flex;
   flex-direction: column;
 }
+
+/* Mensagens de erro: "error" no login e nas listas, "danger" nos formulários */
+p.error,
+p.danger {
+  color: var(--danger-color);
+}
