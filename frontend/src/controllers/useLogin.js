@@ -1,8 +1,10 @@
 
 import { useState } from 'react'
-import { validateLogin } from '../models/loginModel'
+import { useNavigate } from 'react-router-dom'
+import { fazerLogin, guardarSessao, validateLogin } from '../models/loginModel'
 
 export default function useLogin() {
+  const navigate = useNavigate()
 
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
@@ -11,6 +13,7 @@ export default function useLogin() {
   const [password, setPassword] = useState('')
 
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // Show / hide password
   const togglePasswordVisibility = () => {
@@ -23,7 +26,7 @@ export default function useLogin() {
   }
 
   // Login
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault()
 
     const result = validateLogin(email, password)
@@ -34,9 +37,21 @@ export default function useLogin() {
     }
 
     setError('')
+    setLoading(true)
 
-    // depois ligar ao API
-    console.log('Login submitted:', email)
+    try {
+      const dados = await fazerLogin(email, password)
+      guardarSessao(dados, rememberMe)
+      navigate('/oportunidades')
+    } catch (err) {
+      if (err.status === 401) {
+        setError('Email ou palavra-passe inválidos.')
+      } else {
+        setError(err.message || 'Ocorreu um erro ao iniciar sessão.')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   return {
@@ -45,6 +60,7 @@ export default function useLogin() {
     email,
     password,
     error,
+    loading,
 
     setEmail,
     setPassword,
