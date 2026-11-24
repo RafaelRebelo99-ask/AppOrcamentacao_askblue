@@ -2,11 +2,12 @@
 // Barra lateral (Pesquisa / Trabalhos / Orçamentos) + conteúdo da página + rodapé.
 // Passado do DEMO_FRONT (index.html, trabalhos.html, orcamentos.html), que repetiam isto em cada página.
 // Uso: <Layout> ...conteúdo da página... </Layout>
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import logo from '../assets/askblue-logo-oficial-rgb.png'
 import logoDark from '../assets/askblue-logo-negativo-rgb.png'
 import { useTheme } from '../controllers/ThemeController'
 import { podeGerirOportunidades } from '../models/oportunidadesModel'
+import { limparSessao, obterUtilizador } from '../models/loginModel'
 
 // O NavLink marca com "selected" o link da página onde estamos (classe do askblue.css)
 function classeLink({ isActive }) {
@@ -15,23 +16,10 @@ function classeLink({ isActive }) {
 
 export default function Layout({ children }) {
   const { darkMode } = useTheme()
+  const navigate = useNavigate()
 
-  //const navigate = useNavigate();
-
-  // Get authenticated user
-  const utilizadorGuardado =
-    localStorage.getItem('utilizador') ||
-    sessionStorage.getItem('utilizador');
-
-  let utilizador = null;
-
-  try {
-    utilizador = utilizadorGuardado
-      ? JSON.parse(utilizadorGuardado)
-      : null;
-  } catch {
-    utilizador = null;
-  }
+  // Utilizador autenticado (guardado no loginModel)
+  const utilizador = obterUtilizador()
 
   // iniciais do utilizador (para a foto)
   const iniciais = utilizador?.nome
@@ -42,7 +30,7 @@ export default function Layout({ children }) {
       .map(palavra => palavra[0])
       .join('')
       .toUpperCase()
-    : '??';
+    : '??'
 
   const roles = {
     0: 'Colaborador',
@@ -52,16 +40,11 @@ export default function Layout({ children }) {
 
   const role = roles[utilizador?.role] || 'Sem função';
 
-  // Logout
+  // Logout: limpa token e dados do utilizador e volta para o ecrã de login
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('utilizador');
-
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('utilizador');
-
-    navigate('/login');
-  };
+    limparSessao()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <>
