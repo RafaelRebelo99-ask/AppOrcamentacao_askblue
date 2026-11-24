@@ -77,7 +77,7 @@ export default function Layout({ children }) {
             {podeGerirOportunidades() && (
               <>
                 <hr></hr>
-                <NavLink to="/oportunidades/adicionar" className={classeLink}>
+                <NavLink to="/registar-oportunidade" className={classeLink}>
                   <i className="bi bi-clipboard-plus"></i>Nova Oportunidade
                 </NavLink>
               </>

@@ -258,6 +258,10 @@ button.primary {
     background-color: var(--primary-blue);
     color: var(--background-color);
     border-color: transparent;
+
+    i {
+        color: var(--background-color);
+    }
 }
 
 button.primary:hover {
@@ -296,6 +300,10 @@ button.secondary.danger:hover {
     background-color: var(--red-bg);
     border-color: transparent;
     color: var(--on-red);
+
+    i {
+        color: var(--on-red);
+    }
 }
 
 .counter {
@@ -561,6 +569,11 @@ hr {
         .3fr 1fr .8fr 0.8fr 1.5fr 1.2fr .8fr 1.5fr;
     align-items: center;
     width: 100%;
+}
+
+.table.utilizadores tr {
+    grid-template-columns:
+        .8fr .8fr 0.6fr .8fr ;
 }
 
 .ml-auto {

@@ -17,10 +17,6 @@ body,
   flex-direction: column;
 }
 
-/* A .table do askblue.css tem 8 colunas (Oportunidades); a dos utilizadores tem 4 */
-.table.utilizadores tr {
-  grid-template-columns: 1fr 1.5fr 1fr 0.8fr;
-}
 
 /* Mensagens de erro: "error" no login e nas listas, "danger" nos formulários */
 p.error,

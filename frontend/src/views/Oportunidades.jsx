@@ -41,6 +41,10 @@ export default function Oportunidades() {
 
   return (
     <Layout>
+      <div className="row align-center">
+              <h1 className='mb-05'>Oportunidades</h1>
+              <ThemeToggle/>
+            </div>
       <div className="row mb-1 align-center">
         <Filters
           filtros={filtros}
@@ -57,7 +61,6 @@ export default function Oportunidades() {
           onOrdenacaoChange={setOrdenacao}
         />
 
-        <ThemeToggle />
       </div>
 
       {erro && <p className="error mb-05">{erro}</p>}

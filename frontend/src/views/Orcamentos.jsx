@@ -35,6 +35,10 @@ export default function Orcamentos() {
 
   return (
     <Layout>
+      <div className="row align-center">
+              <h1 className='mb-05'>Orçamentos</h1>
+              <ThemeToggle/>
+            </div>
       <div className="row mb-1 align-center">
         <Filters
           filtros={filtros}
@@ -51,7 +55,6 @@ export default function Orcamentos() {
           onOrdenacaoChange={setOrdenacao}
         />
 
-        <ThemeToggle />
       </div>
 
       {erro && <p className="danger">{erro}</p>}

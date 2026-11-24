@@ -35,6 +35,10 @@ export default function Utilizadores() {
 
   return (
     <Layout>
+      <div className="row align-center">
+        <h1 className='mb-05'>Utilizadores</h1>
+        <ThemeToggle/>
+      </div>
       <div className="row mb-1 align-center">
         <Filters
           filtros={filtros}
@@ -53,8 +57,6 @@ export default function Utilizadores() {
         >
           <i className="bi bi-person-plus"></i>Novo utilizador
         </button>
-
-        <ThemeToggle />
       </div>
 
       {formAberto && (
