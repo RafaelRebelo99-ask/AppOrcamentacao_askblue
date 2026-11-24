@@ -3,6 +3,8 @@
 // filtros por estado, "Ordenar por", tema e os botões das linhas não fazem nada.
 // Os dados abaixo são de exemplo; vão ser substituídos pelos da API.
 import Layout from '../components/Layout'
+import ThemeToggle from '../components/ThemeToggle';
+import { useTheme } from '../controllers/ThemeController'
 
 const filtros = [
   { nome: 'Todos', total: 2, selecionado: true },
@@ -17,7 +19,10 @@ const trabalhosExemplo = [
   { id: 2, titulo: 'Serviço de consultoria de IT', estado: 'Atribuído', cliente: 'AskBlue', categoria: 'Tecnologia', prazo: '18/11/2026', aviso: { texto: 'Atrasado', cor: 'red' }, valor: '52.000,00 €', acao: 'Começar Trabalho' },
 ]
 
-export default function Trabalhos() {
+
+export default function Oportunidades() {
+  const { darkMode, toggleTheme } = useTheme();
+
   return (
     <Layout>
       <div className="row mb-1">
@@ -36,7 +41,7 @@ export default function Trabalhos() {
           <div className="item wide"><i className="bi bi-sort-numeric-down"></i><p>Valor (Mais baixo)</p></div>
           <div className="item wide"><i className="bi bi-sort-numeric-up"></i><p>Valor (Mais alto)</p></div>
         </div>
-        <button className="more-actions" title="Mudar tema"><i className="bi bi-moon"></i></button>
+        <ThemeToggle/>
       </div>
 
       {/* Em React a tabela precisa de <thead>/<tbody>; o aspeto é o mesmo */}

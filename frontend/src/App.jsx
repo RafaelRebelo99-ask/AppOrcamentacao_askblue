@@ -5,7 +5,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './views/Login'
 import Pesquisa from './views/Pesquisa'
-import Trabalhos from './views/Trabalhos'
+import Trabalhos from './views/Oportunidades'
 import Orcamentos from './views/Orcamentos'
 import CriarOrcamento from './views/CriarOrcamento'
 

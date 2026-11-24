@@ -4,6 +4,8 @@
 // Uso: <Layout> ...conteúdo da página... </Layout>
 import { NavLink } from 'react-router-dom'
 import logo from '../assets/askblue-logo-oficial-rgb.png'
+import logoDark from '../assets/askblue-logo-negativo-rgb.png'
+import { useTheme } from '../controllers/ThemeController'
 
 // O NavLink marca com "selected" o link da página onde estamos (classe do askblue.css)
 function classeLink({ isActive }) {
@@ -11,20 +13,30 @@ function classeLink({ isActive }) {
 }
 
 export default function Layout({ children }) {
+  const { darkMode } = useTheme()
+
   return (
     <>
       <div className="container pad-05" style={{ minHeight: '95%' }}>
         <div className="row align-start w-100 h-100">
           <div className="column fit gap nav">
-            <img src={logo} alt="AskBlue Logo" className="logo big" />
-            <NavLink to="/pesquisa" className={classeLink}>
-              <i className="bi bi-search"></i>Pesquisa
+            <img src={darkMode ? logoDark : logo} alt="AskBlue Logo" className="logo big" />
+            <NavLink to="/dashboard" className={classeLink}>
+              <i className="bi bi-grid"></i>Dashboard
             </NavLink>
-            <NavLink to="/trabalhos" className={classeLink}>
-              <i className="bi bi-journals"></i>Trabalhos
+            <NavLink to="/oportunidades" className={classeLink}>
+              <i className="bi bi-clipboard"></i>Oportunidades
             </NavLink>
+
             <NavLink to="/orcamentos" end className={classeLink}>
               <i className="bi bi-file-earmark-spreadsheet"></i>Orçamentos
+            </NavLink>
+            <NavLink to="" end className={classeLink}>
+              <i className="bi bi-clock"></i>Histórico
+            </NavLink>
+            <hr></hr>
+            <NavLink to="" className={classeLink}>
+              <i className="bi bi-clipboard-plus"></i>Nova Oportunidade
             </NavLink>
           </div>
 

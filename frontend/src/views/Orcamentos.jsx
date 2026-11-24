@@ -3,6 +3,7 @@
 // filtros por estado, "Ordenar por", tema, "Abrir" e "Eliminar" não fazem nada.
 // Os dados abaixo são de exemplo; vão ser substituídos pelos de GET /api/orcamentos.
 import Layout from '../components/Layout'
+import { ThemeProvider, useTheme } from '../controllers/ThemeController'
 
 const filtros = [
   { nome: 'Todos', total: 3, selecionado: true },
@@ -19,6 +20,8 @@ const orcamentosExemplo = [
 ]
 
 export default function Orcamentos() {
+  const { darkMode, toggleTheme } = useTheme();
+
   return (
     <Layout>
       <div className="row mb-1">
@@ -35,7 +38,7 @@ export default function Orcamentos() {
           <div className="item wide"><i className="bi bi-sort-numeric-down"></i><p>Valor (Mais baixo)</p></div>
           <div className="item wide"><i className="bi bi-sort-numeric-up"></i><p>Valor (Mais alto)</p></div>
         </div>
-        <button className="more-actions" title="Mudar tema"><i className="bi bi-moon"></i></button>
+        <ThemeToggle/>
       </div>
 
       <div className="grid">
