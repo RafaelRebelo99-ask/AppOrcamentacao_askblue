@@ -15,8 +15,8 @@
     --gap: 0.5rem;
     --gap-sm: 0.25rem;
     --text-color: rgb(0, 0, 0);
-    --py: 0.5rem;
-    --px: calc(var(--py) + (1lh - 1cap) / 2);
+    --py: 0.75rem;
+    --px: calc(var(--py) + (1lh - 1cap) / 3);
 
     --blue-bg: #020aed25;
     --on-blue: #000469;
@@ -65,7 +65,7 @@ body {
     box-sizing: border-box;
     font-family: "IBM Plex Sans", sans-serif;
     margin: 0;
-    font-size: .95rem;
+    font-size: .90rem;
 }
 
 p {
@@ -75,6 +75,10 @@ p {
 
 .gap {
     gap: var(--gap);
+}
+
+.gap-1 {
+    gap: 1rem !important;
 }
 
 .gap-sm {
@@ -202,6 +206,7 @@ select {
 .nav a.transparent,
 button.transparent {
     background-color: transparent;
+    border: var(--border);
     border-color: transparent;
 }
 
@@ -468,7 +473,6 @@ i {
     cursor: pointer;
     padding: 0.5rem;
     border-radius: var(--border-radius-sm);
-    margin-left: auto;
 
     i {
         font-size: large;
@@ -739,4 +743,47 @@ form {
 
 .space-between {
     justify-content: space-between !important;
+}
+
+.user {
+    display: flex;
+    justify-content: start;
+}
+
+.user .photo {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: var(--border);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--primary-blue);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    color: var(--sec-background-color);
+}
+
+.tooltip {
+    position: absolute;
+    bottom: calc(100% + 0.25rem);
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: var(--border-radius-sm);
+
+    padding: var(--py) var(--px);
+    background-color: var(--primary-blue);
+    color: var(--background-color);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.073);
+
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 100;
+}
+
+button:hover .tooltip,
+button:focus-visible .tooltip {
+    opacity: 1;
+    visibility: visible;
 }

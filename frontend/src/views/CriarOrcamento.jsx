@@ -1,5 +1,5 @@
 import Layout from '../components/Layout';
-import useCriarOrcamento from '../controllers/useCriarOrcamento';
+import useCriarOrcamento from '../controllers/orcamentos/useNovoOrcamento';
 
 export default function CriarOrcamento() {
   const {

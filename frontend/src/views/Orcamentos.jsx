@@ -3,7 +3,7 @@ import ThemeToggle from '../components/ThemeToggle';
 import Filters from '../components/Filters';
 import Sort from '../components/Sort';
 import OrcamentoCard from '../components/orcamentos/OrcamentoCard';
-import useOrcamentos from '../controllers/useOrcamentos';
+import useOrcamentos from '../controllers/orcamentos/useOrcamentos';
 
 const filtros = [
   { label: 'Todos', value: 'Todos' },
