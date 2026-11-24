@@ -57,6 +57,26 @@ namespace GestaoServicosWeb.Aplicacao
             return utilizador;
         }
 
+        // Um colaborador fica sempre associado à AskBlue
+        public Utilizador CriarColaborador(CriarColaboradorDto dto)
+        {
+            ValidarPassword(dto.Password);
+
+            if (EmailEmUso(dto.Email))
+                throw new InvalidOperationException("Já existe um utilizador com esse email.");
+
+            var empresa = db.Empresas.SingleOrDefault(e => e.Nome == "AskBlue" && e.Ativa)
+                ?? throw new InvalidOperationException("A empresa AskBlue não existe ou está inativa.");
+
+            string hash = hasher.HashPassword(null!, dto.Password);
+
+            var colaborador = new Utilizador(dto.Nome, dto.Email, hash, Role.Colaborador, empresa);
+
+            db.Utilizadores.Add(colaborador);
+            db.SaveChanges();
+            return colaborador;
+        }
+
         // Devolve null se o utilizador não existir
         public Utilizador? Atualizar(Guid id, AtualizarUtilizadorDto dto)
         {
@@ -101,8 +121,12 @@ namespace GestaoServicosWeb.Aplicacao
             if (utilizador == null)
                 return false;
 
-            if (db.Oportunidades.Any(s => s.IdCliente == id) || db.Orcamentos.Any(o => o.IdCriador == id))
-                throw new InvalidOperationException("Não é possível apagar um utilizador com serviços ou orçamentos associados.");
+            if (utilizador.Role == Role.Administrador)
+                throw new InvalidOperationException("Não é possível apagar um administrador.");
+
+            if (db.Oportunidades.Any(o => o.IdCliente == id || o.IdResponsavel == id) ||
+                db.Orcamentos.Any(o => o.IdCriador == id))
+                throw new InvalidOperationException("Não é possível apagar um utilizador com oportunidades ou orçamentos associados.");
 
             db.Utilizadores.Remove(utilizador);
             db.SaveChanges();

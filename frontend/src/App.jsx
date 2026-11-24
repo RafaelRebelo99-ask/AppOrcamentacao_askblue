@@ -10,6 +10,9 @@ import Orcamentos from './views/Orcamentos'
 import CriarOrcamento from './views/CriarOrcamento'
 import Historico from './views/Historico'
 import NovaOportunidade from './views/NovaOportunidade'
+import Utilizadores from './views/Utilizadores' 
+
+
 
 export default function App() {
   return (
@@ -20,6 +23,7 @@ export default function App() {
       <Route path="/historico" element={<Historico />} />
       <Route path="/oportunidades/adicionar" element={<NovaOportunidade />} />
       <Route path="/orcamentos" element={<Orcamentos />} />
+      <Route path="/utilizadores" element={<Utilizadores />} />
       <Route
         path="/orcamentos/novo/:oportunidadeId"
         element={<CriarOrcamento />}
