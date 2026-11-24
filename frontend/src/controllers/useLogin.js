@@ -42,7 +42,7 @@ export default function useLogin() {
     try {
       const dados = await fazerLogin(email, password)
       guardarSessao(dados, rememberMe)
-      navigate('/oportunidades')
+      navigate('/dashboard')
     } catch (err) {
       if (err.status === 401) {
         setError('Email ou palavra-passe inválidos.')

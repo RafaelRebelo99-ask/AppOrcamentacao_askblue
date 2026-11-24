@@ -73,3 +73,15 @@ export function criarUtilizador(dados) {
     body: JSON.stringify({ ...conta, role: ROLES.indexOf('Cliente') }),
   });
 }
+
+
+export function editarUtilizador(id, dados) {
+  return apiRequest(`/api/utilizadores/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      nome: dados.nome.trim(),
+      email: dados.email.trim(),
+    }),
+  });
+}
+

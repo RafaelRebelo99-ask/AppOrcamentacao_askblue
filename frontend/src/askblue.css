@@ -15,8 +15,8 @@
     --gap: 0.5rem;
     --gap-sm: 0.25rem;
     --text-color: rgb(0, 0, 0);
-    --py: 0.75rem;
-    --px: calc(var(--py) + (1lh - 1cap) / 3);
+    --py: 0.5rem;
+    --px: calc(var(--py) + (1lh - 1cap) / 2);
 
     --blue-bg: #020aed25;
     --on-blue: #000469;
@@ -233,7 +233,7 @@ button.icon {
 
 .estado,
 .date {
-    padding: 0.4rem 0.75rem;
+    padding: var(--py) var(--px);
     border-radius: var(--border-radius-sm);
     background-color: var(--sec-background-color);
     font-size: small;
@@ -623,7 +623,7 @@ th {
 
 input,
 textarea {
-    padding: 0.5rem;
+    padding: var(--py) var(--px);
     border-radius: var(--border-radius-sm);
     border: var(--border);
     outline: none;

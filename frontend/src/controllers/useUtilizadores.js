@@ -1,27 +1,35 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { limparSessao } from '../models/loginModel';
 import { sessaoInvalida } from '../models/oportunidadesModel';
+
 import {
   apagarUtilizador,
   criarUtilizador,
+  editarUtilizador,
   eAdministrador,
   listarUtilizadores,
   mensagemDeErroUtilizador,
   validarUtilizador,
 } from '../models/utilizadoresModel';
 
-const FORM_VAZIO = { nome: '', email: '', role: '', password: '' };
+const FORM_VAZIO = {
+  nome: '',
+  email: '',
+  role: '',
+  password: '',
+};
 
 export default function useUtilizadores() {
   const navigate = useNavigate();
 
-  // Lista
+  // Lista de utilizadores
   const [utilizadores, setUtilizadores] = useState([]);
   const [roleSelecionada, setRoleSelecionada] = useState('Todos');
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState('');
-  const [idEmCurso, setIdEmCurso] = useState(null); // conta que está a ser apagada
+  const [idEmCurso, setIdEmCurso] = useState(null);
 
   // Formulário
   const [formAberto, setFormAberto] = useState(false);
@@ -30,15 +38,17 @@ export default function useUtilizadores() {
   const [erroForm, setErroForm] = useState('');
   const [sucesso, setSucesso] = useState('');
 
-  // Carregar a lista ao abrir a página
+  // Utilizador que está a ser editado (null quando estamos a criar)
+  const [utilizadorEmEdicao, setUtilizadorEmEdicao] = useState(null);
+
+  // Carregar utilizadores ao abrir a página
   useEffect(() => {
-    // Só o Administrador gere contas; os outros voltam às oportunidades
     if (!eAdministrador()) {
       navigate('/oportunidades', { replace: true });
       return;
     }
 
-    let ativo = true; // evita mexer no estado se o utilizador já saiu da página
+    let ativo = true;
 
     listarUtilizadores()
       .then(lista => {
@@ -52,16 +62,21 @@ export default function useUtilizadores() {
           navigate('/login', { replace: true });
           return;
         }
+
         setErro(mensagemDeErroUtilizador(err));
       })
       .finally(() => {
         if (ativo) setLoading(false);
       });
 
-    return () => { ativo = false; };
+    return () => {
+      ativo = false;
+    };
   }, [navigate]);
 
-  const contar = role => utilizadores.filter(u => u.role === role).length;
+  // Contagens por função
+  const contar = role =>
+    utilizadores.filter(u => u.role === role).length;
 
   const contagens = {
     Todos: utilizadores.length,
@@ -70,22 +85,46 @@ export default function useUtilizadores() {
     Cliente: contar('Cliente'),
   };
 
+  // Filtrar utilizadores
   const utilizadoresFiltrados = utilizadores.filter(u =>
     roleSelecionada === 'Todos' ||
     u.role === roleSelecionada
   );
 
+  // Abrir formulário para criar
   const handleAbrirForm = () => {
+    setUtilizadorEmEdicao(null);
+    setDados(FORM_VAZIO);
+    setErroForm('');
     setSucesso('');
     setFormAberto(true);
   };
 
+  // Abrir formulário para editar, com os dados preenchidos
+  const handleAbrirEdicao = (utilizador) => {
+    setUtilizadorEmEdicao(utilizador);
+
+    setDados({
+      nome: utilizador.nome,
+      email: utilizador.email,
+      role: utilizador.role,
+      password: '',
+    });
+
+    setErroForm('');
+    setSucesso('');
+    setFormAberto(true);
+  };
+
+  // Fechar formulário
   const handleFecharForm = () => {
     setDados(FORM_VAZIO);
     setErroForm('');
+    setUtilizadorEmEdicao(null);
     setFormAberto(false);
   };
 
+  // Atualizar campos do formulário
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -95,46 +134,97 @@ export default function useUtilizadores() {
     }));
   };
 
-  // Criar a conta e atualizar a tabela
+  // Criar ou editar utilizador
   const handleSubmit = async (e) => {
-    e.preventDefault(); // impede o browser de recarregar a página
+    e.preventDefault();
 
-    const problema = validarUtilizador(dados);
-    if (problema) {
-      setErroForm(problema);
-      return;
+    // Validação para edição
+    if (utilizadorEmEdicao) {
+      const nome = dados.nome.trim();
+      const email = dados.email.trim();
+
+      if (nome.length < 2 || nome.length > 100) {
+        setErroForm('O nome deve ter entre 2 e 100 caracteres.');
+        return;
+      }
+
+      if (!email) {
+        setErroForm('O email é obrigatório.');
+        return;
+      }
+    } else {
+      // Validação para criação
+      const problema = validarUtilizador(dados);
+
+      if (problema) {
+        setErroForm(problema);
+        return;
+      }
     }
 
     setErroForm('');
     setACriar(true);
 
     try {
-      const criado = await criarUtilizador(dados);
+      if (utilizadorEmEdicao) {
+        // Editar utilizador existente
+        const atualizado = await editarUtilizador(
+          utilizadorEmEdicao.id,
+          dados
+        );
+
+        setUtilizadores(prev =>
+          prev.map(u =>
+            u.id === utilizadorEmEdicao.id
+              ? {
+                  ...u,
+                  nome: atualizado.nome,
+                  email: atualizado.email,
+                }
+              : u
+          )
+        );
+
+        setSucesso(`Conta de ${atualizado.nome} atualizada.`);
+      } else {
+        // Criar novo utilizador
+        const criado = await criarUtilizador(dados);
+
+        setRoleSelecionada('Todos');
+        setSucesso(`Conta de ${criado.nome} criada.`);
+
+        // Atualizar a lista
+        try {
+          const lista = await listarUtilizadores();
+          setUtilizadores(lista);
+        } catch (err) {
+          setErro(mensagemDeErroUtilizador(err));
+        }
+      }
 
       handleFecharForm();
-      setRoleSelecionada('Todos'); // para a conta nova não ficar escondida pelo filtro
-      setSucesso(`Conta de ${criado.nome} criada.`);
-
-      // A conta já existe: se só a tabela falhar, o erro aparece na página e não no formulário
-      await listarUtilizadores()
-        .then(setUtilizadores)
-        .catch(err => setErro(mensagemDeErroUtilizador(err)));
     } catch (err) {
       if (sessaoInvalida(err)) {
         limparSessao();
         navigate('/login', { replace: true });
         return;
       }
+
       setErroForm(mensagemDeErroUtilizador(err));
     } finally {
       setACriar(false);
     }
   };
 
-  // Apagar a conta (não tem volta atrás: pede confirmação)
+  // Apagar utilizador
   const handleApagar = async (utilizador) => {
-    if (!window.confirm(`Apagar a conta de ${utilizador.nome} (${utilizador.email})? Não é possível desfazer.`))
+    if (
+      !window.confirm(
+        `Apagar a conta de ${utilizador.nome} (${utilizador.email})? Não é possível desfazer.`
+      )
+    ) {
       return;
+    }
 
     setErro('');
     setSucesso('');
@@ -142,7 +232,11 @@ export default function useUtilizadores() {
 
     try {
       await apagarUtilizador(utilizador.id);
-      setUtilizadores(prev => prev.filter(u => u.id !== utilizador.id));
+
+      setUtilizadores(prev =>
+        prev.filter(u => u.id !== utilizador.id)
+      );
+
       setSucesso(`Conta de ${utilizador.nome} apagada.`);
     } catch (err) {
       if (sessaoInvalida(err)) {
@@ -150,6 +244,7 @@ export default function useUtilizadores() {
         navigate('/login', { replace: true });
         return;
       }
+
       setErro(mensagemDeErroUtilizador(err));
     } finally {
       setIdEmCurso(null);
@@ -165,8 +260,13 @@ export default function useUtilizadores() {
     erro,
     sucesso,
     idEmCurso,
-    handleApagar,
 
+    // Ações sobre utilizadores
+    handleApagar,
+    handleAbrirEdicao,
+
+    // Estado e ações do formulário
+    utilizadorEmEdicao,
     formAberto,
     dados,
     aCriar,

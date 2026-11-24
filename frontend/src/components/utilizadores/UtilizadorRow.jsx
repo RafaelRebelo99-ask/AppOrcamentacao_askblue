@@ -1,4 +1,4 @@
-export default function UtilizadorRow({ utilizador, emCurso, onApagar }) {
+export default function UtilizadorRow({ utilizador, emCurso, onApagar, onEditar }) {
   return (
     <tr>
       <td>{utilizador.nome}</td>
@@ -6,9 +6,19 @@ export default function UtilizadorRow({ utilizador, emCurso, onApagar }) {
       <td>
         <div className="estado">{utilizador.role}</div>
       </td>
-      <td className="ml-auto">
+      <td className="row ml-auto">
+        <button
+            type="button"
+            className="secondary"
+            disabled={emCurso}
+            onClick={() => onEditar(utilizador)}
+          >
+            <i className="bi bi-pencil"></i>
+            Editar
+          </button>
         {/* Os administradores não se apagam (o backend também recusa) */}
         {utilizador.role !== 'Administrador' && (
+          
           <button
             type="button"
             className="secondary danger"

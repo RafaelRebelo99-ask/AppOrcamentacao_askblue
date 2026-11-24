@@ -31,13 +31,15 @@ export default function Utilizadores() {
     handleFecharForm,
     handleChange,
     handleSubmit,
+    utilizadorEmEdicao,
+    handleAbrirEdicao,
   } = useUtilizadores();
 
   return (
     <Layout>
       <div className="row align-center">
         <h1 className='mb-05'>Utilizadores</h1>
-        <ThemeToggle/>
+        <ThemeToggle />
       </div>
       <div className="row mb-1 align-center">
         <Filters
@@ -67,6 +69,7 @@ export default function Utilizadores() {
           onCancelar={handleFecharForm}
           erro={erroForm}
           loading={aCriar}
+          modoEdicao={!!utilizadorEmEdicao}
         />
       )}
 
@@ -92,6 +95,7 @@ export default function Utilizadores() {
                 utilizador={utilizador}
                 emCurso={idEmCurso === utilizador.id}
                 onApagar={handleApagar}
+                onEditar={handleAbrirEdicao}
               />
             ))
           ) : (
