@@ -113,6 +113,10 @@ p {
     margin-bottom: 2rem;
 }
 
+.border-bottom {
+    border-bottom: var(--border);
+}
+
 .container {
     display: flex;
     height: 100%;
@@ -239,6 +243,7 @@ button.icon {
     justify-content: center;
     border: var(--border);
     text-wrap: nowrap;
+    color: var(--text-color);
 }
 
 .wide-left {
@@ -549,7 +554,7 @@ hr {
 .table tr {
     display: grid;
     grid-template-columns:
-        .25fr 1.5fr 1fr 0.8fr 0.8fr 1.2fr .8fr 1.5fr;
+        .3fr 1fr .8fr 0.8fr 1.5fr 1.2fr .8fr 1.5fr;
     align-items: center;
     width: 100%;
 }
@@ -790,4 +795,102 @@ button:hover .tooltip,
 button:focus-visible .tooltip {
     opacity: 1;
     visibility: visible;
+}
+
+/* DASHBOARD */
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+}
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.dashboard-header h1 {
+    margin-bottom: 0.4rem;
+}
+
+.dashboard-header p {
+    margin: 0;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.dashboard-stat {
+    padding: 1rem;
+    border: var(--border);
+    border-radius: var(--border-radius-md);
+    background: var(--sec-background-color);
+    color: var(--text-color);
+}
+
+.dashboard-stat h2 {
+    margin: 1rem 0 0.25rem;
+    font-size: 2rem;
+}
+
+.dashboard-stat i {
+    font-size: 1.2rem;
+}
+
+.dashboard-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1rem;
+}
+
+.dashboard-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+    border: var(--border);
+    border-radius: var(--border-radius-md);
+    background: var(--sec-background-color);
+    min-width: 0;
+}
+
+.dashboard-section h3 {
+    margin-bottom: 0.35rem;
+    color: var(--text-color);
+    font-weight: normal;
+    font-size: 1.5rem;
+}
+
+.dashboard-section p {
+    margin-top: 0;
+}
+
+.dashboard-section .row p {
+    margin-bottom: 0;
+}
+
+.dashboard-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.dashboard-empty > i {
+    font-size: 2rem;
+    opacity: 0.5;
+}
+
+.dashboard-empty p {
+    margin: 0;
 }

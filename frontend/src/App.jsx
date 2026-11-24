@@ -18,7 +18,7 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/oportunidades" element={<Oportunidades />} />
       <Route path="/historico" element={<Historico />} />
-      <Route path="/oportunidades/adicionar" element={<NovaOportunidade />} />
+      <Route path="/registar-oportunidade" element={<NovaOportunidade />} />
       <Route path="/orcamentos" element={<Orcamentos />} />
       <Route
         path="/orcamentos/novo/:oportunidadeId"
