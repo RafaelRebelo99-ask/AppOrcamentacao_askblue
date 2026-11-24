@@ -1,21 +1,13 @@
-const filtros = [
-  { label: 'Todas', value: 'Todas' },
-  { label: 'Registadas', value: 'Registada' },
-  { label: 'Em análise', value: 'EmAnalise' },
-  { label: 'Em preparação', value: 'EmPreparacao' },
-  { label: 'Proposta enviada', value: 'PropostaEnviada' },
-  { label: 'Ganhas', value: 'Ganha' },
-  { label: 'Perdidas', value: 'Perdida' },
-  { label: 'Canceladas', value: 'Cancelada' },
-];
+
 
 export default function OportunidadeFilters({
+  filtros,
   estadoSelecionado,
   contagens,
   onEstadoChange,
 }) {
   return (
-    <div className="row mb-1">
+    <div className="row align-center scroll">
       {filtros.map((filtro) => (
         <button
           key={filtro.value}

@@ -1,71 +1,131 @@
-// ===== VIEW: Orçamentos =====
-// Só o visual, passado do DEMO_FRONT/orcamentos.html. Ainda sem lógica:
-// filtros por estado, "Ordenar por", tema, "Abrir" e "Eliminar" não fazem nada.
-// Os dados abaixo são de exemplo; vão ser substituídos pelos de GET /api/orcamentos.
-import Layout from '../components/Layout'
-import ThemeToggle from '../components/ThemeToggle'
-import { ThemeProvider, useTheme } from '../controllers/ThemeController'
 
-const filtros = [
-  { nome: 'Todos', total: 3, selecionado: true },
-  { nome: 'Aceite', total: 2 },
-  { nome: 'Recusado', total: 1 },
-  { nome: 'Enviado', total: 0 },
-  { nome: 'Rascunho', total: 0 },
-]
+import { useState } from 'react';
+import Layout from '../components/Layout';
+import ThemeToggle from '../components/ThemeToggle';
+import Filters from '../components/Filters';
+import Sort from '../components/Sort';
 
 const orcamentosExemplo = [
-  { id: 'ORC-2026-001', estado: 'Aceite', servico: 'Serviço', categoria: 'Tecnologias', cliente: 'AskBlue' },
-  { id: 'ORC-2026-002', estado: 'Recusado', servico: 'Serviço', categoria: 'Tecnologias', cliente: 'Ageas' },
-  { id: 'ORC-2026-003', estado: 'Aceite', servico: 'Serviço', categoria: 'Tecnologias', cliente: 'Santander' },
-]
+  {
+    id: 'ORC-2026-001',
+    estado: 'Aceite',
+    titulo: 'Implementação de solução tecnológica',
+    categoria: 'Tecnologia',
+    cliente: 'Cliente A',
+    dataCriacao: '15/11/2026',
+    valor: 12000,
+  },
+  {
+    id: 'ORC-2026-002',
+    estado: 'Recusado',
+    titulo: 'Desenvolvimento de aplicação',
+    categoria: 'Tecnologia',
+    cliente: 'Cliente B',
+    dataCriacao: '12/11/2026',
+    valor: 52000,
+  },
+  {
+    id: 'ORC-2026-003',
+    estado: 'Aceite',
+    titulo: 'Consultoria tecnológica',
+    categoria: 'Tecnologia',
+    cliente: 'Cliente C',
+    dataCriacao: '10/11/2026',
+    valor: 8000,
+  },
+];
+
+const opcoesOrdenacao = [
+  { label: 'Data (Mais recente)', value: 'data-desc' },
+  { label: 'Data (Mais antigo)', value: 'data-asc' },
+  { label: 'Valor (Mais baixo)', value: 'valor-asc' },
+  { label: 'Valor (Mais alto)', value: 'valor-desc' },
+];
+
+const filtros = [
+  { label: 'Todos', value: 'Todos' },
+  { label: 'Aceite', value: 'Aceite' },
+  { label: 'Recusado', value: 'Recusado' },
+  { label: 'Enviado', value: 'Enviado' },
+  { label: 'Rascunho', value: 'Rascunho' },
+];
+
+const contagens = {
+  Todos: orcamentosExemplo.length,
+  Aceite: orcamentosExemplo.filter(o => o.estado === 'Aceite').length,
+  Recusado: orcamentosExemplo.filter(o => o.estado === 'Recusado').length,
+  Enviado: orcamentosExemplo.filter(o => o.estado === 'Enviado').length,
+  Rascunho: orcamentosExemplo.filter(o => o.estado === 'Rascunho').length,
+};
 
 export default function Orcamentos() {
-  const { darkMode, toggleTheme } = useTheme();
+  const [estadoSelecionado, setEstadoSelecionado] = useState('Todos');
+
+  const orcamentosFiltrados = [...orcamentosExemplo]
+    .filter(orcamento =>
+      estadoSelecionado === 'Todos' ||
+      orcamento.estado === estadoSelecionado
+    )
+
+  const [ordenacao, setOrdenacao] = useState('');
 
   return (
     <Layout>
-      <div className="row mb-1">
-        {filtros.map((f) => (
-          <button key={f.nome} className={'wide-left secondary' + (f.selecionado ? ' selected' : '')}>
-            {f.nome}<div className="counter">{f.total}</div>
-          </button>
-        ))}
+      <div className="row mb-1 align-center">
+        <Filters
+          filtros={filtros}
+          estadoSelecionado={estadoSelecionado}
+          contagens={contagens}
+          onEstadoChange={setEstadoSelecionado}
+        />
+
         <div className="vl"></div>
-        <button className="wide secondary" id="sortBtn">Ordenar por<i className="bi bi-caret-down"></i></button>
-        <div className="menu hidden" id="sortMenu">
-          <div className="item wide"><i className="bi bi-clock"></i><p>Data (Mais recente)</p></div>
-          <div className="item wide"><i className="bi bi-clock-history"></i><p>Data (Mais antigo)</p></div>
-          <div className="item wide"><i className="bi bi-sort-numeric-down"></i><p>Valor (Mais baixo)</p></div>
-          <div className="item wide"><i className="bi bi-sort-numeric-up"></i><p>Valor (Mais alto)</p></div>
-        </div>
-        <ThemeToggle/>
+        <Sort
+          opcoes={opcoesOrdenacao}
+          ordenacao={ordenacao}
+          onOrdenacaoChange={setOrdenacao}
+        />
+        <ThemeToggle />
       </div>
 
       <div className="grid">
-        {orcamentosExemplo.map((o) => (
-          <div className="card column" key={o.id}>
-            <div className="row space-between">
-              <div className="id">{o.id}</div>
-              <div className="estado">{o.estado}</div>
-            </div>
-            <div className="column">
-              <h2 className="mb-05">{o.servico}</h2>
-              <div className="row">
-                <div className="pill primary">{o.categoria}</div>
-                <div className="row gap-0">
-                  <p>{o.cliente}</p><i className="bi bi-check-lg"></i>
+        {orcamentosFiltrados.length > 0 ? (
+          orcamentosFiltrados.map(orcamento => (
+            <div className="card column" key={orcamento.id}>
+              <div className="row space-between">
+                <div className="id">{orcamento.id}</div>
+                <div className="estado">{orcamento.estado}</div>
+              </div>
+
+              <div className="column">
+                <h2 className="mb-05">{orcamento.titulo}</h2>
+
+                <div className="row">
+                  <div className="pill primary">{orcamento.categoria}</div>
+                  <div className="row gap-0">
+                    <p>{orcamento.cliente}</p>
+                    <i className="bi bi-check-lg"></i>
+                  </div>
                 </div>
               </div>
+
+              <hr />
+
+              <div className="row">
+                <button className="primary">Abrir</button>
+                <button className="secondary danger">Eliminar</button>
+              </div>
             </div>
-            <hr />
-            <div className="row">
-              <button className="primary">Abrir</button>
-              <button className="secondary danger">Eliminar</button>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>Não existem propostas neste estado.</p>
+        )}
       </div>
     </Layout>
-  )
+  );
+}
+
+function converterData(data) {
+  const [dia, mes, ano] = data.split('/');
+  return new Date(ano, mes - 1, dia).getTime();
 }

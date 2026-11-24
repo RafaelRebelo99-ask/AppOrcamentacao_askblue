@@ -8,6 +8,8 @@ import Dashboard from './views/Dashboard'
 import Oportunidades from './views/Oportunidades'
 import Orcamentos from './views/Orcamentos'
 import CriarOrcamento from './views/CriarOrcamento'
+import Historico from './views/Historico'
+import NovaOportunidade from './views/NovaOportunidade'
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/oportunidades" element={<Oportunidades />} />
+      <Route path="/historico" element={<Historico />} />
+      <Route path="/oportunidades/adicionar" element={<NovaOportunidade />} />
       <Route path="/orcamentos" element={<Orcamentos />} />
       <Route path="/orcamentos/novo" element={<CriarOrcamento />} />
 

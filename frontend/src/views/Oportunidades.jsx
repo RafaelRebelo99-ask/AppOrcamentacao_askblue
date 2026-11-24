@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
-import OportunidadeFilters from '../components/oportunidades/OportunidadeFilters';
+import Filters from '../components/Filters';
 import OportunidadeRow from '../components/oportunidades/OportunidadeRow';
+import Sort from '../components/Sort';
 
 const oportunidades = [
   {
@@ -28,6 +29,25 @@ const oportunidades = [
   },
 ];
 
+//isto pode ser hardcoded
+const opcoesOrdenacao = [
+  { label: 'Data (Mais recente)', value: 'data-desc' },
+  { label: 'Data (Mais antigo)', value: 'data-asc' },
+  { label: 'Prazo (Mais próximo)', value: 'prazo-asc' },
+  { label: 'Prazo (Mais distante)', value: 'prazo-desc' },
+];
+
+const filtros = [
+  { label: 'Todas', value: 'Todas' },
+  { label: 'Registadas', value: 'Registada' },
+  { label: 'Em análise', value: 'EmAnalise' },
+  { label: 'Em preparação', value: 'EmPreparacao' },
+  { label: 'Proposta enviada', value: 'PropostaEnviada' },
+  { label: 'Ganhas', value: 'Ganha' },
+  { label: 'Perdidas', value: 'Perdida' },
+  { label: 'Canceladas', value: 'Cancelada' },
+];
+
 const contagens = {
   Todas: oportunidades.length,
   Registada: oportunidades.filter(o => o.estado === 'Registada').length,
@@ -47,13 +67,25 @@ export default function Oportunidades() {
     oportunidade.estado === estadoSelecionado
   );
 
+  const [ordenacao, setOrdenacao] = useState('');
+
   return (
     <Layout>
-      <div className="row mb-1">
-        <OportunidadeFilters
+      <div className="row mb-1 align-center">
+        <Filters
+          filtros={filtros}
           estadoSelecionado={estadoSelecionado}
           contagens={contagens}
           onEstadoChange={setEstadoSelecionado}
+        />
+
+        <div className='vl'>
+        </div>
+
+        <Sort
+        opcoes={opcoesOrdenacao}
+          ordenacao={ordenacao}
+          onOrdenacaoChange={setOrdenacao}
         />
 
         <ThemeToggle />
