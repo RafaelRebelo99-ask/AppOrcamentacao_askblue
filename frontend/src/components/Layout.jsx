@@ -2,10 +2,13 @@
 // Barra lateral (Pesquisa / Trabalhos / Orçamentos) + conteúdo da página + rodapé.
 // Passado do DEMO_FRONT (index.html, trabalhos.html, orcamentos.html), que repetiam isto em cada página.
 // Uso: <Layout> ...conteúdo da página... </Layout>
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import logo from '../assets/askblue-logo-oficial-rgb.png'
 import logoDark from '../assets/askblue-logo-negativo-rgb.png'
 import { useTheme } from '../controllers/ThemeController'
+import { limparSessao, obterUtilizador } from '../models/loginModel'
+
+const ROLES = ['Colaborador', 'Administrador', 'Cliente']
 
 // O NavLink marca com "selected" o link da página onde estamos (classe do askblue.css)
 function classeLink({ isActive }) {
@@ -14,23 +17,15 @@ function classeLink({ isActive }) {
 
 export default function Layout({ children }) {
   const { darkMode } = useTheme()
+  const navigate = useNavigate()
 
-  //const navigate = useNavigate();
+  // Utilizador autenticado (guardado no loginModel)
+  const utilizador = obterUtilizador()
 
-  // Get authenticated user
-  const utilizadorGuardado =
-    localStorage.getItem('utilizador') ||
-    sessionStorage.getItem('utilizador');
-
-  let utilizador = null;
-
-  try {
-    utilizador = utilizadorGuardado
-      ? JSON.parse(utilizadorGuardado)
-      : null;
-  } catch {
-    utilizador = null;
-  }
+  const roleTexto =
+    typeof utilizador?.role === 'number'
+      ? (ROLES[utilizador.role] ?? 'Sem função')
+      : (utilizador?.role || 'Sem função')
 
   // iniciais do utilizador (para a foto)
   const iniciais = utilizador?.nome
@@ -41,18 +36,13 @@ export default function Layout({ children }) {
       .map(palavra => palavra[0])
       .join('')
       .toUpperCase()
-    : '??';
+    : '??'
 
-  // Logout
+  // Logout: limpa token e dados do utilizador e volta para o ecrã de login
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('utilizador');
-
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('utilizador');
-
-    navigate('/login');
-  };
+    limparSessao()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <>
@@ -90,7 +80,7 @@ export default function Layout({ children }) {
                     </p>
 
                     <p id="user-role" className="weak">
-                      {utilizador?.role || 'Sem função'}
+                      {roleTexto}
                     </p>
                   </div>
                 </div>

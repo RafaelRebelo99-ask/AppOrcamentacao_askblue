@@ -42,12 +42,20 @@ export function guardarSessao(dados, rememberMe) {
 
 export function obterUtilizador() {
   const texto = localStorage.getItem('utilizador') || sessionStorage.getItem('utilizador')
-  return texto ? JSON.parse(texto) : null
+  if (!texto) return null
+
+  try {
+    return JSON.parse(texto)
+  } catch {
+    return null
+  }
 }
 
 export function limparSessao() {
   localStorage.removeItem('token')
+  localStorage.removeItem('accessToken')
   localStorage.removeItem('utilizador')
   sessionStorage.removeItem('token')
+  sessionStorage.removeItem('accessToken')
   sessionStorage.removeItem('utilizador')
 }
