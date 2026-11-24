@@ -23,9 +23,13 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/oportunidades" element={<Oportunidades />} />
+<<<<<<< Updated upstream
         <Route path="/oportunidades/adicionar" element={<NovaOportunidade />} />
         <Route path="/historico" element={<Historico />} />
         <Route path="/utilizadores" element={<Utilizadores />} />
+=======
+        <Route path="/registar-oportunidade" element={<NovaOportunidade />} />
+>>>>>>> Stashed changes
         <Route path="/orcamentos" element={<Orcamentos />} />
         <Route path="/orcamentos/novo/:oportunidadeId" element={<CriarOrcamento />} />
       </Route>
