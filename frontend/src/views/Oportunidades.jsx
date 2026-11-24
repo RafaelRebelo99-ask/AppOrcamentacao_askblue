@@ -6,6 +6,7 @@ import Filters from '../components/Filters';
 import OportunidadeRow from '../components/oportunidades/OportunidadeRow';
 import Sort from '../components/Sort';
 
+// vai se buscar à API
 const oportunidades = [
   {
     id: 1,
@@ -37,6 +38,7 @@ const opcoesOrdenacao = [
   { label: 'Prazo (Mais distante)', value: 'prazo-desc' },
 ];
 
+// vai se buscar à API (são os estados)
 const filtros = [
   { label: 'Todas', value: 'Todas' },
   { label: 'Registadas', value: 'Registada' },
