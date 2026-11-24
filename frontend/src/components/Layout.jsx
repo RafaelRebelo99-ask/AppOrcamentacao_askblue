@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 import logo from '../assets/askblue-logo-oficial-rgb.png'
 import logoDark from '../assets/askblue-logo-negativo-rgb.png'
 import { useTheme } from '../controllers/ThemeController'
+import { podeGerirOportunidades } from '../models/oportunidadesModel'
 
 // O NavLink marca com "selected" o link da página onde estamos (classe do askblue.css)
 function classeLink({ isActive }) {
@@ -43,6 +44,14 @@ export default function Layout({ children }) {
       .toUpperCase()
     : '??';
 
+  const roles = {
+    0: 'Colaborador',
+    1: 'Administrador',
+    2: 'Cliente',
+  };
+
+  const role = roles[utilizador?.role] || 'Sem função';
+
   // Logout
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -74,7 +83,7 @@ export default function Layout({ children }) {
               <i className="bi bi-clock"></i>Histórico
             </NavLink>
             <hr></hr>
-            <NavLink to="/oportunidades/adicionar" className={classeLink}>
+            <NavLink to="/registar-oportunidade" className={classeLink}>
               <i className="bi bi-clipboard-plus"></i>Nova Oportunidade
             </NavLink>
 
@@ -90,21 +99,21 @@ export default function Layout({ children }) {
                     </p>
 
                     <p id="user-role" className="weak">
-                      {utilizador?.role || 'Sem função'}
+                      {role || 'Sem função'}
                     </p>
                   </div>
                 </div>
 
-                
-                  <button
-                    type="button"
-                    className="more-actions transparent w-100 justify-start"
-                    onClick={handleLogout}
-                  >
-                    <i className='bi bi-arrow-bar-right'></i>
-                    <p>Terminar sessão</p>
-                  </button>
-                  
+
+                <button
+                  type="button"
+                  className="more-actions transparent w-100 justify-start"
+                  onClick={handleLogout}
+                >
+                  <i className='bi bi-arrow-bar-right'></i>
+                  <p>Terminar sessão</p>
+                </button>
+
 
               </div>
             </div>
