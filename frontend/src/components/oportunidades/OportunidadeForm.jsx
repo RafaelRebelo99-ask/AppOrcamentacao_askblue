@@ -1,126 +1,135 @@
+import Select from "../Select";
+
 export default function OportunidadeForm({
-  dados,
-  clientes,
-  categorias,
-  onChange,
-  onSubmit,
-  onCancelar,
-  erro,
-  loading,
+    dados,
+    clientes,
+    categorias,
+    onChange,
+    onSubmit,
+    onCancelar,
+    erro,
+    loading,
 }) {
-  return (
-    <form onSubmit={onSubmit} className="column gap-2">
+    return (
+        <form onSubmit={onSubmit} className="column gap-2">
 
-      <div className="column">
-        <h2>Informação geral</h2>
+            <div className="column">
+                <h2 className="mb-05">Informação geral</h2>
 
-        <label>Título *</label>
-        <input
-          name="titulo"
-          value={dados.titulo}
-          onChange={onChange}
-          maxLength={200}
-          required
-        />
+                <label>Título *</label>
+                <input
+                    name="titulo"
+                    value={dados.titulo}
+                    onChange={onChange}
+                    maxLength={200}
+                    required
+                    className="mb-05"
+                />
 
-        <label>Descrição *</label>
-        <textarea
-          name="descricao"
-          value={dados.descricao}
-          onChange={onChange}
-          rows={5}
-          required
-        />
-      </div>
+                <label>Descrição *</label>
+                <textarea
+                    name="descricao"
+                    value={dados.descricao}
+                    onChange={onChange}
+                    rows={5}
+                    required
+                    className="mb-05"
+                />
+            </div>
 
-      <hr />
+            <hr className="mb-1" />
 
-      <div className="column">
-        <h2>Classificação</h2>
+            <div className="row">
+                <div className="column mb-1">
+                    <h2 className="mb-05">Classificação</h2>
 
-        <label>Cliente *</label>
-        <select
-          name="idCliente"
-          value={dados.idCliente}
-          onChange={onChange}
-          required
-        >
-          <option value="">Selecionar cliente</option>
+                    <label>Cliente *</label>
+                    <Select
+                    className="mb-05"
+                        name="idCliente"
+                        value={dados.idCliente}
+                        onChange={(value) =>
+                            onChange({
+                                target: {
+                                    name: 'idCliente',
+                                    value
+                                }
+                            })
+                        }
+                        placeholder="Selecionar cliente"
+                        options={clientes.map(cliente => ({
+                            value: cliente.id,
+                            label: cliente.nome
+                        }))}
+                    />
 
-          {clientes.map(cliente => (
-            <option key={cliente.id} value={cliente.id}>
-              {cliente.nome}
-            </option>
-          ))}
-        </select>
+                    <label>Categoria *</label>
+                    <Select
+                    name="idCategoria"
+                        value={dados.idCategoria}
+                        onChange={(value) =>
+                            onChange({
+                                target: {
+                                    name: 'idCategoria',
+                                    value
+                                }
+                            })
+                        }
+                        placeholder="Selecionar categoria"
+                        options={categorias.map(categorias => ({
+                            value: categorias.id,
+                            label: categorias.nome
+                        }))}
+                    />
+                </div>
 
-        <label>Categoria *</label>
-        <select
-          name="idCategoria"
-          value={dados.idCategoria}
-          onChange={onChange}
-          required
-        >
-          <option value="">Selecionar categoria</option>
+                <div className="column">
+                    <h2 className="mb-05">Datas</h2>
 
-          {categorias.map(categoria => (
-            <option key={categoria.id} value={categoria.id}>
-              {categoria.nome}
-            </option>
-          ))}
-        </select>
-      </div>
+                    <label>Prazo da proposta</label>
+                    <input
+                        type="date"
+                        name="prazoProposta"
+                        value={dados.prazoProposta}
+                        onChange={onChange}
+                        className="mb-05"
+                    />
 
-      <hr />
+                    <label>Data pretendida</label>
+                    <input
+                        type="date"
+                        name="dataPretendida"
+                        value={dados.dataPretendida}
+                        onChange={onChange}
+                    />
 
-      <div className="column">
-        <h2>Datas</h2>
+                </div>
 
-        <div className="row">
-          <div className="column" style={{ flex: 1 }}>
-            <label>Prazo da proposta</label>
-            <input
-              type="date"
-              name="prazoProposta"
-              value={dados.prazoProposta}
-              onChange={onChange}
-            />
-          </div>
 
-          <div className="column" style={{ flex: 1 }}>
-            <label>Data pretendida</label>
-            <input
-              type="date"
-              name="dataPretendida"
-              value={dados.dataPretendida}
-              onChange={onChange}
-            />
-          </div>
-        </div>
-      </div>
+                {erro && <p className="danger">{erro}</p>}
+            </div>
 
-      {erro && <p className="danger">{erro}</p>}
 
-      <hr />
+            <hr />
 
-      <div className="row">
-        <button
-          type="button"
-          className="secondary"
-          onClick={onCancelar}
-        >
-          Cancelar
-        </button>
+            <div className="row mt-auto">
+                <button
+                    type="button"
+                    className="secondary"
+                    onClick={onCancelar}
+                >
+                    Cancelar
+                </button>
 
-        <button
-          type="submit"
-          className="primary"
-          disabled={loading}
-        >
-          {loading ? 'A registar...' : 'Registar oportunidade'}
-        </button>
-      </div>
+                <button
+                    type="submit"
+                    className="primary"
+                    disabled={loading}
+                >
+                    {loading ? 'A registar...' : 'Registar oportunidade'}
+                </button>
+            </div>
 
-    </form>
-  );
+        </form>
+    );
 }

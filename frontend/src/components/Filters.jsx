@@ -1,5 +1,3 @@
-
-
 export default function OportunidadeFilters({
   filtros,
   estadoSelecionado,
@@ -7,7 +5,7 @@ export default function OportunidadeFilters({
   onEstadoChange,
 }) {
   return (
-    <div className="row align-center scroll">
+    <div className="row align-center">
       {filtros.map((filtro) => (
         <button
           key={filtro.value}
