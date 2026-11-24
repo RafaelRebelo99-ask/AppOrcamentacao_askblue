@@ -48,10 +48,7 @@ export default function Select({
     }
 
     return (
-        <div
-            className={`${className}`}
-            ref={selectRef}
-        >
+        <div className={`${className}`} ref={selectRef}>
             <button
                 type="button"
                 className={`wide secondary pos-rel ${isOpen ? 'active' : ''}`}
@@ -60,28 +57,23 @@ export default function Select({
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
             >
-                <span>
-                    {selectedOption?.label || placeholder}
-                </span>
-
+                <span>{selectedOption?.label || placeholder}</span>
                 <i className={`bi bi-caret-${isOpen ? 'up' : 'down'}`} />
             </button>
 
             {isOpen && (
-                <div className="menu" role="listbox">
+                <div className="menu custom-select-menu" role="listbox">
                     {options.map((option) => (
                         <button
                             type="button"
                             key={option.value}
-                            className={`item ${
-                                option.value === value ? 'selected' : ''
-                            }`}
+                            className={`item w-100 ${option.value === value ? 'selected' : ''
+                                }`}
                             onClick={() => handleSelect(option)}
                             role="option"
                             aria-selected={option.value === value}
                         >
                             {option.label}
-
                             {option.value === value && (
                                 <i className="bi bi-check2" />
                             )}

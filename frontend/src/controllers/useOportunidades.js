@@ -116,6 +116,7 @@ export default function useOportunidadesController() {
   };
 
   return {
+    oportunidades,
     oportunidadesFiltradas,
     estadoSelecionado,
     setEstadoSelecionado,

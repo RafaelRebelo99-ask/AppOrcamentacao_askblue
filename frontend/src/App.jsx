@@ -10,27 +10,30 @@ import Orcamentos from './views/Orcamentos'
 import CriarOrcamento from './views/CriarOrcamento'
 import Historico from './views/Historico'
 import NovaOportunidade from './views/NovaOportunidade'
-import Utilizadores from './views/Utilizadores' 
+import Utilizadores from './views/Utilizadores'
+import ProtectedRoute from './components/ProtectRoute'
 
-
-
-export default function App() {
+function App() {
   return (
     <Routes>
+      {/* Página pública */}
       <Route path="/login" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/oportunidades" element={<Oportunidades />} />
-      <Route path="/historico" element={<Historico />} />
-      <Route path="/oportunidades/adicionar" element={<NovaOportunidade />} />
-      <Route path="/orcamentos" element={<Orcamentos />} />
-      <Route path="/utilizadores" element={<Utilizadores />} />
-      <Route
-        path="/orcamentos/novo/:oportunidadeId"
-        element={<CriarOrcamento />}
-      />
 
-      {/* Por agora, qualquer outro endereço vai para o login */}
+      {/* Páginas protegidas */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/oportunidades" element={<Oportunidades />} />
+        <Route path="/oportunidades/adicionar" element={<NovaOportunidade />} />
+        <Route path="/historico" element={<Historico />} />
+        <Route path="/utilizadores" element={<Utilizadores />} />
+        <Route path="/orcamentos" element={<Orcamentos />} />
+        <Route path="/orcamentos/novo/:oportunidadeId" element={<CriarOrcamento />} />
+      </Route>
+
+      {/* Qualquer rota desconhecida */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
-  )
+  );
 }
+
+export default App;
