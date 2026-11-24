@@ -81,11 +81,11 @@ export default function Oportunidades() {
               />
             ))
           ) : (
-            <tr>
-              <td colSpan="8" style={{ textAlign: 'center' }}>
-                Não existem oportunidades neste estado.
-              </td>
-            </tr>
+
+            <td colSpan="8" style={{ textAlign: 'center' }}>
+              Não existem oportunidades neste estado.
+            </td>
+
           )}
         </tbody>
       </table>

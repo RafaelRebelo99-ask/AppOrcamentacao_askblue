@@ -31,11 +31,11 @@ export default function Layout({ children }) {
             <NavLink to="/orcamentos" end className={classeLink}>
               <i className="bi bi-file-earmark-spreadsheet"></i>Orçamentos
             </NavLink>
-            <NavLink to="" end className={classeLink}>
+            <NavLink to="/historico" end className={classeLink}>
               <i className="bi bi-clock"></i>Histórico
             </NavLink>
             <hr></hr>
-            <NavLink to="" className={classeLink}>
+            <NavLink to="/oportunidades/adicionar" className={classeLink}>
               <i className="bi bi-clipboard-plus"></i>Nova Oportunidade
             </NavLink>
           </div>

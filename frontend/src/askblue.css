@@ -34,10 +34,10 @@
     --primary-blue: #ededed;
     --secondary-blue: #cccccc;
     --danger-color: #ff5151;
-    --background-color: rgb(17, 17, 20);
-    --sec-background-color: rgb(0, 0, 0);
+    --background-color: rgb(29, 29, 34);
+    --sec-background-color: rgb(19, 19, 20);
     --border: 1px solid var(--border-color);
-    --border-color: #29292c;
+    --border-color: #424248;
     --secondary-hover: var(--sec-background-color);
     --text-color: white;
 
@@ -195,6 +195,8 @@ select {
     justify-content: center;
     width: fit-content;
     height: 2.25rem;
+    text-wrap: nowrap;
+    color: var(--text-color);
 }
 
 .nav a.transparent,
@@ -391,6 +393,7 @@ button.secondary.danger:hover {
 
 .menu .item.danger:hover {
     background-color: var(--red-bg);
+    border-color: var(--red-bg);
 
     i,
     p {
@@ -547,6 +550,10 @@ hr {
     margin-left: auto;
 }
 
+.mt-auto {
+    margin-top: auto;
+}
+
 .table td,
 th {
     display: flex;
@@ -602,7 +609,9 @@ textarea {
 }
 
 input:focus,
-input:hover {
+input:hover,
+textarea:hover,
+textarea:focus {
     background-color: var(--secondary-hover);
 }
 

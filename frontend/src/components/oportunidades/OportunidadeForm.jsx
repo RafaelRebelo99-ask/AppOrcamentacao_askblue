@@ -12,7 +12,7 @@ export default function OportunidadeForm({
         <form onSubmit={onSubmit} className="column gap-2">
 
             <div className="column">
-                <h2>Informação geral</h2>
+                <h2 className="mb-05">Informação geral</h2>
 
                 <label>Título *</label>
                 <input
@@ -21,6 +21,7 @@ export default function OportunidadeForm({
                     onChange={onChange}
                     maxLength={200}
                     required
+                    className="mb-05"
                 />
 
                 <label>Descrição *</label>
@@ -30,14 +31,15 @@ export default function OportunidadeForm({
                     onChange={onChange}
                     rows={5}
                     required
+                    className="mb-05"
                 />
             </div>
 
             <hr className="mb-1" />
 
             <div className="row">
-                <div className="column">
-                    <h2>Classificação</h2>
+                <div className="column mb-1">
+                    <h2 className="mb-05">Classificação</h2>
 
                     <label>Cliente *</label>
                     <select
@@ -45,6 +47,7 @@ export default function OportunidadeForm({
                         value={dados.idCliente}
                         onChange={onChange}
                         required
+                        className="mb-05"
                     >
                         <option value="">Selecionar cliente</option>
 
@@ -73,30 +76,27 @@ export default function OportunidadeForm({
                 </div>
 
                 <div className="column">
-                    <h2>Datas</h2>
+                    <h2 className="mb-05">Datas</h2>
 
-                    <div className="column">
-                        <div className="column" style={{ flex: 1 }}>
-                            <label>Prazo da proposta</label>
-                            <input
-                                type="date"
-                                name="prazoProposta"
-                                value={dados.prazoProposta}
-                                onChange={onChange}
-                            />
-                        </div>
+                    <label>Prazo da proposta</label>
+                    <input
+                        type="date"
+                        name="prazoProposta"
+                        value={dados.prazoProposta}
+                        onChange={onChange}
+                        className="mb-05"
+                    />
 
-                        <div className="column" style={{ flex: 1 }}>
-                            <label>Data pretendida</label>
-                            <input
-                                type="date"
-                                name="dataPretendida"
-                                value={dados.dataPretendida}
-                                onChange={onChange}
-                            />
-                        </div>
-                    </div>
+                    <label>Data pretendida</label>
+                    <input
+                        type="date"
+                        name="dataPretendida"
+                        value={dados.dataPretendida}
+                        onChange={onChange}
+                    />
+
                 </div>
+
 
                 {erro && <p className="danger">{erro}</p>}
             </div>
@@ -104,7 +104,7 @@ export default function OportunidadeForm({
 
             <hr />
 
-            <div className="row">
+            <div className="row mt-auto">
                 <button
                     type="button"
                     className="secondary"
