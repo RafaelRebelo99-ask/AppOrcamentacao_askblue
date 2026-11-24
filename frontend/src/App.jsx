@@ -4,7 +4,8 @@
 // as chamadas à API em models/ e acrescentar a rota aqui.
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './views/Login'
-import Trabalhos from './views/Oportunidades'
+import Dashboard from './views/Dashboard'
+import Oportunidades from './views/Oportunidades'
 import Orcamentos from './views/Orcamentos'
 import CriarOrcamento from './views/CriarOrcamento'
 
@@ -12,7 +13,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/oportunidades" element={<Trabalhos />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/oportunidades" element={<Oportunidades />} />
       <Route path="/orcamentos" element={<Orcamentos />} />
       <Route path="/orcamentos/novo" element={<CriarOrcamento />} />
 
