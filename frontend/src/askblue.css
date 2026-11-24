@@ -376,7 +376,8 @@ button.secondary.danger:hover {
     flex-wrap: wrap;
 }
 
-.menu .item, .option {
+.menu .item,
+.option {
     display: flex;
     align-items: center;
     gap: var(--gap);
@@ -391,12 +392,14 @@ button.secondary.danger:hover {
     justify-content: start;
 }
 
-.menu .item.disabled, option.disabled {
+.menu .item.disabled,
+option.disabled {
     opacity: 0.5;
     pointer-events: none;
 }
 
-.menu .item.danger, .option.danger {
+.menu .item.danger,
+.option.danger {
     color: var(--danger-color);
 
     i,
@@ -405,7 +408,8 @@ button.secondary.danger:hover {
     }
 }
 
-.menu .item.danger:hover, option.danger:hover {
+.menu .item.danger:hover,
+option.danger:hover {
     background-color: var(--red-bg);
     border-color: var(--red-bg);
 
@@ -489,7 +493,7 @@ i {
 }
 
 .menu.right {
-     right: 0;
+    right: 0;
 }
 
 .more-actions:hover,
@@ -886,11 +890,29 @@ button:focus-visible .tooltip {
     text-align: center;
 }
 
-.dashboard-empty > i {
+.dashboard-empty>i {
     font-size: 2rem;
     opacity: 0.5;
 }
 
 .dashboard-empty p {
     margin: 0;
+}
+
+.modal {
+    box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.363);
+    z-index: 123;
+    max-width: 30rem;
+    position: relative;
+    transform: translateY(-5rem);
+}
+
+.overlay {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 122;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
