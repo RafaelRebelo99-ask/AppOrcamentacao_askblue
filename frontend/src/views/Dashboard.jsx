@@ -66,12 +66,12 @@ export default function Dashboard() {
             <main className="dashboard">
                 <section className="dashboard-header">
                     <div>
-                        <h1>Bom dia, {nome}!</h1>
+                        <h1>Bem vindo, {nome}</h1>
                         <p className="weak">
                             Aqui está o resumo da tua atividade comercial.
                         </p>
                     </div>
-                    <ThemeToggle/>
+                    <ThemeToggle />
                 </section>
 
                 <section className="dashboard-stats">
@@ -110,20 +110,28 @@ export default function Dashboard() {
                             </button>
                         </div>
 
-                        <div className="dashboard-empty">
-                            <i className="bi bi-clipboard"></i>
-                            <p>Ainda não existem oportunidades para apresentar.</p>
-                            <button
-                                type="button"
-                                className="secondary"
-                                onClick={() => navigate('/registar-oportunidade')}
-                            >
-                                Criar oportunidade
-                            </button>
-                        </div>
+                        {loading ? (
+                            <p className="weak">A carregar oportunidades...</p>
+                        ) : recentes.length === 0 ? (
+                            <div className="dashboard-empty">
+                                <i className="bi bi-briefcase"></i>
+                                <p>Ainda não existem oportunidades.</p>
+                            </div>
+                        ) : (
+                            <div className="column ">
+                                {recentes.map(oportunidade => (
+                                    <div className="row pad align-center border-bottom" key={oportunidade.id}>
+                                        <p>{oportunidade.titulo}</p>
+                                        <div className="estado">{oportunidade.estado}</div>
+                                        <p className='ml-auto'>Prazo da proposta: </p>
+                                        <div className="date">{oportunidade.prazo}</div>
+                                    </div>
+
+                                ))}
+                            </div>
+                        )}
                     </article>
 
-                    {/* Pending actions */}
                     <article className="dashboard-section">
                         <div>
                             <h3>Ações pendentes</h3>

@@ -113,6 +113,10 @@ p {
     margin-bottom: 2rem;
 }
 
+.border-bottom {
+    border-bottom: var(--border);
+}
+
 .container {
     display: flex;
     height: 100%;
@@ -239,6 +243,7 @@ button.icon {
     justify-content: center;
     border: var(--border);
     text-wrap: nowrap;
+    color: var(--text-color);
 }
 
 .wide-left {
