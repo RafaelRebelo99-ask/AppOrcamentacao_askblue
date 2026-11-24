@@ -20,7 +20,10 @@ export default function App() {
       <Route path="/historico" element={<Historico />} />
       <Route path="/oportunidades/adicionar" element={<NovaOportunidade />} />
       <Route path="/orcamentos" element={<Orcamentos />} />
-      <Route path="/orcamentos/novo" element={<CriarOrcamento />} />
+      <Route
+        path="/orcamentos/novo/:oportunidadeId"
+        element={<CriarOrcamento />}
+      />
 
       {/* Por agora, qualquer outro endereço vai para o login */}
       <Route path="*" element={<Navigate to="/login" replace />} />

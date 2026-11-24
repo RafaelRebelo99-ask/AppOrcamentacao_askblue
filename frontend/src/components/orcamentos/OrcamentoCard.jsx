@@ -1,29 +1,74 @@
-export default function OrcamentoCard({ orcamento }) {
-    return (
-        <div className="card column" key={orcamento.id}>
-            <div className="row space-between align-center mb-1">
-                <div className="id">{orcamento.id}</div>
-                <div className="estado">{orcamento.estado}</div>
-            </div>
+function formatarData(data) {
+  if (!data) return '—';
 
-            <div className="column">
-                <h2 className="mb-05">{orcamento.titulo}</h2>
+  return new Date(data).toLocaleDateString('pt-PT');
+}
 
-                <div className="row align-center">
-                    <div className="pill primary">{orcamento.categoria}</div>
-                    <div className="row gap-0 align-center">
-                        <p>{orcamento.cliente}</p>
-                        <i className="bi bi-check-lg"></i>
-                    </div>
-                </div>
-            </div>
+function formatarValor(valor) {
+  return Number(valor).toLocaleString('pt-PT', {
+    style: 'currency',
+    currency: 'EUR',
+  });
+}
 
-            <hr />
-
-            <div className="row">
-                <button className="primary">Abrir</button>
-                <button className="secondary danger">Eliminar</button>
-            </div>
+export default function OrcamentoCard({ orcamento, onEliminar }) {
+  return (
+    <div className="card column">
+      <div className="row space-between align-center mb-1">
+        <div className="id">
+          {orcamento.id.slice(0, 8)}
         </div>
-    );
+
+        <div className="estado">
+          {orcamento.estado}
+        </div>
+      </div>
+
+      <div className="column">
+        <h2 className="mb-05">
+          {orcamento.descricao}
+        </h2>
+
+        <p>
+          Oportunidade: {orcamento.idOportunidade}
+        </p>
+
+        <p>
+          Criada em: {formatarData(orcamento.dataCriacao)}
+        </p>
+
+        <p>
+          Validade: {formatarData(orcamento.dataValidade)}
+        </p>
+
+        <p>
+          Valor sem IVA: {formatarValor(orcamento.valorSemIVA)}
+        </p>
+
+        <p>
+          IVA ({orcamento.taxaIVA}%):{' '}
+          {formatarValor(orcamento.valorTotal - orcamento.valorSemIVA)}
+        </p>
+
+        <strong>
+          Total: {formatarValor(orcamento.valorTotal)}
+        </strong>
+
+        {orcamento.expirado && (
+          <p className="danger">Proposta expirada</p>
+        )}
+      </div>
+
+      {orcamento.estado === 'Rascunho' && (
+        <div className="row">
+          <button
+            className="secondary danger"
+            onClick={() => onEliminar(orcamento)}
+          >
+            Eliminar rascunho
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
