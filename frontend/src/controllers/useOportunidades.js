@@ -1,82 +1,118 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { limparSessao } from '../models/loginModel';
+import {
+  cancelarOportunidade,
+  iniciarAnalise,
+  iniciarPreparacao,
+  listarOportunidades,
+  marcarComoPerdida,
+  mensagemDeErro,
+  podeGerirOportunidades,
+  sessaoInvalida,
+} from '../models/oportunidadesModel';
 
-const oportunidadesMock = [
-  {
-    id: 1,
-    titulo: 'Implementação de solução tecnológica',
-    estado: 'EmPreparacao',
-    cliente: 'Cliente A',
-    categoria: 'Tecnologia',
-    prazo: '20/11/2026',
-    aviso: { texto: 'Em 2 dias', cor: 'yellow' },
-    valor: '12.000,00 €',
-  },
-  {
-    id: 2,
-    titulo: 'Desenvolvimento de aplicação',
-    estado: 'Registada',
-    cliente: 'Cliente B',
-    categoria: 'Tecnologia',
-    prazo: '18/11/2026',
-    aviso: { texto: 'Atrasado', cor: 'red' },
-    valor: '52.000,00 €',
-  },
-];
-
-function converterData(data) {
-  const [dia, mes, ano] = data.split('/');
-  return new Date(ano, mes - 1, dia).getTime();
+// Oportunidades sem prazo ficam sempre no fim, qualquer que seja a ordem
+function compararPrazo(a, b, sentido) {
+  if (a.prazoTempo === null && b.prazoTempo === null) return 0;
+  if (a.prazoTempo === null) return 1;
+  if (b.prazoTempo === null) return -1;
+  return (a.prazoTempo - b.prazoTempo) * sentido;
 }
 
 export default function useOportunidadesController() {
-  const [oportunidades, setOportunidades] = useState(oportunidadesMock);
+  const navigate = useNavigate();
+
+  const [oportunidades, setOportunidades] = useState([]);
   const [estadoSelecionado, setEstadoSelecionado] = useState('Todas');
-  const [ordenacao, setOrdenacao] = useState('data-desc');
+  const [ordenacao, setOrdenacao] = useState('prazo-asc');
+
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState('');
+  const [idEmCurso, setIdEmCurso] = useState(null); // oportunidade com uma ação a decorrer
+
+  const [podeGerir] = useState(podeGerirOportunidades);
+
+  // Carregar a lista ao abrir a página
+  useEffect(() => {
+    let ativo = true; // evita mexer no estado se o utilizador já saiu da página
+
+    listarOportunidades()
+      .then(lista => {
+        if (ativo) setOportunidades(lista);
+      })
+      .catch(err => {
+        if (!ativo) return;
+
+        if (sessaoInvalida(err)) {
+          limparSessao();
+          navigate('/login', { replace: true });
+          return;
+        }
+        setErro(mensagemDeErro(err));
+      })
+      .finally(() => {
+        if (ativo) setLoading(false);
+      });
+
+    return () => { ativo = false; };
+  }, [navigate]);
+
+  const contar = estado => oportunidades.filter(o => o.estado === estado).length;
 
   const contagens = {
     Todas: oportunidades.length,
-    Registada: oportunidades.filter(o => o.estado === 'Registada').length,
-    EmAnalise: oportunidades.filter(o => o.estado === 'EmAnalise').length,
-    EmPreparacao: oportunidades.filter(o => o.estado === 'EmPreparacao').length,
-    PropostaEnviada: oportunidades.filter(o => o.estado === 'PropostaEnviada').length,
-    Ganha: oportunidades.filter(o => o.estado === 'Ganha').length,
-    Perdida: oportunidades.filter(o => o.estado === 'Perdida').length,
-    Cancelada: oportunidades.filter(o => o.estado === 'Cancelada').length,
+    Registada: contar('Registada'),
+    EmAnalise: contar('EmAnalise'),
+    EmPreparacao: contar('EmPreparacao'),
+    PropostaEnviada: contar('PropostaEnviada'),
+    Ganha: contar('Ganha'),
+    Perdida: contar('Perdida'),
+    Cancelada: contar('Cancelada'),
   };
 
-  const oportunidadesFiltradas = [...oportunidades]
+  const oportunidadesFiltradas = oportunidades
     .filter(o =>
       estadoSelecionado === 'Todas' ||
       o.estado === estadoSelecionado
     )
-    .sort((a, b) => {
-      switch (ordenacao) {
-        case 'data-desc':
-          return converterData(b.prazo) - converterData(a.prazo);
-        case 'data-asc':
-          return converterData(a.prazo) - converterData(b.prazo);
-        case 'prazo-asc':
-          return converterData(a.prazo) - converterData(b.prazo);
-        case 'prazo-desc':
-          return converterData(b.prazo) - converterData(a.prazo);
-        default:
-          return 0;
+    .sort((a, b) => compararPrazo(a, b, ordenacao === 'prazo-desc' ? -1 : 1));
+
+  // Chama a API e volta a carregar a lista, para mostrar o estado que ficou no backend
+  const executar = async (oportunidade, acao) => {
+    setErro('');
+    setIdEmCurso(oportunidade.id);
+
+    try {
+      await acao(oportunidade.id);
+      setOportunidades(await listarOportunidades());
+    } catch (err) {
+      if (sessaoInvalida(err)) {
+        limparSessao();
+        navigate('/login', { replace: true });
+        return;
       }
-    });
-
-  const handleConsultar = (oportunidade) => {
-    // Navegar para os detalhes da oportunidade
-    console.log('Consultar:', oportunidade.id);
+      setErro(mensagemDeErro(err));
+    } finally {
+      setIdEmCurso(null);
+    }
   };
 
-  const handleEditar = (oportunidade) => {
-    // Navegar para edição da oportunidade
-    console.log('Editar:', oportunidade.id);
+  const handleIniciarAnalise = oportunidade =>
+    executar(oportunidade, iniciarAnalise);
+
+  const handleIniciarPreparacao = oportunidade =>
+    executar(oportunidade, iniciarPreparacao);
+
+  // Perdida e Cancelada não têm volta atrás: pede confirmação
+  const handlePerdida = (oportunidade) => {
+    if (window.confirm(`Marcar "${oportunidade.titulo}" como perdida? Não é possível desfazer.`))
+      executar(oportunidade, marcarComoPerdida);
   };
 
-  const handleEliminar = (oportunidade) => {
-    // Futuramente, chamar o serviço para eliminar na API
-    console.log('Eliminar:', oportunidade.id);
+  const handleCancelar = (oportunidade) => {
+    if (window.confirm(`Cancelar "${oportunidade.titulo}"? Não é possível desfazer.`))
+      executar(oportunidade, cancelarOportunidade);
   };
 
   return {
@@ -86,8 +122,13 @@ export default function useOportunidadesController() {
     ordenacao,
     setOrdenacao,
     contagens,
-    handleConsultar,
-    handleEditar,
-    handleEliminar,
+    loading,
+    erro,
+    idEmCurso,
+    podeGerir,
+    handleIniciarAnalise,
+    handleIniciarPreparacao,
+    handlePerdida,
+    handleCancelar,
   };
 }

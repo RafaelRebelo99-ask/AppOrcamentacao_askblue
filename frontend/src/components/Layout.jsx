@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 import logo from '../assets/askblue-logo-oficial-rgb.png'
 import logoDark from '../assets/askblue-logo-negativo-rgb.png'
 import { useTheme } from '../controllers/ThemeController'
+import { podeGerirOportunidades } from '../models/oportunidadesModel'
 
 // O NavLink marca com "selected" o link da página onde estamos (classe do askblue.css)
 function classeLink({ isActive }) {
@@ -31,13 +32,16 @@ export default function Layout({ children }) {
             <NavLink to="/orcamentos" end className={classeLink}>
               <i className="bi bi-file-earmark-spreadsheet"></i>Orçamentos
             </NavLink>
-            <NavLink to="" end className={classeLink}>
+            <NavLink to="/historico" end className={classeLink}>
               <i className="bi bi-clock"></i>Histórico
             </NavLink>
+            {/* Só Colaborador e Administrador criam oportunidades */}
+            {podeGerirOportunidades() && (<>
             <hr></hr>
-            <NavLink to="" className={classeLink}>
+            <NavLink to="/oportunidades/adicionar" className={classeLink}>
               <i className="bi bi-clipboard-plus"></i>Nova Oportunidade
             </NavLink>
+            </>)}
           </div>
 
           <div className="box lg column h-100 pad-1">

@@ -16,4 +16,7 @@ namespace GestaoServicosWeb.Contratos
     // Saída: o que a API devolve (sem PasswordHash)
     public record UtilizadorDto(Guid Id, string Nome, string Email,
                                  Role Role);
+
+    // Saída: o mínimo para escolher um cliente numa lista
+    public record ClienteResumoDto(Guid Id, string Nome);
 }
