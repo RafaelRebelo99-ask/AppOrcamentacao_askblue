@@ -22,7 +22,7 @@ export default function NovaOportunidade() {
           <p>Regista uma nova oportunidade comercial da AskBlue.</p>
         </div>
 
-        <div className="card column">
+        <div className="row">
           <OportunidadeForm
             dados={dados}
             clientes={clientes}

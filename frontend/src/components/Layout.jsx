@@ -40,7 +40,7 @@ export default function Layout({ children }) {
             </NavLink>
           </div>
 
-          <div className="box lg column h-100 pad-1">
+          <div className="box lg column h-100 pad-1 scrollable">
             {children}
           </div>
         </div>
