@@ -7,6 +7,9 @@ namespace GestaoServicosWeb.Contratos
     public record CriarUtilizadorDto(string Nome, string Email, string Password,
                                       Role Role);
 
+    // Entrada: criar um colaborador (a role e a empresa são postas pelo servidor)
+    public record CriarColaboradorDto(string Nome, string Email, string Password);
+
     // Entrada: atualizar o perfil (NIF, Role e password não se alteram por aqui)
     public record AtualizarUtilizadorDto(string Nome, string Email);
 

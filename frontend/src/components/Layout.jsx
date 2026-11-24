@@ -6,6 +6,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import logo from '../assets/askblue-logo-oficial-rgb.png'
 import logoDark from '../assets/askblue-logo-negativo-rgb.png'
 import { useTheme } from '../controllers/ThemeController'
+import { eAdministrador } from '../models/utilizadoresModel'
 import { podeGerirOportunidades } from '../models/oportunidadesModel'
 import { limparSessao, obterUtilizador } from '../models/loginModel'
 
@@ -58,6 +59,13 @@ export default function Layout({ children }) {
             <NavLink to="/oportunidades" className={classeLink}>
               <i className="bi bi-clipboard"></i>Oportunidades
             </NavLink>
+          
+            {/* Só o Administrador gere contas */}
+            {eAdministrador() && (
+              <NavLink to="/utilizadores" className={classeLink}>
+                <i className="bi bi-people"></i>Utilizadores
+              </NavLink>
+            )}
 
             <NavLink to="/orcamentos" end className={classeLink}>
               <i className="bi bi-file-earmark-spreadsheet"></i>Orçamentos
@@ -65,10 +73,15 @@ export default function Layout({ children }) {
             <NavLink to="/historico" end className={classeLink}>
               <i className="bi bi-clock"></i>Histórico
             </NavLink>
-            <hr></hr>
-            <NavLink to="/registar-oportunidade" className={classeLink}>
-              <i className="bi bi-clipboard-plus"></i>Nova Oportunidade
-            </NavLink>
+            {/* Só Colaborador e Administrador criam oportunidades */}
+            {podeGerirOportunidades() && (
+              <>
+                <hr></hr>
+                <NavLink to="/oportunidades/adicionar" className={classeLink}>
+                  <i className="bi bi-clipboard-plus"></i>Nova Oportunidade
+                </NavLink>
+              </>
+            )}
 
             <div className="user mt-auto">
               <div className="column gap-1">

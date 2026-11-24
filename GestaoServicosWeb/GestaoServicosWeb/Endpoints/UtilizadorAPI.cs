@@ -76,6 +76,19 @@ namespace GestaoServicosWeb.API
             .AllowAnonymous()
             .WithName("RegistarUtilizador");
 
+            // POST /api/utilizadores/colaboradores → criar um colaborador da AskBlue — só Administrador
+            grupo.MapPost("/colaboradores", (CriarColaboradorDto dto, UtilizadorService service) =>
+            {
+                try
+                {
+                    var u = service.CriarColaborador(dto);
+                    return Results.Created($"/api/utilizadores/{u.Id}", ParaDto(u));
+                }
+                catch (ArgumentException ex)          { return Results.BadRequest(ex.Message); }
+                catch (InvalidOperationException ex)  { return Results.Conflict(ex.Message); }
+            })
+            .RequireAuthorization(Politicas.Administrador);
+
             // 5. PUT /api/utilizadores/{id} → atualizar perfil — o próprio, ou Empresa
             grupo.MapPut("/{id:guid}", (Guid id, AtualizarUtilizadorDto dto, ClaimsPrincipal user, UtilizadorService service) =>
             {

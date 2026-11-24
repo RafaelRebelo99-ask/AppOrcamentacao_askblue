@@ -36,7 +36,7 @@ function deEnum(valor, nomes) {
 
 // ----- Permissões -----
 
-function obterRole() {
+export function obterRole() {
   return deEnum(obterUtilizador()?.role, ROLES);
 }
 
