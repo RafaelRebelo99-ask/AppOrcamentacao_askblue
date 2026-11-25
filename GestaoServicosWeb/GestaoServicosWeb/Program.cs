@@ -66,6 +66,7 @@ builder.Services.AddDbContext<AppDbContext>(opcoes => opcoes.UseSqlServer(connec
 builder.Services.AddSingleton(jwtSettings);
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<UtilizadorService>();
+builder.Services.AddScoped<NotificacaoService>();
 builder.Services.AddScoped<OportunidadeService>();
 builder.Services.AddScoped<OrcamentoService>();
 builder.Services.AddScoped<CategoriaService>();
@@ -134,5 +135,6 @@ app.MapUtilizadorAPI();
 app.MapOportunidadeAPI();
 app.MapOrcamentoEndpoints();
 app.MapCategoriaAPI();
+app.MapNotificacaoAPI();
 
 app.Run();

@@ -8,10 +8,12 @@ namespace GestaoServicosWeb.Aplicacao
     public class OportunidadeService
     {
         private readonly AppDbContext db;
+        private readonly NotificacaoService notificacoes;
 
-        public OportunidadeService(AppDbContext db)
+        public OportunidadeService(AppDbContext db, NotificacaoService notificacoes)
         {
             this.db = db;
+            this.notificacoes = notificacoes;
         }
 
         // Listar todas as oportunidades: colaboradores e administradores.
@@ -119,6 +121,7 @@ namespace GestaoServicosWeb.Aplicacao
             );
 
             db.Oportunidades.Add(oportunidade);
+            notificacoes.OportunidadeAlterada(oportunidade, idResponsavel);
             db.SaveChanges();
 
             return oportunidade;
@@ -173,6 +176,7 @@ namespace GestaoServicosWeb.Aplicacao
                 return false;
 
             oportunidade.Cancelar();
+            notificacoes.OportunidadeAlterada(oportunidade, idUtilizador);
             db.SaveChanges();
 
             return true;
@@ -189,6 +193,7 @@ namespace GestaoServicosWeb.Aplicacao
                 return false;
 
             oportunidade.IniciarAnalise();
+            notificacoes.OportunidadeAlterada(oportunidade, idUtilizador);
             db.SaveChanges();
 
             return true;
@@ -205,6 +210,7 @@ namespace GestaoServicosWeb.Aplicacao
                 return false;
 
             oportunidade.IniciarPreparacao();
+            notificacoes.OportunidadeAlterada(oportunidade, idUtilizador);
             db.SaveChanges();
 
             return true;
@@ -221,6 +227,7 @@ namespace GestaoServicosWeb.Aplicacao
                 return false;
 
             oportunidade.MarcarComoPerdida();
+            notificacoes.OportunidadeAlterada(oportunidade, idUtilizador);
             db.SaveChanges();
 
             return true;

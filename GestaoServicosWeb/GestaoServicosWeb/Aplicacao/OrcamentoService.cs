@@ -16,10 +16,12 @@ namespace GestaoServicosWeb.Aplicacao
     public class OrcamentoService
     {
         private readonly AppDbContext db;
+        private readonly NotificacaoService notificacoes;
 
-        public OrcamentoService(AppDbContext db)
+        public OrcamentoService(AppDbContext db, NotificacaoService notificacoes)
         {
             this.db = db;
+            this.notificacoes = notificacoes;
         }
 
         // leitura
@@ -259,6 +261,8 @@ namespace GestaoServicosWeb.Aplicacao
             // Atualiza o estado comercial da oportunidade.
             oportunidade.RegistarPropostaEnviada();
 
+            notificacoes.PropostaEnviada(orcamento, oportunidade, idUtilizador);
+
             db.SaveChanges();
 
             return orcamento;
@@ -313,6 +317,8 @@ namespace GestaoServicosWeb.Aplicacao
 
             oportunidade.MarcarComoGanha();
 
+            notificacoes.PropostaAceite(orcamento, oportunidade, outrasPropostas, idCliente);
+
             db.SaveChanges();
             transacao.Commit();
 
@@ -321,9 +327,11 @@ namespace GestaoServicosWeb.Aplicacao
 
         public Orcamento Recusar(Guid id, Guid idCliente)
         {
-            var (orcamento, _) = ObterDoCliente(id, idCliente);
+            var (orcamento, oportunidade) = ObterDoCliente(id, idCliente);
 
             orcamento.Recusar();
+
+            notificacoes.PropostaRecusada(orcamento, oportunidade, idCliente);
 
             db.SaveChanges();
 

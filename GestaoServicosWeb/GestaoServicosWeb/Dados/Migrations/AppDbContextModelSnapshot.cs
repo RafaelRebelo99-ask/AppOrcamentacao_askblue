@@ -111,6 +111,37 @@ namespace GestaoServicosWeb.Dados.Migrations
                         });
                 });
 
+            modelBuilder.Entity("GestaoServicosWeb.Notificacao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Destino")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("IdUtilizador")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Lida")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Texto")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdUtilizador", "DataCriacao");
+
+                    b.ToTable("Notificacoes", (string)null);
+                });
+
             modelBuilder.Entity("GestaoServicosWeb.Oportunidade", b =>
                 {
                     b.Property<Guid>("Id")
@@ -255,6 +286,17 @@ namespace GestaoServicosWeb.Dados.Migrations
                     b.HasIndex("EmpresaId");
 
                     b.ToTable("Utilizadores", (string)null);
+                });
+
+            modelBuilder.Entity("GestaoServicosWeb.Notificacao", b =>
+                {
+                    b.HasOne("GestaoServicosWeb.Utilizador", "Utilizador")
+                        .WithMany()
+                        .HasForeignKey("IdUtilizador")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Utilizador");
                 });
 
             modelBuilder.Entity("GestaoServicosWeb.Oportunidade", b =>
