@@ -103,7 +103,7 @@ export default function OportunidadeRow({
                       className="item wide danger"
                       onClick={() => abrirConfirmacao('perdida')}
                     >
-                      <i className="bi bi-x-circle"></i>
+                      <i className="bi bi-clipboard-x"></i>
                       <p>Marcar como perdida</p>
                     </button>
 
@@ -111,7 +111,7 @@ export default function OportunidadeRow({
                       className="item wide danger"
                       onClick={() => abrirConfirmacao('cancelar')}
                     >
-                      <i className="bi bi-slash-circle"></i>
+                      <i className="bi bi-clipboard-minus"></i>
                       <p>Cancelar oportunidade</p>
                     </button>
                   </div>

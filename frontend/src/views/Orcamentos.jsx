@@ -35,7 +35,11 @@ export default function Orcamentos() {
 
   return (
     <Layout>
-      <div className="row mb-1 align-center">
+      <div className="row align-center">
+              <h1 className='mb-05'>Orçamentos</h1>
+              <ThemeToggle/>
+            </div>
+      <div className="row mb-1 align-center wrap">
         <Filters
           filtros={filtros}
           estadoSelecionado={estadoSelecionado}

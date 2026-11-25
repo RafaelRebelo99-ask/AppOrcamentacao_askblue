@@ -92,6 +92,7 @@ export async function listarOportunidades() {
       estadoTexto: TEXTO_ESTADO[estado] ?? estado,   // para mostrar: 'Em análise'
       cliente: nomeCliente.get(o.idCliente) ?? '—',
       categoria: nomeCategoria.get(o.idCategoria) ?? '—',
+      idCategoria: o.idCategoria, // para filtrar
       prazo: formatarData(o.prazoProposta),          // para mostrar: '10/12/2026'
       prazoTempo: o.prazoProposta                    // para ordenar (null = sem prazo)
         ? new Date(o.prazoProposta).getTime()

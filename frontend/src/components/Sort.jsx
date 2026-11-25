@@ -18,7 +18,7 @@ export default function Sort({
         onClick={() => setMenuAberto(!menuAberto)}
       >
         {opcaoSelecionada?.label || 'Ordenar por'}
-        <i className="bi bi-caret-down"></i>
+        <i className={`bi bi-caret-${menuAberto ? 'up' : 'down'}`}></i>
       </button>
 
       {menuAberto && (

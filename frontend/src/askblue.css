@@ -28,6 +28,8 @@
     --on-orange: #683E00;
     --red-bg: #ff464635;
     --on-red: #960000;
+
+    --line-height: 1.2rem;
 }
 
 :root.dark {
@@ -36,9 +38,7 @@
     --danger-color: #ff5151;
     --background-color: rgb(29, 29, 34);
     --sec-background-color: rgb(19, 19, 20);
-    --border: 1px solid var(--border-color);
     --border-color: #424248;
-    --secondary-hover: var(--sec-background-color);
     --text-color: white;
 
     --blue-bg: #020aed2f;
@@ -66,6 +66,7 @@ body {
     font-family: "IBM Plex Sans", sans-serif;
     margin: 0;
     font-size: .90rem;
+    line-height: var(--line-height);
 }
 
 p {
@@ -364,12 +365,29 @@ button.secondary.danger:hover {
     border-radius: var(--border-radius-md);
     border: var(--border);
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
-    padding: 0.5rem;
+    padding: 0.25rem;
     width: fit-content;
     z-index: 2;
     background-color: var(--background-color);
     position: absolute;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.menu {
+  animation: menuEntrada 0.1s ease;
+  transform-origin: top right;
+}
+
+@keyframes menuEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .wrap {
@@ -806,7 +824,7 @@ button:focus-visible .tooltip {
 .dashboard {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
     width: 100%;
 }
 
@@ -818,11 +836,7 @@ button:focus-visible .tooltip {
 }
 
 .dashboard-header h1 {
-    margin-bottom: 0.4rem;
-}
-
-.dashboard-header p {
-    margin: 0;
+    margin-bottom: 0.5rem;
 }
 
 .dashboard-stats {
@@ -832,7 +846,7 @@ button:focus-visible .tooltip {
 }
 
 .dashboard-stat {
-    padding: 1rem;
+    padding: 1.5rem;
     border: var(--border);
     border-radius: var(--border-radius-md);
     background: var(--sec-background-color);
@@ -840,7 +854,7 @@ button:focus-visible .tooltip {
 }
 
 .dashboard-stat h2 {
-    margin: 1rem 0 0.25rem;
+    margin: 1.5rem 0 1rem;
     font-size: 2rem;
 }
 
@@ -858,7 +872,8 @@ button:focus-visible .tooltip {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    padding: 1rem;
+    padding: 1.5rem;
+    padding-bottom: 2rem;
     border: var(--border);
     border-radius: var(--border-radius-md);
     background: var(--sec-background-color);

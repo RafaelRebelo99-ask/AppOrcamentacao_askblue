@@ -33,13 +33,13 @@ export default function Dashboard() {
             titulo: 'Oportunidades ativas',
             valor: oportunidadesAtivas,
             descricao: 'Registadas, em análise ou preparação',
-            icon: 'bi-briefcase',
+            icon: 'bi-clipboard',
         },
         {
             titulo: 'Propostas em rascunho',
-            valor: '—',
+            valor: 'N/A',
             descricao: 'Por concluir',
-            icon: 'bi-file-earmark-text',
+            icon: 'bi-file-earmark-spreadsheet',
         },
         {
             titulo: 'Propostas enviadas',
@@ -51,7 +51,7 @@ export default function Dashboard() {
             titulo: 'Oportunidades ganhas',
             valor: contar('Ganha'),
             descricao: 'Com proposta aceite',
-            icon: 'bi-trophy',
+            icon: 'bi-clipboard-check',
         },
     ];
 
@@ -114,7 +114,7 @@ export default function Dashboard() {
                             <p className="weak">A carregar oportunidades...</p>
                         ) : recentes.length === 0 ? (
                             <div className="dashboard-empty">
-                                <i className="bi bi-briefcase"></i>
+                                <i className="bi bi-clipboard"></i>
                                 <p>Ainda não existem oportunidades.</p>
                             </div>
                         ) : (
