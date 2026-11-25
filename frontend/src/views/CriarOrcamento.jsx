@@ -1,6 +1,15 @@
 import Layout from '../components/Layout';
 import Aviso from '../components/Aviso';
 import useCriarOrcamento from '../controllers/orcamentos/useNovoOrcamento';
+import Select from '../components/Select';
+import NumeroInput from '../components/NumeroInput';
+import ThemeToggle from '../components/ThemeToggle';
+
+const taxasIVA = [
+  { label: '23%', value: '23' },
+  { label: '10%', value: '10' },
+  { label: '0% (isento)', value: '0' },
+];
 
 export default function CriarOrcamento() {
   const {
@@ -18,6 +27,7 @@ export default function CriarOrcamento() {
     handleConfirmarEnvio,
     handleFecharConfirmacao,
     handleCancelar,
+    handleSelectChange
   } = useCriarOrcamento();
 
   if (loadingOportunidade) {
@@ -44,29 +54,31 @@ export default function CriarOrcamento() {
 
   return (
     <Layout>
-      <div className="orcamento">
-        <h1 className="mb-1">Nova proposta</h1>
-
-        <section className="mb-1">
+      <div className="row">
+        <h1 className="mb-1">Novo Orçamento</h1>
+        <ThemeToggle />
+      </div>
+      <div className="column w-50">
+        <section>
           <h2>{oportunidade.titulo}</h2>
 
-          <p>{oportunidade.descricao}</p>
+          <p className='mb-1'>{oportunidade.descricao}</p>
 
-          <div className="row wrap">
-            <div className="pill primary">
-              {oportunidade.estadoTexto}
-            </div>
+          <div className="row wrap align-center">
+            <p>
+              {oportunidade.categoria}
+            </p>
+            <div className="vl"></div>
+            <p>Prazo da proposta:</p><div className="date">{oportunidade.prazo}</div>
 
-            <p>Prazo da proposta: {oportunidade.prazo}</p>
-
-            <p>Data pretendida: {oportunidade.dataPretendida}</p>
+            <p>Data pretendida:</p><div className="date">{oportunidade.dataPretendida}</div>
           </div>
         </section>
 
         <hr />
 
         <form onSubmit={handleEnviar}>
-          <div className="column gap-1">
+          <div className="column gap-2">
             <div className="field">
               <label htmlFor="descricao">Descrição da proposta *</label>
 
@@ -80,52 +92,51 @@ export default function CriarOrcamento() {
               />
             </div>
 
-            <div className="row wrap">
+            <div className="row wrap gap-2 align-center">
               <div className="field">
-                <label htmlFor="valorSemIVA">Valor sem IVA (€) *</label>
+                <label htmlFor="valorSemIVA">Valor sem IVA *</label>
+                <div className="empty-box">
 
-                <input
-                  id="valorSemIVA"
-                  name="valorSemIVA"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={dados.valorSemIVA}
-                  onChange={handleChange}
-                  required
-                />
+                  <NumeroInput
+                    id="valorSemIVA"
+                    name="valorSemIVA"
+                    value={dados.valorSemIVA}
+                    onChange={handleChange}
+                    required
+                  />
+
+                  <p id="moeda" className="weak">€</p>
+
+                </div>
+
               </div>
 
               <div className="field">
                 <label htmlFor="taxaIVA">Taxa de IVA (%) *</label>
 
-                <select
-                  id="taxaIVA"
-                  name="taxaIVA"
+                <Select
+                  options={taxasIVA}
+                  className='w-100'
                   value={dados.taxaIVA}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="23">23%</option>
-                  <option value="13">13%</option>
-                  <option value="6">6%</option>
-                  <option value="0">0%</option>
-                </select>
+                  onChange={(value) => handleSelectChange('taxaIVA', value)}
+                />
+
+
               </div>
 
               {/* Só para ajudar quem preenche; o valor final é calculado no backend */}
               <div className="field">
                 <label>Valor do IVA</label>
-                <output>{resumo.valorIVA}</output>
+                <div className='empty-box'>{resumo.valorIVA}</div>
               </div>
 
               <div className="field">
                 <label>Valor total (incl. IVA)</label>
-                <output>{resumo.valorTotal}</output>
+                <div className='empty-box'>{resumo.valorTotal}</div>
               </div>
             </div>
 
-            <div className="row wrap">
+            <div className="row wrap gap-2">
               <div className="field">
                 <label htmlFor="dataInicio">Data de início *</label>
 
@@ -156,7 +167,7 @@ export default function CriarOrcamento() {
 
               <div className="field">
                 <label>Data de fim</label>
-                <output>{resumo.dataFim}</output>
+                <div className='date'>{resumo.dataFim}</div>
               </div>
 
               <div className="field">
@@ -180,7 +191,7 @@ export default function CriarOrcamento() {
             )}
 
             {sucesso && <p role="status">{sucesso}</p>}
-
+            <hr></hr>
             <div className="row">
               <button
                 type="button"
@@ -211,6 +222,7 @@ export default function CriarOrcamento() {
           </div>
         </form>
       </div>
+
 
       {/* Fora do <form>, para os botões do aviso não o submeterem */}
       <Aviso

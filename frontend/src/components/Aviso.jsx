@@ -11,7 +11,7 @@ export default function Aviso({
     return (
         <div className="overlay">
 
-            <div className="box pad-1 modal">
+            <div className="box modal">
                 <div className="row align-center space-between mb-1">
                     <h2>AskBlue</h2>
                     <button className="more-actions" type="button" onClick={onFechar}>

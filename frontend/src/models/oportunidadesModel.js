@@ -91,7 +91,9 @@ export async function listarOportunidades() {
       estado,                                        // para filtrar: 'EmAnalise'
       estadoTexto: TEXTO_ESTADO[estado] ?? estado,   // para mostrar: 'Em análise'
       cliente: nomeCliente.get(o.idCliente) ?? '—',
+      idCliente: o.idCliente,
       categoria: nomeCategoria.get(o.idCategoria) ?? '—',
+      idCategoria: o.idCategoria, // para filtrar
       prazo: formatarData(o.prazoProposta),          // para mostrar: '10/12/2026'
       prazoTempo: o.prazoProposta                    // para ordenar (null = sem prazo)
         ? new Date(o.prazoProposta).getTime()
@@ -107,10 +109,14 @@ export async function obterOportunidade(id) {
   const o = await apiRequest(`/api/oportunidades/${id}`);
   const estado = deEnum(o.estado, ESTADOS);
 
+  console.log(o);
+
   return {
     id: o.id,
     titulo: o.titulo,
     descricao: o.descricao,
+    categoria: o.idCategoria,
+    liente: o.idCliente,
     estado,
     estadoTexto: TEXTO_ESTADO[estado] ?? estado,
     prazo: formatarData(o.prazoProposta),

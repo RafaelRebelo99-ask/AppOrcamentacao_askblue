@@ -9,8 +9,8 @@ export default function OrcamentoCard({
     onDescarregarPdf,
 }) {
     return (
-        <div className="card column">
-            <div className="row space-between align-center mb-1">
+        <div className="card column slide-up">
+            <div className="row space-between align-center">
                 <div className="id" title={orcamento.id}>
                     {orcamento.numero}
                 </div>
@@ -32,45 +32,55 @@ export default function OrcamentoCard({
                         {orcamento.estado}
                     </div>
                 </div>
+
             </div>
 
             <div className="column">
                 <h2 className="mb-05">
                     {orcamento.oportunidade}
                 </h2>
-
-                {podeGerir && <p>Cliente: {orcamento.cliente}</p>}
-
                 <p className="mb-05">{orcamento.descricao}</p>
+                {podeGerir && <p>Cliente: {orcamento.cliente}</p>}
+                <hr></hr>
+
+                <div className="column gap-1">
+                    <div className="row align-center">
+                        <p>Criada em:</p> <div className="date">{orcamento.criadaEm}</div>
+                    </div>
+
+                    <div className="row align-center">
+                        <p>Validade:</p> <div className="date">{orcamento.validade}</div>
+                    </div>
+
+                    <div className="row align-center wrap">
+                        <p>Execução:</p>
+                        <div className="date">{orcamento.inicio}</div>
+                        <p>a</p>
+                        <div className="date">{orcamento.fim}</div>
+                    </div>
+                </div>
+
+                <hr></hr>
 
                 <div className="row align-center">
-                    <p>Criada em:</p> <div className="date">{orcamento.criadaEm}</div>
+                    <div className="column">
+                        <p>
+                            Valor sem IVA:
+                        </p>
+                        <p>{orcamento.valorSemIVA}</p>
+                    </div>
+
+                    <div className="column">
+                        <p>
+                            IVA:
+                        </p>
+                        <p>{orcamento.valorIVA}</p>
+                    </div>
                 </div>
 
-                <div className="row align-center">
-                    <p>Validade:</p> <div className="date">{orcamento.validade}</div>
-                </div>
+                <hr />
 
-                <div className="row align-center wrap">
-                    <p>Execução:</p>
-                    <div className="date">{orcamento.inicio}</div>
-                    <p>a</p>
-                    <div className="date">{orcamento.fim}</div>
-                </div>
-
-                <div className="row">
-                    <p>
-                        Valor sem IVA: {orcamento.valorSemIVA}
-                    </p>
-                    <div className="vl"></div>
-                    <p>
-                        IVA ({orcamento.taxaIVA}%): {orcamento.valorIVA}
-                    </p>
-                </div>
-
-                <hr/>
-
-                <div className="empty-box">
+                <div className="empty-box mb-1">
                     Valor Total: {orcamento.valorTotal}
                 </div>
 

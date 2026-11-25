@@ -41,7 +41,7 @@ export default function Utilizadores() {
         <h1 className='mb-05'>Utilizadores</h1>
         <ThemeToggle />
       </div>
-      <div className="row mb-1 align-center">
+      <div className="row mb-1 align-center wrap">
         <Filters
           filtros={filtros}
           estadoSelecionado={roleSelecionada}

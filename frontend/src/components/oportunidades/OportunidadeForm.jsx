@@ -13,9 +13,10 @@ export default function OportunidadeForm({
     onCancelar,
     erro,
     loading,
+    className
 }) {
     return (
-        <form onSubmit={onSubmit} className="column gap-2">
+        <form onSubmit={onSubmit} className={`column gap-1 ${className}`}>
 
             <div className="column">
                 <h2 className="mb-05">Informação geral</h2>
@@ -41,10 +42,10 @@ export default function OportunidadeForm({
                 />
             </div>
 
-            <hr className="mb-1" />
+            <hr />
 
             <div className="row">
-                <div className="column mb-1">
+                <div className="column w-50">
                     <h2 className="mb-05">Classificação</h2>
 
                     <label>Cliente *</label>
@@ -87,7 +88,7 @@ export default function OportunidadeForm({
                     />
                 </div>
 
-                <div className="column">
+                <div className="column w-50">
                     <h2 className="mb-05">Datas</h2>
 
                     <label>Prazo da proposta</label>

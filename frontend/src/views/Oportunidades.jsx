@@ -1,8 +1,11 @@
+
 import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
 import Filters from '../components/Filters';
 import Sort from '../components/Sort';
+import Select from '../components/Select';
 import OportunidadeRow from '../components/oportunidades/OportunidadeRow';
+
 import useOportunidadesController from '../controllers/useOportunidades';
 
 const filtros = [
@@ -17,19 +20,35 @@ const filtros = [
 ];
 
 const opcoesOrdenacao = [
-  { label: 'Prazo (Mais próximo)', value: 'prazo-asc' },
-  { label: 'Prazo (Mais distante)', value: 'prazo-desc' },
+  {
+    icon: 'bi bi-clock',
+    label: 'Prazo (Mais próximo)',
+    value: 'prazo-asc',
+  },
+  {
+    icon: 'bi bi-clock-history',
+    label: 'Prazo (Mais distante)',
+    value: 'prazo-desc',
+  },
 ];
 
 export default function Oportunidades() {
   const {
+    clientes,
+    loadingClientes,
     oportunidadesFiltradas,
     estadoSelecionado,
     setEstadoSelecionado,
+    categoriaSelecionada,
+    setCategoriaSelecionada,
+    clienteSelecionado,
+    setClienteSelecionado,
     ordenacao,
     setOrdenacao,
     contagens,
+    categorias,
     loading,
+    loadingCategorias,
     erro,
     idEmCurso,
     podeGerir,
@@ -38,15 +57,16 @@ export default function Oportunidades() {
     handleCriarOrcamento,
     handlePerdida,
     handleCancelar,
-  } =useOportunidadesController();
+  } = useOportunidadesController();
 
   return (
     <Layout>
       <div className="row align-center">
-              <h1 className='mb-05'>Oportunidades</h1>
-              <ThemeToggle/>
-            </div>
-      <div className="row mb-1 align-center">
+        <h1 className="mb-05">Oportunidades</h1>
+        <ThemeToggle />
+      </div>
+
+      <div className="row mb-1 align-center wrap">
         <Filters
           filtros={filtros}
           estadoSelecionado={estadoSelecionado}
@@ -56,15 +76,30 @@ export default function Oportunidades() {
 
         <div className="vl"></div>
 
+        <Select
+          options={categorias}
+          value={categoriaSelecionada}
+          onChange={setCategoriaSelecionada}
+          placeholder={loadingCategorias ? 'A carregar categorias...' : 'Categoria'}
+          disabled={loadingCategorias}
+        />
+        <Select
+          options={clientes}
+          value={clienteSelecionado}
+          onChange={setClienteSelecionado}
+          placeholder={loadingClientes ? 'A carregar clientes...' : 'Cliente'}
+          disabled={loadingClientes}
+        />
+
         <Sort
           opcoes={opcoesOrdenacao}
           ordenacao={ordenacao}
           onOrdenacaoChange={setOrdenacao}
         />
-
       </div>
 
       {erro && <p className="error mb-05">{erro}</p>}
+
       {loading && <p>A carregar oportunidades...</p>}
 
       <table className="table" hidden={loading}>
@@ -97,11 +132,11 @@ export default function Oportunidades() {
               />
             ))
           ) : (
-
-            <td colSpan="8" style={{ textAlign: 'center' }}>
-              Não existem oportunidades neste estado.
-            </td>
-
+            <tr>
+              <td colSpan="8" style={{ textAlign: 'center' }}>
+                Não existem oportunidades com estes filtros.
+              </td>
+            </tr>
           )}
         </tbody>
       </table>

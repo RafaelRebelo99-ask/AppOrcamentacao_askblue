@@ -99,15 +99,6 @@ export default function OportunidadeRow({
 
         <td className="ml-auto">
           <div className="row">
-            <button
-              type="button"
-              className="more-actions"
-              onClick={abrirDocumentos}
-              title="Ver documentos"
-              aria-label="Ver documentos"
-            >
-              <i className="bi bi-paperclip"></i>
-            </button>
 
             {mostrarAcoes && (
               <>
@@ -156,6 +147,16 @@ export default function OportunidadeRow({
                   {menuAberto && (
                     <div className="menu right">
                       <button
+                        type="button"
+                        className="item"
+                        onClick={abrirDocumentos}
+                        title="Ver documentos"
+                        aria-label="Ver documentos"
+                      >
+                        <i className="bi bi-paperclip"></i>
+                        Consultar anexos
+                      </button>
+                      <button
                         className="item wide danger"
                         onClick={() => abrirConfirmacao('perdida')}
                       >
@@ -198,7 +199,7 @@ export default function OportunidadeRow({
         <div className="overlay">
           <div className="box pad-1 modal">
             <div className="row align-center space-between mb-1">
-              <h2>Documentos — {oportunidade.titulo}</h2>
+              <h2>Anexos <i className='bi bi-dash'></i> {oportunidade.titulo}</h2>
               <button
                 className="more-actions"
                 type="button"

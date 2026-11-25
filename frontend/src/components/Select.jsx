@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import '../askblue.css';
 
@@ -48,11 +47,14 @@ export default function Select({
     }
 
     return (
-        <div className={`${className}`} ref={selectRef}>
+        <div
+            className={`pos-rel ${className}`}
+            ref={selectRef}
+        >
             <button
                 type="button"
-                className={`wide secondary pos-rel ${isOpen ? 'active' : ''}`}
-                onClick={() => setIsOpen(!isOpen)}
+                className={`wide secondary pos-rel space-between ${isOpen ? 'active' : ''}`}
+                onClick={() => setIsOpen((prev) => !prev)}
                 disabled={disabled}
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
@@ -62,12 +64,15 @@ export default function Select({
             </button>
 
             {isOpen && (
-                <div className="menu custom-select-menu" role="listbox">
+                <div
+                    className="menu select"
+                    role="listbox"
+                >
                     {options.map((option) => (
                         <button
                             type="button"
                             key={option.value}
-                            className={`item w-100 ${option.value === value ? 'selected' : ''
+                            className={`item ${option.value === value ? 'selected' : ''
                                 }`}
                             onClick={() => handleSelect(option)}
                             role="option"

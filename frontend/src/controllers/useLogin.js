@@ -3,6 +3,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fazerLogin, guardarSessao, validateLogin } from '../models/loginModel'
 
+// hook custom para encapsular a logica do login
+// chama os hooks do react
+
 export default function useLogin() {
   const navigate = useNavigate()
 
@@ -15,12 +18,12 @@ export default function useLogin() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Show / hide password
+  // mostrar / esconder a pass
   const togglePasswordVisibility = () => {
     setPasswordVisible(prev => !prev)
   }
 
-  // Remember details
+  // remmember me (depois ha de ser guardado enviado num cookie (?))
   const toggleRememberMe = () => {
     setRememberMe(prev => !prev)
   }
