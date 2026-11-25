@@ -18,6 +18,9 @@
     --py: 0.5rem;
     --px: calc(var(--py) + (1lh - 1cap) / 2);
 
+    --skeleton-base: var(--border-color);
+    --skeleton-highlight: white;
+
     --blue-bg: #020aed25;
     --on-blue: #000469;
     --gray-bg: #9f9f9f50;
@@ -40,6 +43,8 @@
     --sec-background-color: rgb(19, 19, 20);
     --border-color: #424248;
     --text-color: white;
+    --skeleton-highlight: var(--border-color);
+    --skeleton-base: var(--background-color);
 
     --blue-bg: #020aed2f;
     --on-blue: #b6b9ff;
@@ -996,4 +1001,32 @@ button:focus-visible .tooltip {
         opacity: 1;
     }
 
+}
+
+.skeleton {
+    background: linear-gradient(90deg,
+            var(--skeleton-base, #e5e7eb) 25%,
+            var(--skeleton-highlight, #f3f4f6) 50%,
+            var(--skeleton-base, #e5e7eb) 75%);
+
+    border-radius: var(--border-radius-sm);
+    border: var(--border);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite linear;
+}
+
+@keyframes skeleton-loading {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton {
+        animation: none;
+    }
 }
