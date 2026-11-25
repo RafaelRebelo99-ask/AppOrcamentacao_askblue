@@ -64,6 +64,7 @@ button.sino:hover {
   overflow-y: auto;
   gap: 0.25rem;
   color: var(--text-color);
+  padding: 1rem;
 }
 
 /* O .menu .item do askblue.css tem uma linha só e altura fixa */

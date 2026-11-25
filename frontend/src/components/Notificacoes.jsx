@@ -1,4 +1,4 @@
-import { Bell } from 'lucide-react';
+//import { Bell } from 'lucide-react';
 import useNotificacoes from '../controllers/useNotificacoes';
 
 // Sino com o número de notificações por ler e a lista das mais recentes
@@ -27,7 +27,7 @@ export default function Notificacoes() {
         aria-label={descricao}
         aria-expanded={aberto}
       >
-        <Bell size={18} aria-hidden="true" />
+        <i className='bi bi-bell'></i>
 
         {naoLidas > 0 && (
           <span className="sino-total" aria-hidden="true">
@@ -37,7 +37,7 @@ export default function Notificacoes() {
       </button>
 
       {aberto && (
-        <div className="menu right notificacoes-lista">
+        <div className="menu pad-1 right notificacoes-lista">
           <div className="row space-between align-center">
             <h2>Notificações</h2>
 

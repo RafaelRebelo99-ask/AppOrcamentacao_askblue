@@ -5,6 +5,7 @@ import Sort from '../components/Sort';
 import Aviso from '../components/Aviso';
 import OrcamentoCard from '../components/orcamentos/OrcamentoCard';
 import useOrcamentos from '../controllers/orcamentos/useOrcamentos';
+import OrcamentoCardSkeleton from '../components/skeletons/OrcamentoSkeleton';
 
 const filtros = [
   { label: 'Todos', value: 'Todos' },
@@ -74,9 +75,9 @@ export default function Orcamentos() {
   return (
     <Layout>
       <div className="row align-center">
-              <h1 className='mb-05'>Orçamentos</h1>
-              <ThemeToggle/>
-            </div>
+        <h1 className='mb-05'>Orçamentos</h1>
+        <ThemeToggle />
+      </div>
       <div className="row mb-1 align-center wrap">
         <Filters
           filtros={filtrosVisiveis}
@@ -98,7 +99,11 @@ export default function Orcamentos() {
       {erro && <p className="danger">{erro}</p>}
 
       {loading ? (
-        <p>A carregar propostas...</p>
+        <div className="grid">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <OrcamentoCardSkeleton key={index} />
+          ))}
+        </div>
       ) : (
         <div className="grid">
           {orcamentosFiltrados.length > 0 ? (
