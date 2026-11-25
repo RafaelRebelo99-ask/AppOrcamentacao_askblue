@@ -56,6 +56,7 @@ export default function Orcamentos() {
     idEmCurso,
     acaoPendente,
     handleEnviar,
+    handleEditar,
     handleEliminar,
     handleAceitar,
     handleRecusar,
@@ -114,6 +115,7 @@ export default function Orcamentos() {
                 podeGerir={podeGerir}
                 emCurso={idEmCurso === orcamento.id}
                 onEnviar={handleEnviar}
+                onEditar={handleEditar}
                 onEliminar={handleEliminar}
                 onAceitar={handleAceitar}
                 onRecusar={handleRecusar}

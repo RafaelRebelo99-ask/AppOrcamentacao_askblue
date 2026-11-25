@@ -103,55 +103,58 @@ export default function Oportunidades() {
 
       {erro && <p className="error mb-05">{erro}</p>}
 
-      <table className="table">
-        <thead>
-          <tr className="header">
-            <th>ID</th>
-            <th>Título</th>
-            <th>Estado</th>
-            <th>Cliente</th>
-            <th>Categoria</th>
-            <th>Prazo da proposta</th>
-            <th>Data pretendida</th>
-            <th></th>
-          </tr>
-        </thead>
 
-        <tbody>
-          {loading ? (
-            Array.from({ length: 10 }).map((_, index) => (
-              <OportunidadeRowSkeleton key={index} />
-            ))
-          ) : oportunidadesFiltradas.length > 0 ? (
-            oportunidadesFiltradas.map(oportunidade => (
-              <OportunidadeRow
-                key={oportunidade.id}
-                oportunidade={oportunidade}
-                menuAberto={menuAbertoId === oportunidade.id}
-                onToggleMenu={() =>
-                  setMenuAbertoId(
-                    menuAbertoId === oportunidade.id ? null : oportunidade.id
-                  )
-                }
-                onFecharMenu={() => setMenuAbertoId(null)}
-                podeGerir={podeGerir}
-                emCurso={idEmCurso === oportunidade.id}
-                onIniciarAnalise={handleIniciarAnalise}
-                onIniciarPreparacao={handleIniciarPreparacao}
-                onCriarOrcamento={handleCriarOrcamento}
-                onPerdida={handlePerdida}
-                onCancelar={handleCancelar}
-              />
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8" style={{ textAlign: 'center' }}>
-                Não existem oportunidades com estes filtros.
-              </td>
+      <div className="table-container">
+        <table className="table">
+          <thead>
+            <tr className="header">
+              <th>ID</th>
+              <th>Título</th>
+              <th>Estado</th>
+              <th>Cliente</th>
+              <th>Categoria</th>
+              <th>Prazo da proposta</th>
+              <th>Data pretendida</th>
+              <th></th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {loading ? (
+              Array.from({ length: 10 }).map((_, index) => (
+                <OportunidadeRowSkeleton key={index} />
+              ))
+            ) : oportunidadesFiltradas.length > 0 ? (
+              oportunidadesFiltradas.map(oportunidade => (
+                <OportunidadeRow
+                  key={oportunidade.id}
+                  oportunidade={oportunidade}
+                  menuAberto={menuAbertoId === oportunidade.id}
+                  onToggleMenu={() =>
+                    setMenuAbertoId(
+                      menuAbertoId === oportunidade.id ? null : oportunidade.id
+                    )
+                  }
+                  onFecharMenu={() => setMenuAbertoId(null)}
+                  podeGerir={podeGerir}
+                  emCurso={idEmCurso === oportunidade.id}
+                  onIniciarAnalise={handleIniciarAnalise}
+                  onIniciarPreparacao={handleIniciarPreparacao}
+                  onCriarOrcamento={handleCriarOrcamento}
+                  onPerdida={handlePerdida}
+                  onCancelar={handleCancelar}
+                />
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" style={{ textAlign: 'center' }}>
+                  Não existem oportunidades com estes filtros.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </Layout>
   );
 }

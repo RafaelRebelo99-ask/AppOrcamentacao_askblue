@@ -28,6 +28,7 @@ function App() {
         <Route path="/utilizadores" element={<Utilizadores />} />
         <Route path="/orcamentos" element={<Orcamentos />} />
         <Route path="/orcamentos/novo/:oportunidadeId" element={<CriarOrcamento />} />
+        <Route path="/orcamentos/:orcamentoId/editar" element={<CriarOrcamento />} />
       </Route>
 
       {/* Qualquer rota desconhecida */}

@@ -172,6 +172,10 @@ p {
     justify-content: flex-start !important;
 }
 
+.justify-end {
+    justify-content: flex-end !important;
+}
+
 a {
     text-decoration: none;
     color: var(--text-color);
@@ -391,7 +395,7 @@ button.secondary.danger:hover {
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
     padding: 0.25rem;
     width: fit-content;
-    z-index: 2;
+    z-index: 999999;
     background-color: var(--background-color);
     position: absolute;
     margin-top: 0.25rem;
@@ -482,8 +486,16 @@ label {
     margin-bottom: 0.5rem;
 }
 
-.scrollable {
-    overflow-y: auto;
+.scrollable-y {
+    overflow-y: auto !important;
+}
+
+.scrollable-x {
+    overflow-x: auto !important;
+}
+
+.overflow-hidden {
+    overflow: hidden;
 }
 
 i {
@@ -602,17 +614,43 @@ hr {
 
 /* tabela */
 
-.table {
+.table-container {
     width: 100%;
-    border-collapse: collapse;
+    max-height: 75vh;
+    overflow: auto;
 }
 
-.table tr {
-    display: grid;
-    grid-template-columns:
-        .3fr 1fr .8fr 0.8fr 1.5fr 1.2fr .8fr 1.5fr;
-    align-items: center;
+.table {
     width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+tr.header {
+    border-bottom: var(--border);
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--background-color);
+    text-align: start;
+}
+
+.table th,
+.table td {
+    font-weight: normal;
+    padding: 0.5rem;
+    vertical-align: middle;
+    background-color: var(--background-color);
+}
+
+/* Keep the actions column from shrinking too much */
+.table th:last-child,
+.table td:last-child {
+    width: 190px;
 }
 
 .table.utilizadores tr {
@@ -631,27 +669,6 @@ hr {
 
 .mt-auto {
     margin-top: auto;
-}
-
-.table td,
-th {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-    padding: 0.5rem;
-    gap: var(--gap);
-    color: var(--text-color);
-    font-weight: normal;
-}
-
-.table th {
-    color: var(--primary-blue);
-}
-
-.table td.right,
-.table th.right {
-    justify-content: flex-end;
-    font-variant-numeric: tabular-nums;
 }
 
 .table tr.header {

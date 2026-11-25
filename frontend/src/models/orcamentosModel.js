@@ -35,6 +35,9 @@ export async function listarOrcamentos() {
       expirado: o.expirado,
       // O cliente só decide sobre uma proposta enviada, dentro da validade e com a oportunidade em aberto
       podeDecidir: estado === 'Enviado' && !o.expirado && oportunidade?.estado === 'PropostaEnviada',
+      // O backend não deixa editar depois de a oportunidade estar fechada
+      podeEditar: estado === 'Rascunho' &&
+        !['Ganha', 'Perdida', 'Cancelada'].includes(oportunidade?.estado),
       oportunidade: oportunidade?.titulo ?? '—',
       cliente: oportunidade?.cliente ?? '—',
       descricao: o.descricao,
@@ -52,6 +55,26 @@ export async function listarOrcamentos() {
       total: o.valorTotal,
     };
   });
+}
+
+// Uma proposta, com os valores no formato dos campos do formulário
+export async function obterOrcamento(id) {
+  const o = await apiRequest(`/api/orcamentos/${id}`);
+
+  return {
+    id: o.id,
+    idOportunidade: o.idOportunidade,
+    estado: typeof o.estado === 'number' ? ESTADOS[o.estado] : o.estado,
+    dados: {
+      descricao: o.descricao,
+      // O formulário lê o ponto como separador de milhares: 1000.5 tem de ir como "1000,50"
+      valorSemIVA: o.valorSemIVA.toFixed(2).replace('.', ','),
+      taxaIVA: String(o.taxaIVA),
+      dataValidade: o.dataValidade.slice(0, 10),
+      dataInicio: o.dataInicio.slice(0, 10),
+      duracaoDias: String(o.duracaoDias),
+    },
+  };
 }
 
 // Devolve uma mensagem de erro, ou '' se estiver tudo bem (regras iguais às do backend).
@@ -87,9 +110,6 @@ export function calcularResumo(dados) {
       .replace(',', '.')
   );
 
-  console.log('Valor original:', dados.valorSemIVA);
-  console.log('Valor convertido:', valor);
-
   let valorIVA = '—';
   let valorTotal = '—';
   let dataFim = '—';
@@ -103,10 +123,13 @@ export function calcularResumo(dados) {
     valorTotal = formatarEuros(total);
   }
 
-  if (dados.dataInicio && dados.duracaoDias > 0) {
+  // O campo dá texto: sem Number(), 1 + '5' dava o dia 15 em vez do dia 6
+  const duracao = Number(dados.duracaoDias);
+
+  if (dados.dataInicio && duracao > 0) {
     const [ano, mes, dia] = dados.dataInicio.split('-').map(Number);
     dataFim = formatarData(
-      new Date(ano, mes - 1, dia + dados.duracaoDias)
+      new Date(ano, mes - 1, dia + duracao)
     );
   }
 

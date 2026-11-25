@@ -140,6 +140,8 @@ export default function useOrcamentos() {
     }
   };
 
+  const handleEditar = orcamento => navigate(`/orcamentos/${orcamento.id}/editar`);
+
   const handleDescarregarPdf = async (orcamento) => {
     setErro('');
     setIdEmCurso(orcamento.id);
@@ -171,6 +173,7 @@ export default function useOrcamentos() {
     idEmCurso,
     acaoPendente,
     handleEnviar,
+    handleEditar,
     handleEliminar,
     handleAceitar,
     handleRecusar,

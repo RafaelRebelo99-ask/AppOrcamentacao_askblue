@@ -13,6 +13,7 @@ const taxasIVA = [
 
 export default function CriarOrcamento() {
   const {
+    modoEdicao,
     oportunidade,
     dados,
     resumo,
@@ -33,7 +34,7 @@ export default function CriarOrcamento() {
   if (loadingOportunidade) {
     return (
       <Layout>
-        <p>A carregar oportunidade...</p>
+        <p>{modoEdicao ? 'A carregar rascunho...' : 'A carregar oportunidade...'}</p>
       </Layout>
     );
   }
@@ -52,10 +53,15 @@ export default function CriarOrcamento() {
     );
   }
 
+  // Um rascunho antigo pode ter uma taxa que já não está na lista: mostra-a na mesma
+  const taxas = taxasIVA.some(t => t.value === dados.taxaIVA)
+    ? taxasIVA
+    : [...taxasIVA, { label: `${dados.taxaIVA}%`, value: dados.taxaIVA }];
+
   return (
     <Layout>
       <div className="row">
-        <h1 className="mb-1">Novo Orçamento</h1>
+        <h1 className="mb-1">{modoEdicao ? 'Editar Orçamento' : 'Novo Orçamento'}</h1>
         <ThemeToggle />
       </div>
       <div className="column w-50">
@@ -115,7 +121,7 @@ export default function CriarOrcamento() {
                 <label htmlFor="taxaIVA">Taxa de IVA (%) *</label>
 
                 <Select
-                  options={taxasIVA}
+                  options={taxas}
                   className='w-100'
                   value={dados.taxaIVA}
                   onChange={(value) => handleSelectChange('taxaIVA', value)}

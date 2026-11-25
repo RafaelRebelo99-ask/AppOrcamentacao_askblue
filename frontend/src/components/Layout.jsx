@@ -118,7 +118,7 @@ export default function Layout({ children }) {
             </div>
           </div>
 
-          <div className="box lg column h-100 pad-1 scrollable">
+          <div className="box lg column h-100 pad-1 overflow-hidden">
             {children}
           </div>
         </div>
