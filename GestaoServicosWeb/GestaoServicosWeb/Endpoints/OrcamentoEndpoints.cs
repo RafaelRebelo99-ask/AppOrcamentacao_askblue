@@ -1,4 +1,4 @@
-﻿
+
 using System.Security.Claims;
 using GestaoServicosWeb.Aplicacao;
 using GestaoServicosWeb.Contratos;
@@ -90,7 +90,8 @@ public static class OrcamentoEndpoints
         group.MapPost("/", (
             OrcamentoDto pedido,
             ClaimsPrincipal user,
-            OrcamentoService service) =>
+            OrcamentoService service,
+            HistoricoService historico) =>
             Executar(() =>
             {
                 var orcamento = service.Criar(
@@ -102,6 +103,14 @@ public static class OrcamentoEndpoints
                     pedido.DataValidade,
                     pedido.DataInicio,
                     pedido.DuracaoDias);
+
+                var nome = user.ObterNome();
+                historico.Registar(
+                    IdDe(user),
+                    nome,
+                    CategoriaHistorico.Orcamentos,
+                    "Criar orçamento",
+                    $"{nome} criou um rascunho de orçamento ({orcamento.ValorTotal:0.00} €).");
 
                 return TypedResults.Created(
                     $"/api/orcamentos/{orcamento.Id}",
@@ -117,19 +126,30 @@ public static class OrcamentoEndpoints
             Guid id,
             EditarOrcamentoRequest pedido,
             ClaimsPrincipal user,
-            OrcamentoService service) =>
+            OrcamentoService service,
+            HistoricoService historico) =>
             Executar(() =>
-                TypedResults.Ok(
-                    OrcamentoResponse.De(
-                        service.Editar(
-                            id,
-                            IdDe(user),
-                            pedido.Descricao,
-                            pedido.ValorSemIVA,
-                            pedido.TaxaIVA,
-                            pedido.DataValidade,
-                            pedido.DataInicio,
-                            pedido.DuracaoDias)))))
+            {
+                var orcamento = service.Editar(
+                    id,
+                    IdDe(user),
+                    pedido.Descricao,
+                    pedido.ValorSemIVA,
+                    pedido.TaxaIVA,
+                    pedido.DataValidade,
+                    pedido.DataInicio,
+                    pedido.DuracaoDias);
+
+                var nome = user.ObterNome();
+                historico.Registar(
+                    IdDe(user),
+                    nome,
+                    CategoriaHistorico.Orcamentos,
+                    "Editar orçamento",
+                    $"{nome} editou o orçamento {id.ToString()[..8]} ({orcamento.ValorTotal:0.00} €).");
+
+                return TypedResults.Ok(OrcamentoResponse.De(orcamento));
+            }))
             .RequireAuthorization(p =>
                 p.RequireRole(
                     nameof(Role.Colaborador),
@@ -139,12 +159,22 @@ public static class OrcamentoEndpoints
         group.MapPost("/{id:guid}/enviar", (
             Guid id,
             ClaimsPrincipal user,
-            OrcamentoService service) =>
+            OrcamentoService service,
+            HistoricoService historico) =>
             Executar(() =>
-                TypedResults.Ok(
-                    OrcamentoResponse.De(
-                        service.Enviar(id, IdDe(user)))))
-            )
+            {
+                var orcamento = service.Enviar(id, IdDe(user));
+
+                var nome = user.ObterNome();
+                historico.Registar(
+                    IdDe(user),
+                    nome,
+                    CategoriaHistorico.Orcamentos,
+                    "Enviar orçamento",
+                    $"{nome} enviou o orçamento {id.ToString()[..8]} ({orcamento.ValorTotal:0.00} €) ao cliente.");
+
+                return TypedResults.Ok(OrcamentoResponse.De(orcamento));
+            }))
             .RequireAuthorization(p =>
                 p.RequireRole(
                     nameof(Role.Colaborador),
@@ -154,10 +184,20 @@ public static class OrcamentoEndpoints
         group.MapDelete("/{id:guid}", (
             Guid id,
             ClaimsPrincipal user,
-            OrcamentoService service) =>
+            OrcamentoService service,
+            HistoricoService historico) =>
             Executar(() =>
             {
                 service.Eliminar(id, IdDe(user));
+
+                var nome = user.ObterNome();
+                historico.Registar(
+                    IdDe(user),
+                    nome,
+                    CategoriaHistorico.Orcamentos,
+                    "Eliminar orçamento",
+                    $"{nome} eliminou o rascunho de orçamento {id.ToString()[..8]}.");
+
                 return TypedResults.NoContent();
             }))
             .RequireAuthorization(p =>
@@ -171,12 +211,22 @@ public static class OrcamentoEndpoints
         group.MapPost("/{id:guid}/aceitar", (
             Guid id,
             ClaimsPrincipal user,
-            OrcamentoService service) =>
+            OrcamentoService service,
+            HistoricoService historico) =>
             Executar(() =>
-                TypedResults.Ok(
-                    OrcamentoResponse.De(
-                        service.Aceitar(id, IdDe(user)))))
-            )
+            {
+                var orcamento = service.Aceitar(id, IdDe(user));
+
+                var nome = user.ObterNome();
+                historico.Registar(
+                    IdDe(user),
+                    nome,
+                    CategoriaHistorico.Orcamentos,
+                    "Aceitar orçamento",
+                    $"{nome} aceitou o orçamento {id.ToString()[..8]} ({orcamento.ValorTotal:0.00} €).");
+
+                return TypedResults.Ok(OrcamentoResponse.De(orcamento));
+            }))
             .RequireAuthorization(p =>
                 p.RequireRole(nameof(Role.Cliente)));
 
@@ -184,12 +234,22 @@ public static class OrcamentoEndpoints
         group.MapPost("/{id:guid}/recusar", (
             Guid id,
             ClaimsPrincipal user,
-            OrcamentoService service) =>
+            OrcamentoService service,
+            HistoricoService historico) =>
             Executar(() =>
-                TypedResults.Ok(
-                    OrcamentoResponse.De(
-                        service.Recusar(id, IdDe(user)))))
-            )
+            {
+                var orcamento = service.Recusar(id, IdDe(user));
+
+                var nome = user.ObterNome();
+                historico.Registar(
+                    IdDe(user),
+                    nome,
+                    CategoriaHistorico.Orcamentos,
+                    "Recusar orçamento",
+                    $"{nome} recusou o orçamento {id.ToString()[..8]}.");
+
+                return TypedResults.Ok(OrcamentoResponse.De(orcamento));
+            }))
             .RequireAuthorization(p =>
                 p.RequireRole(nameof(Role.Cliente)));
     }

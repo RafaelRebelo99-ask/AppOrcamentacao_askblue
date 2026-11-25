@@ -1,4 +1,4 @@
-﻿using GestaoServicosWeb.Aplicacao;
+using GestaoServicosWeb.Aplicacao;
 using GestaoServicosWeb.Contratos;
 using System.Security.Claims;
 
@@ -63,11 +63,26 @@ namespace GestaoServicosWeb.API
             });
 
             // 4. POST /api/utilizadores → registar (público)
-            grupo.MapPost("/", (CriarUtilizadorDto dto, UtilizadorService service) =>
+            grupo.MapPost("/", (CriarUtilizadorDto dto, ClaimsPrincipal user, UtilizadorService service, HistoricoService historico) =>
             {
                 try
                 {
                     var u = service.Criar(dto);
+
+                    var autenticado = user.Identity?.IsAuthenticated == true;
+                    var autorId = autenticado ? user.ObterId() : u.Id;
+                    var autorNome = autenticado ? user.ObterNome() : u.Nome;
+                    var descricao = autenticado
+                        ? $"{autorNome} criou a conta de {u.Role} \"{u.Nome}\" ({u.Email})."
+                        : $"{u.Nome} registou-se na plataforma ({u.Email}).";
+
+                    historico.Registar(
+                        autorId,
+                        autorNome,
+                        CategoriaHistorico.Utilizadores,
+                        "Criar utilizador",
+                        descricao);
+
                     return Results.Created($"/api/utilizadores/{u.Id}", ParaDto(u));
                 }
                 catch (ArgumentException ex)          { return Results.BadRequest(ex.Message); }
@@ -77,11 +92,20 @@ namespace GestaoServicosWeb.API
             .WithName("RegistarUtilizador");
 
             // POST /api/utilizadores/colaboradores → criar um colaborador da AskBlue — só Administrador
-            grupo.MapPost("/colaboradores", (CriarColaboradorDto dto, UtilizadorService service) =>
+            grupo.MapPost("/colaboradores", (CriarColaboradorDto dto, ClaimsPrincipal user, UtilizadorService service, HistoricoService historico) =>
             {
                 try
                 {
                     var u = service.CriarColaborador(dto);
+
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Utilizadores,
+                        "Criar colaborador",
+                        $"{nome} criou o colaborador \"{u.Nome}\" ({u.Email}).");
+
                     return Results.Created($"/api/utilizadores/{u.Id}", ParaDto(u));
                 }
                 catch (ArgumentException ex)          { return Results.BadRequest(ex.Message); }
@@ -90,7 +114,7 @@ namespace GestaoServicosWeb.API
             .RequireAuthorization(Politicas.Administrador);
 
             // 5. PUT /api/utilizadores/{id} → atualizar perfil — o próprio, ou Empresa
-            grupo.MapPut("/{id:guid}", (Guid id, AtualizarUtilizadorDto dto, ClaimsPrincipal user, UtilizadorService service) =>
+            grupo.MapPut("/{id:guid}", (Guid id, AtualizarUtilizadorDto dto, ClaimsPrincipal user, UtilizadorService service, HistoricoService historico) =>
             {
                 if (!EOProprioOuEmpresa(user, id))
                     return Results.Forbid();
@@ -99,40 +123,70 @@ namespace GestaoServicosWeb.API
                 {
                     var u = service.Atualizar(id, dto);
 
-                    return u == null
-                        ? Results.NotFound()
-                        : Results.Ok(ParaDto(u));
+                    if (u == null)
+                        return Results.NotFound();
+
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Utilizadores,
+                        "Editar utilizador",
+                        $"{nome} atualizou os dados de \"{u.Nome}\" ({u.Email}).");
+
+                    return Results.Ok(ParaDto(u));
                 }
                 catch (ArgumentException ex)          { return Results.BadRequest(ex.Message); }
                 catch (InvalidOperationException ex)  { return Results.Conflict(ex.Message); }
             });
 
             // 6. PUT /api/utilizadores/{id}/password → alterar password — só o próprio
-            grupo.MapPut("/{id:guid}/password", (Guid id, AlterarPasswordDto dto, ClaimsPrincipal user, UtilizadorService service) =>
+            grupo.MapPut("/{id:guid}/password", (Guid id, AlterarPasswordDto dto, ClaimsPrincipal user, UtilizadorService service, HistoricoService historico) =>
             {
                 if (user.ObterId() != id)
                     return Results.Forbid();
 
                 try
                 {
-                    return service.AlterarPassword(id, dto)
-                        ? Results.NoContent()
-                        : Results.NotFound();
+                    if (!service.AlterarPassword(id, dto))
+                        return Results.NotFound();
+
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Utilizadores,
+                        "Alterar password",
+                        $"{nome} alterou a palavra-passe.");
+
+                    return Results.NoContent();
                 }
                 catch (ArgumentException ex)          { return Results.BadRequest(ex.Message); }
             });
 
             // 7. DELETE /api/utilizadores/{id} → apagar — só Empresa, e nunca a própria conta
-            grupo.MapDelete("/{id:guid}", (Guid id, ClaimsPrincipal user, UtilizadorService service) =>
+            grupo.MapDelete("/{id:guid}", (Guid id, ClaimsPrincipal user, UtilizadorService service, HistoricoService historico) =>
             {
                 if (user.ObterId() == id)
                     return Results.BadRequest("Não pode apagar a sua própria conta.");
 
                 try
                 {
-                    return service.Apagar(id)
-                        ? Results.NoContent()
-                        : Results.NotFound();
+                    var alvo = service.Buscar(id);
+
+                    if (!service.Apagar(id))
+                        return Results.NotFound();
+
+                    var nome = user.ObterNome();
+                    var alvoTexto = alvo != null ? $"\"{alvo.Nome}\" ({alvo.Email})" : id.ToString()[..8];
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Utilizadores,
+                        "Apagar utilizador",
+                        $"{nome} apagou a conta de {alvoTexto}.");
+
+                    return Results.NoContent();
                 }
                 catch (InvalidOperationException ex)  { return Results.Conflict(ex.Message); }
             })

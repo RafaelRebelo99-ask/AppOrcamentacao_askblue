@@ -70,9 +70,12 @@ export default function Layout({ children }) {
             <NavLink to="/orcamentos" end className={classeLink}>
               <i className="bi bi-file-earmark-spreadsheet"></i>Orçamentos
             </NavLink>
-            <NavLink to="/historico" end className={classeLink}>
-              <i className="bi bi-clock"></i>Histórico
-            </NavLink>
+            {/* Só o Administrador vê o histórico de atividade */}
+            {eAdministrador() && (
+              <NavLink to="/historico" end className={classeLink}>
+                <i className="bi bi-clock"></i>Histórico
+              </NavLink>
+            )}
             {/* Só Colaborador e Administrador criam oportunidades */}
             {podeGerirOportunidades() && (
               <>
