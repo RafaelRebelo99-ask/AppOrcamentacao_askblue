@@ -1,3 +1,17 @@
+import Layout from '../components/Layout'
+import ThemeToggle from '../components/ThemeToggle';
+import Filters from '../components/Filters';
+import UtilizadorForm from '../components/utilizadores/UtilizadorForm';
+import UtilizadorRow from '../components/utilizadores/UtilizadorRow';
+import useUtilizadores from '../controllers/useUtilizadores';
+
+const filtros = [
+  { label: 'Todos', value: 'Todos' },
+  { label: 'Administradores', value: 'Administrador' },
+  { label: 'Colaboradores', value: 'Colaborador' },
+  { label: 'Clientes', value: 'Cliente' },
+];
+
 export default function Utilizadores() {
   const {
     utilizadoresFiltrados,

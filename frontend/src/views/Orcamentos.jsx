@@ -2,6 +2,7 @@ import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
 import Filters from '../components/Filters';
 import Sort from '../components/Sort';
+import Aviso from '../components/Aviso';
 import OrcamentoCard from '../components/orcamentos/OrcamentoCard';
 import useOrcamentos from '../controllers/orcamentos/useOrcamentos';
 
@@ -13,6 +14,26 @@ const filtros = [
   { label: 'Recusado', value: 'Recusado' },
 ];
 
+// Texto da confirmação e do botão, para cada ação
+const confirmacoes = {
+  enviar: {
+    botao: 'Enviar',
+    texto: o => `Enviar a proposta de ${o.valorTotal} ao cliente? Depois de enviada, não pode ser editada.`,
+  },
+  eliminar: {
+    botao: 'Eliminar',
+    texto: o => `Eliminar o rascunho de ${o.valorTotal}? Esta ação não pode ser desfeita.`,
+  },
+  aceitar: {
+    botao: 'Aceitar',
+    texto: o => `Aceitar a proposta de ${o.valorTotal}? As outras propostas para "${o.oportunidade}" serão recusadas.`,
+  },
+  recusar: {
+    botao: 'Recusar',
+    texto: o => `Recusar a proposta de ${o.valorTotal}? Esta ação não pode ser desfeita.`,
+  },
+};
+
 const opcoesOrdenacao = [
   { label: 'Data (Mais recente)', value: 'data-desc' },
   { label: 'Data (Mais antigo)', value: 'data-asc' },
@@ -22,6 +43,7 @@ const opcoesOrdenacao = [
 
 export default function Orcamentos() {
   const {
+    podeGerir,
     orcamentosFiltrados,
     estadoSelecionado,
     setEstadoSelecionado,
@@ -30,8 +52,23 @@ export default function Orcamentos() {
     contagens,
     loading,
     erro,
+    idEmCurso,
+    acaoPendente,
+    handleEnviar,
     handleEliminar,
+    handleAceitar,
+    handleRecusar,
+    handleConfirmar,
+    handleFecharConfirmacao,
   } = useOrcamentos();
+
+  // Sem ação pendente, o aviso fica fechado
+  const confirmacao = confirmacoes[acaoPendente?.tipo];
+
+  // O Cliente nunca recebe rascunhos
+  const filtrosVisiveis = podeGerir
+    ? filtros
+    : filtros.filter(f => f.value !== 'Rascunho');
 
   return (
     <Layout>
@@ -41,7 +78,7 @@ export default function Orcamentos() {
             </div>
       <div className="row mb-1 align-center wrap">
         <Filters
-          filtros={filtros}
+          filtros={filtrosVisiveis}
           estadoSelecionado={estadoSelecionado}
           contagens={contagens}
           onEstadoChange={setEstadoSelecionado}
@@ -55,7 +92,6 @@ export default function Orcamentos() {
           onOrdenacaoChange={setOrdenacao}
         />
 
-        <ThemeToggle />
       </div>
 
       {erro && <p className="danger">{erro}</p>}
@@ -69,7 +105,12 @@ export default function Orcamentos() {
               <OrcamentoCard
                 key={orcamento.id}
                 orcamento={orcamento}
+                podeGerir={podeGerir}
+                emCurso={idEmCurso === orcamento.id}
+                onEnviar={handleEnviar}
                 onEliminar={handleEliminar}
+                onAceitar={handleAceitar}
+                onRecusar={handleRecusar}
               />
             ))
           ) : (
@@ -77,6 +118,15 @@ export default function Orcamentos() {
           )}
         </div>
       )}
+
+      <Aviso
+        mensagem={confirmacao?.texto(acaoPendente.orcamento)}
+        confirmar={true}
+        textoConfirmar={confirmacao?.botao}
+        textoCancelar="Voltar"
+        onFechar={handleFecharConfirmacao}
+        onConfirmar={handleConfirmar}
+      />
     </Layout>
   );
 }

@@ -143,6 +143,7 @@ export default function useOportunidadesController() {
         ordenacao === 'prazo-desc' ? -1 : 1
       )
     );
+  };
 
   // Executar ação e atualizar lista
   const executar = async (oportunidade, acao) => {
@@ -173,15 +174,15 @@ export default function useOportunidadesController() {
   const handleIniciarPreparacao = oportunidade =>
     executar(oportunidade, iniciarPreparacao);
 
-  const handlePerdida = oportunidade => {
-    if (
-      window.confirm(
-        `Marcar "${oportunidade.titulo}" como perdida? Não é possível desfazer.`
-      )
-    ) {
+  const handleCriarOrcamento = oportunidade =>
+    navigate(`/orcamentos/novo/${oportunidade.id}`);
+
+  // Perdida e Cancelada não têm volta atrás: pede confirmação
+  const handlePerdida = (oportunidade) => {
+    if (window.confirm(`Marcar "${oportunidade.titulo}" como perdida? Não é possível desfazer.`))
       executar(oportunidade, marcarComoPerdida);
-    }
   };
+
 
   const handleCancelar = oportunidade => {
     if (
@@ -192,6 +193,7 @@ export default function useOportunidadesController() {
       executar(oportunidade, cancelarOportunidade);
     }
   };
+
 
   return {
     oportunidades,
@@ -216,7 +218,8 @@ export default function useOportunidadesController() {
 
     handleIniciarAnalise,
     handleIniciarPreparacao,
+    handleCriarOrcamento,
     handlePerdida,
     handleCancelar,
   };
-}
+};

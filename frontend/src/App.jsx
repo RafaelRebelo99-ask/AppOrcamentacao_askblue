@@ -10,6 +10,7 @@ import Orcamentos from './views/Orcamentos'
 import CriarOrcamento from './views/CriarOrcamento'
 import Historico from './views/Historico'
 import NovaOportunidade from './views/NovaOportunidade'
+import Utilizadores from './views/Utilizadores'
 import ProtectedRoute from './components/ProtectRoute'
 
 function App() {
@@ -22,9 +23,11 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/oportunidades" element={<Oportunidades />} />
-        <Route path="/oportunidades/adicionar" element={<NovaOportunidade />} />
+        <Route path="/registar-oportunidade" element={<NovaOportunidade />} />
+        <Route path="/historico" element={<Historico />} />
+        <Route path="/utilizadores" element={<Utilizadores />} />
         <Route path="/orcamentos" element={<Orcamentos />} />
-        <Route path="/orcamentos/novo" element={<CriarOrcamento />} />
+        <Route path="/orcamentos/novo/:oportunidadeId" element={<CriarOrcamento />} />
       </Route>
 
       {/* Qualquer rota desconhecida */}
