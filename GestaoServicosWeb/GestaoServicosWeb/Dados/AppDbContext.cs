@@ -11,6 +11,7 @@ namespace GestaoServicosWeb.Dados
         public DbSet<Categoria> Categorias => Set<Categoria>();
         public DbSet<Oportunidade> Oportunidades => Set<Oportunidade>();
         public DbSet<Orcamento> Orcamentos => Set<Orcamento>();
+        public DbSet<Notificacao> Notificacoes => Set<Notificacao>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -205,6 +206,31 @@ namespace GestaoServicosWeb.Dados
                 o.Ignore(x => x.ValorIVA);
                 o.Ignore(x => x.Expirado);
                 o.Ignore(x => x.DataFim);
+            });
+
+            // ===== Notificacao =====
+            modelBuilder.Entity<Notificacao>(n =>
+            {
+                n.ToTable("Notificacoes");
+                n.HasKey(x => x.Id);
+                n.Property(x => x.Id).ValueGeneratedNever();
+
+                n.Property(x => x.Texto)
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                n.Property(x => x.Destino)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                // Apagar um utilizador apaga as notificações dele
+                n.HasOne(x => x.Utilizador)
+                    .WithMany()
+                    .HasForeignKey(x => x.IdUtilizador)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                n.HasIndex(x => new { x.IdUtilizador, x.DataCriacao });
             });
         }
     }

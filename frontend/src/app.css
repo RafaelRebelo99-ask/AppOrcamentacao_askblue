@@ -23,3 +23,66 @@ p.error,
 p.danger {
   color: var(--danger-color);
 }
+
+/* ===== Notificações (sino à esquerda do botão do tema, ver ThemeToggle) ===== */
+.notificacoes {
+  position: relative;
+  z-index: 10;
+}
+
+button.sino {
+  position: relative;
+  padding: 0.5rem;
+  border: none;
+  background-color: transparent;
+  color: var(--primary-blue); /* a mesma cor da lua: azul no tema claro, quase branco no escuro */
+}
+
+button.sino:hover {
+  background-color: var(--secondary-hover);
+}
+
+/* Número de não lidas, por cima do sino */
+.sino-total {
+  position: absolute;
+  top: 0;
+  right: -0.1rem;
+  min-width: 1rem;
+  padding: 0.05rem 0.2rem;
+  border-radius: 0.25rem;
+  background-color: #d92d20;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.notificacoes-lista {
+  width: min(24rem, 80vw);
+  max-height: 60vh;
+  overflow-y: auto;
+  gap: 0.25rem;
+  color: var(--text-color);
+}
+
+/* O .menu .item do askblue.css tem uma linha só e altura fixa */
+.menu .item.notificacao {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  height: auto;
+  text-align: left;
+  text-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+
+.menu .item.notificacao.por-ler {
+  border-left: 3px solid var(--primary-blue);
+  font-weight: 600;
+}
+
+.menu .item.notificacao .weak {
+  font-size: small;
+  font-weight: normal;
+}
