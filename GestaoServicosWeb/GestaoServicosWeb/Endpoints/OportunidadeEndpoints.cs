@@ -65,13 +65,22 @@ namespace GestaoServicosWeb.API
             grupo.MapPost("/", (
                 CriarOportunidadeDto dto,
                 ClaimsPrincipal user,
-                OportunidadeService service) =>
+                OportunidadeService service,
+                HistoricoService historico) =>
             {
                 return Executar(() =>
                 {
                     var oportunidade = service.Criar(
                         user.ObterId(),
                         dto);
+
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Oportunidades,
+                        "Criar oportunidade",
+                        $"{nome} criou a oportunidade \"{oportunidade.Titulo}\".");
 
                     return Results.Created(
                         $"/api/oportunidades/{oportunidade.Id}",
@@ -85,7 +94,8 @@ namespace GestaoServicosWeb.API
                 Guid id,
                 AtualizarOportunidadeDto dto,
                 ClaimsPrincipal user,
-                OportunidadeService service) =>
+                OportunidadeService service,
+                HistoricoService historico) =>
             {
                 return Executar(() =>
                 {
@@ -94,9 +104,18 @@ namespace GestaoServicosWeb.API
                         dto,
                         user.ObterId());
 
-                    return oportunidade == null
-                        ? Results.NotFound()
-                        : Results.Ok(ParaDto(oportunidade));
+                    if (oportunidade == null)
+                        return Results.NotFound();
+
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Oportunidades,
+                        "Editar oportunidade",
+                        $"{nome} editou a oportunidade \"{oportunidade.Titulo}\".");
+
+                    return Results.Ok(ParaDto(oportunidade));
                 });
             })
             .RequireAuthorization(Politicas.Colaborador);
@@ -105,15 +124,28 @@ namespace GestaoServicosWeb.API
             grupo.MapPut("/{id:guid}/iniciar-analise", (
                 Guid id,
                 ClaimsPrincipal user,
-                OportunidadeService service) =>
+                OportunidadeService service,
+                HistoricoService historico) =>
             {
                 return Executar(() =>
-                    service.IniciarAnalise(id, user.ObterId())
-                        ? Results.Ok(new
-                        {
-                            mensagem = "Análise iniciada com sucesso."
-                        })
-                        : Results.NotFound());
+                {
+                    if (!service.IniciarAnalise(id, user.ObterId()))
+                        return Results.NotFound();
+
+                    var titulo = service.Buscar(id, user.ObterId())?.Titulo ?? id.ToString()[..8];
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Oportunidades,
+                        "Iniciar análise",
+                        $"{nome} iniciou a análise da oportunidade \"{titulo}\".");
+
+                    return Results.Ok(new
+                    {
+                        mensagem = "Análise iniciada com sucesso."
+                    });
+                });
             })
             .RequireAuthorization(Politicas.Colaborador);
 
@@ -121,15 +153,28 @@ namespace GestaoServicosWeb.API
             grupo.MapPut("/{id:guid}/iniciar-preparacao", (
                 Guid id,
                 ClaimsPrincipal user,
-                OportunidadeService service) =>
+                OportunidadeService service,
+                HistoricoService historico) =>
             {
                 return Executar(() =>
-                    service.IniciarPreparacao(id, user.ObterId())
-                        ? Results.Ok(new
-                        {
-                            mensagem = "Preparação da proposta iniciada com sucesso."
-                        })
-                        : Results.NotFound());
+                {
+                    if (!service.IniciarPreparacao(id, user.ObterId()))
+                        return Results.NotFound();
+
+                    var titulo = service.Buscar(id, user.ObterId())?.Titulo ?? id.ToString()[..8];
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Oportunidades,
+                        "Iniciar preparação",
+                        $"{nome} iniciou a preparação da oportunidade \"{titulo}\".");
+
+                    return Results.Ok(new
+                    {
+                        mensagem = "Preparação da proposta iniciada com sucesso."
+                    });
+                });
             })
             .RequireAuthorization(Politicas.Colaborador);
 
@@ -137,15 +182,28 @@ namespace GestaoServicosWeb.API
             grupo.MapPut("/{id:guid}/perdida", (
                 Guid id,
                 ClaimsPrincipal user,
-                OportunidadeService service) =>
+                OportunidadeService service,
+                HistoricoService historico) =>
             {
                 return Executar(() =>
-                    service.MarcarComoPerdida(id, user.ObterId())
-                        ? Results.Ok(new
-                        {
-                            mensagem = "Oportunidade marcada como perdida."
-                        })
-                        : Results.NotFound());
+                {
+                    if (!service.MarcarComoPerdida(id, user.ObterId()))
+                        return Results.NotFound();
+
+                    var titulo = service.Buscar(id, user.ObterId())?.Titulo ?? id.ToString()[..8];
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Oportunidades,
+                        "Oportunidade perdida",
+                        $"{nome} marcou a oportunidade \"{titulo}\" como perdida.");
+
+                    return Results.Ok(new
+                    {
+                        mensagem = "Oportunidade marcada como perdida."
+                    });
+                });
             })
             .RequireAuthorization(Politicas.Colaborador);
 
@@ -153,15 +211,28 @@ namespace GestaoServicosWeb.API
             grupo.MapPut("/{id:guid}/cancelar", (
                 Guid id,
                 ClaimsPrincipal user,
-                OportunidadeService service) =>
+                OportunidadeService service,
+                HistoricoService historico) =>
             {
                 return Executar(() =>
-                    service.Cancelar(id, user.ObterId())
-                        ? Results.Ok(new
-                        {
-                            mensagem = "Oportunidade cancelada com sucesso."
-                        })
-                        : Results.NotFound());
+                {
+                    if (!service.Cancelar(id, user.ObterId()))
+                        return Results.NotFound();
+
+                    var titulo = service.Buscar(id, user.ObterId())?.Titulo ?? id.ToString()[..8];
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Oportunidades,
+                        "Cancelar oportunidade",
+                        $"{nome} cancelou a oportunidade \"{titulo}\".");
+
+                    return Results.Ok(new
+                    {
+                        mensagem = "Oportunidade cancelada com sucesso."
+                    });
+                });
             })
             .RequireAuthorization(Politicas.Colaborador);
 
@@ -172,6 +243,7 @@ namespace GestaoServicosWeb.API
                 HttpRequest request,
                 ClaimsPrincipal user,
                 OportunidadeService service,
+                HistoricoService historico,
                 IWebHostEnvironment env) =>
             {
                 Oportunidade? oportunidade;
@@ -224,6 +296,17 @@ namespace GestaoServicosWeb.API
                     await ficheiro.CopyToAsync(stream);
 
                     guardados.Add(new { nome = nomeSeguro, tamanho = ficheiro.Length });
+                }
+
+                if (guardados.Count > 0)
+                {
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Oportunidades,
+                        "Anexar documentos",
+                        $"{nome} anexou {guardados.Count} documento(s) à oportunidade \"{oportunidade.Titulo}\".");
                 }
 
                 return Results.Ok(guardados);

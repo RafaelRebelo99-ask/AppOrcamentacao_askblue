@@ -12,6 +12,7 @@ namespace GestaoServicosWeb.Dados
         public DbSet<Oportunidade> Oportunidades => Set<Oportunidade>();
         public DbSet<Orcamento> Orcamentos => Set<Orcamento>();
         public DbSet<Notificacao> Notificacoes => Set<Notificacao>();
+        public DbSet<RegistoHistorico> Historico => Set<RegistoHistorico>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -231,6 +232,33 @@ namespace GestaoServicosWeb.Dados
                     .OnDelete(DeleteBehavior.Cascade);
 
                 n.HasIndex(x => new { x.IdUtilizador, x.DataCriacao });
+            });
+
+            // ===== RegistoHistorico =====
+            modelBuilder.Entity<RegistoHistorico>(h =>
+            {
+                h.ToTable("Historico");
+                h.HasKey(x => x.Id);
+                h.Property(x => x.Id).ValueGeneratedNever();
+
+                h.Property(x => x.NomeUtilizador)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                h.Property(x => x.Categoria)
+                    .HasConversion<string>()
+                    .HasMaxLength(30)
+                    .IsRequired();
+
+                h.Property(x => x.Acao)
+                    .HasMaxLength(80)
+                    .IsRequired();
+
+                h.Property(x => x.Descricao)
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                h.HasIndex(x => x.DataHora);
             });
         }
     }

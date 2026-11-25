@@ -11,13 +11,21 @@ namespace GestaoServicosWeb.API
             var grupo = app.MapGroup("/api/auth").WithTags("Autenticação");
 
             grupo.MapPost("/login", Results<Ok<LoginResponse>, UnauthorizedHttpResult>
-                (LoginDto dto, LoginService service) =>
+                (LoginDto dto, LoginService service, HistoricoService historico) =>
             {
                 var resposta = service.Autenticar(dto);
 
-                return resposta is null
-                    ? TypedResults.Unauthorized()
-                    : TypedResults.Ok(resposta);
+                if (resposta is null)
+                    return TypedResults.Unauthorized();
+
+                historico.Registar(
+                    resposta.Utilizador.Id,
+                    resposta.Utilizador.Nome,
+                    CategoriaHistorico.Autenticacao,
+                    "Login",
+                    $"{resposta.Utilizador.Nome} iniciou sessão.");
+
+                return TypedResults.Ok(resposta);
             })
             .AllowAnonymous()
             .WithName("Login")

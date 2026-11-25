@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GestaoServicosWeb.Aplicacao;
 using GestaoServicosWeb.Contratos;
 
@@ -30,11 +31,20 @@ namespace GestaoServicosWeb.API
             });
 
             // 3. POST /api/categorias → criar nova categoria (só Empresa)
-            grupo.MapPost("/", (CriarCategoriaDto dto, CategoriaService service) =>
+            grupo.MapPost("/", (CriarCategoriaDto dto, ClaimsPrincipal user, CategoriaService service, HistoricoService historico) =>
             {
                 try
                 {
                     var c = service.Criar(dto);
+
+                    var nome = user.ObterNome();
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Categorias,
+                        "Criar categoria",
+                        $"{nome} criou a categoria \"{c.Nome}\".");
+
                     return Results.Created($"/api/categorias/{c.Id}", ParaDto(c));
                 }
                 catch (ArgumentException ex)
@@ -49,13 +59,25 @@ namespace GestaoServicosWeb.API
             .RequireAuthorization(Politicas.Administrador);
 
             // 4. DELETE /api/categorias/{id} → apagar categoria (só Empresa)
-            grupo.MapDelete("/{id:guid}", (Guid id, CategoriaService service) =>
+            grupo.MapDelete("/{id:guid}", (Guid id, ClaimsPrincipal user, CategoriaService service, HistoricoService historico) =>
             {
                 try
                 {
-                    return service.Apagar(id)
-                        ? Results.NoContent()
-                        : Results.NotFound();
+                    var alvo = service.Buscar(id);
+
+                    if (!service.Apagar(id))
+                        return Results.NotFound();
+
+                    var nome = user.ObterNome();
+                    var nomeCategoria = alvo?.Nome ?? id.ToString()[..8];
+                    historico.Registar(
+                        user.ObterId(),
+                        nome,
+                        CategoriaHistorico.Categorias,
+                        "Apagar categoria",
+                        $"{nome} apagou a categoria \"{nomeCategoria}\".");
+
+                    return Results.NoContent();
                 }
                 catch (InvalidOperationException ex)
                 {

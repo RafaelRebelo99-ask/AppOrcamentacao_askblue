@@ -32,5 +32,8 @@ namespace GestaoServicosWeb.API
 
         public static bool EAdmin(this ClaimsPrincipal user) =>
             user.IsInRole(nameof(Role.Administrador));
+
+        public static string ObterNome(this ClaimsPrincipal user) =>
+            user.FindFirstValue(ClaimTypes.Name) ?? "Utilizador";
     }
 }
