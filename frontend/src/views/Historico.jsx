@@ -37,12 +37,15 @@ export default function Historico() {
 
         <div className="vl"></div>
 
-        <input
-          type="search"
-          placeholder="Pesquisar utilizador ou ação..."
-          value={pesquisa}
-          onChange={e => setPesquisa(e.target.value)}
-        />
+        <div className="empty-box">
+          <i className='bi bi-search'></i>
+          <input
+            type="search"
+            placeholder="Pesquisar utilizador ou ação..."
+            value={pesquisa}
+            onChange={e => setPesquisa(e.target.value)}
+          />
+        </div>
 
         <button
           type="button"
