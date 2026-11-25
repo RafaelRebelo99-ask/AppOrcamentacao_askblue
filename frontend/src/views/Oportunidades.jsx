@@ -5,6 +5,7 @@ import Filters from '../components/Filters';
 import Sort from '../components/Sort';
 import Select from '../components/Select';
 import OportunidadeRow from '../components/oportunidades/OportunidadeRow';
+import OportunidadeRowSkeleton from '../components/skeletons/OportunidadeSkeleton';
 
 import useOportunidadesController from '../controllers/useOportunidades';
 
@@ -100,9 +101,7 @@ export default function Oportunidades() {
 
       {erro && <p className="error mb-05">{erro}</p>}
 
-      {loading && <p>A carregar oportunidades...</p>}
-
-      <table className="table" hidden={loading}>
+      <table className="table">
         <thead>
           <tr className="header">
             <th>ID</th>
@@ -117,7 +116,11 @@ export default function Oportunidades() {
         </thead>
 
         <tbody>
-          {oportunidadesFiltradas.length > 0 ? (
+          {loading ? (
+            Array.from({ length: 10 }).map((_, index) => (
+              <OportunidadeRowSkeleton key={index} />
+            ))
+          ) : oportunidadesFiltradas.length > 0 ? (
             oportunidadesFiltradas.map(oportunidade => (
               <OportunidadeRow
                 key={oportunidade.id}
