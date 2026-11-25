@@ -11,8 +11,21 @@ import {
   eliminarOrcamento,
   enviarOrcamento,
   listarOrcamentos,
+  obterPdf,
   recusarOrcamento,
 } from '../../models/orcamentosModel';
+
+// Guarda o ficheiro no computador. Não dá para usar um link normal, porque o pedido precisa do token.
+function guardarFicheiro(blob, nome) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = nome;
+  link.click();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 // O que cada ação chama na API, depois de confirmada
 const ACOES = {
@@ -127,6 +140,24 @@ export default function useOrcamentos() {
     }
   };
 
+  const handleDescarregarPdf = async (orcamento) => {
+    setErro('');
+    setIdEmCurso(orcamento.id);
+
+    try {
+      guardarFicheiro(await obterPdf(orcamento.id), `Proposta-${orcamento.numero}.pdf`);
+    } catch (err) {
+      if (sessaoInvalida(err)) {
+        limparSessao();
+        navigate('/login', { replace: true });
+        return;
+      }
+      setErro(mensagemDeErro(err));
+    } finally {
+      setIdEmCurso(null);
+    }
+  };
+
   return {
     podeGerir,
     orcamentosFiltrados,
@@ -143,6 +174,7 @@ export default function useOrcamentos() {
     handleEliminar,
     handleAceitar,
     handleRecusar,
+    handleDescarregarPdf,
     handleConfirmar,
     handleFecharConfirmacao,
   };

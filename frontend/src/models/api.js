@@ -52,5 +52,6 @@ export async function apiRequest(url, options = {}) {
     return null
   }
 
-  return resposta.json()
+  // Ficheiros (ex.: PDF): usar { comoBlob: true }
+  return options.comoBlob ? resposta.blob() : resposta.json()
 }
