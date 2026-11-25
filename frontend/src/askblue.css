@@ -2,10 +2,10 @@
     --primary-blue: #020AED;
     --secondary-blue: #0300a5;
     --danger-color: #ff0000;
-    --background-color: rgb(249, 249, 249);
+    --background-color: #ffffff;
     --sec-background-color: #ffffff;
     --border: 1px solid var(--border-color);
-    --border-color: #c7d2df;
+    --border-color: #d6d6d6;
     --border-radius-lg: 1rem;
     --border-radius-md: 0.75rem;
     --border-radius-sm: 0.5rem;
@@ -18,7 +18,7 @@
     --py: 0.5rem;
     --px: calc(var(--py) + (1lh - 1cap) / 2);
 
-    --skeleton-base: var(--border-color);
+    --skeleton-base: #e9e9e9;
     --skeleton-highlight: white;
 
     --blue-bg: #020aed25;
@@ -78,6 +78,7 @@ body {
 p {
     transition: transform 0.15s ease-in-out;
     color: var(--text-color);
+    overflow-wrap: anywhere;
 }
 
 .gap {
@@ -840,6 +841,7 @@ form {
     width: 2.5rem;
     height: 2.5rem;
     border: var(--border);
+    border-color: transparent;
     border-radius: var(--border-radius-sm);
     background-color: var(--primary-blue);
     justify-content: center;
