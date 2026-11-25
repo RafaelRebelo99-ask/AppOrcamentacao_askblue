@@ -1,4 +1,3 @@
-
 function SkeletonBlock({ width = '100%', height = '1.5rem' }) {
   return (
     <div
@@ -17,7 +16,7 @@ export default function OportunidadeRowSkeleton() {
     <tr>
       {/* ID */}
       <td>
-        <SkeletonBlock />
+        <SkeletonBlock width="30%" />
       </td>
 
       {/* Título */}
@@ -27,12 +26,12 @@ export default function OportunidadeRowSkeleton() {
 
       {/* Estado */}
       <td>
-        <SkeletonBlock  />
+        <SkeletonBlock width="60%" />
       </td>
 
       {/* Cliente */}
       <td>
-        <SkeletonBlock  />
+        <SkeletonBlock width="70%"/>
       </td>
 
       {/* Categoria */}
@@ -42,21 +41,18 @@ export default function OportunidadeRowSkeleton() {
 
       {/* Prazo da proposta */}
       <td>
-        <div className="column gap-05">
-          <SkeletonBlock />
-          <SkeletonBlock />
-        </div>
+        <SkeletonBlock />
       </td>
 
       {/* Data pretendida */}
       <td>
-        <SkeletonBlock />
+        <SkeletonBlock width="60%"/>
       </td>
 
       {/* Ações */}
       <td>
         <div className="row align-center">
-          <SkeletonBlock  />
+          <SkeletonBlock />
           <SkeletonBlock />
         </div>
       </td>
