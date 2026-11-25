@@ -36,10 +36,10 @@ const confirmacoes = {
 };
 
 const opcoesOrdenacao = [
-  { label: 'Data (Mais recente)', value: 'data-desc' },
-  { label: 'Data (Mais antigo)', value: 'data-asc' },
-  { label: 'Valor (Mais baixo)', value: 'valor-asc' },
-  { label: 'Valor (Mais alto)', value: 'valor-desc' },
+  { icon: 'bi bi-clock' , label: 'Data (Mais recente)', value: 'data-desc' },
+  { icon: 'bi bi-clock-history', label: 'Data (Mais antigo)', value: 'data-asc' },
+  { icon: 'bi bi-sort-numeric-down', label: 'Valor (Mais baixo)', value: 'valor-asc' },
+  { icon: 'bi bi-sort-numeric-up', label: 'Valor (Mais alto)', value: 'valor-desc' },
 ];
 
 export default function Orcamentos() {
