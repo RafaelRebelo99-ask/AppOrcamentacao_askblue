@@ -30,6 +30,7 @@ export async function listarOrcamentos() {
 
     return {
       id: o.id,
+      numero: o.id.slice(0, 8).toUpperCase(), // igual ao do PDF
       estado,
       expirado: o.expirado,
       // O cliente só decide sobre uma proposta enviada, dentro da validade e com a oportunidade em aberto
@@ -146,6 +147,11 @@ export function atualizarOrcamento(id, dados) {
 // Rascunho -> Enviado. Depois de enviado já não pode ser editado.
 export function enviarOrcamento(id) {
   return apiRequest(`/api/orcamentos/${id}/enviar`, { method: 'POST' });
+}
+
+// Devolve o ficheiro PDF (gerado no backend)
+export function obterPdf(id) {
+  return apiRequest(`/api/orcamentos/${id}/pdf`, { comoBlob: true });
 }
 
 // Aceitar: a oportunidade fica Ganha e as outras propostas enviadas são recusadas (feito no backend)

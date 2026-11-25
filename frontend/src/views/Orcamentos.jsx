@@ -58,6 +58,7 @@ export default function Orcamentos() {
     handleEliminar,
     handleAceitar,
     handleRecusar,
+    handleDescarregarPdf,
     handleConfirmar,
     handleFecharConfirmacao,
   } = useOrcamentos();
@@ -111,6 +112,7 @@ export default function Orcamentos() {
                 onEliminar={handleEliminar}
                 onAceitar={handleAceitar}
                 onRecusar={handleRecusar}
+                onDescarregarPdf={handleDescarregarPdf}
               />
             ))
           ) : (

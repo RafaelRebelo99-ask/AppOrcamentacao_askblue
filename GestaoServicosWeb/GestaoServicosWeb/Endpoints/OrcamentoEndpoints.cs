@@ -73,6 +73,17 @@ public static class OrcamentoEndpoints
                     OrcamentoResponse.De(
                         service.Obter(id, IdDe(user))))));
 
+        // PDF da proposta: quem a pode ver, pode descarregar
+        group.MapGet("/{id:guid}/pdf", (
+            Guid id,
+            ClaimsPrincipal user,
+            OrcamentoService service) =>
+            Executar(() =>
+            {
+                var (nome, conteudo) = service.GerarPdf(id, IdDe(user));
+                return TypedResults.File(conteudo, "application/pdf", nome);
+            }));
+
         // Colaborador
 
         // Criar proposta

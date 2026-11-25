@@ -123,6 +123,54 @@ namespace GestaoServicosWeb.Aplicacao
                 "Orçamento não encontrado.");
         }
 
+        // PDF da proposta. Pode descarregar quem a pode ver (regras do Obter).
+        public (string nome, byte[] conteudo) GerarPdf(Guid id, Guid idUtilizador)
+        {
+            var orcamento = Obter(id, idUtilizador);
+
+            var oportunidade = db.Oportunidades
+                .AsNoTracking()
+                .Include(o => o.Cliente)
+                .Include(o => o.Categoria)
+                .First(o => o.Id == orcamento.IdOportunidade);
+
+            var empresa = db.Utilizadores
+                .AsNoTracking()
+                .Where(u => u.Id == orcamento.IdCriador)
+                .Select(u => u.Empresa)
+                .FirstOrDefault()
+                ?? throw new InvalidOperationException(
+                    "O criador da proposta não está associado a uma empresa.");
+
+            var numero = orcamento.Id.ToString("N")[..8].ToUpperInvariant();
+
+            var pdf = PropostaPdf.Gerar(new DadosPropostaPdf(
+                Numero: numero,
+                Estado: orcamento.Estado.ToString(),
+                Rascunho: orcamento.Estado == EstadoOrcamento.Rascunho,
+                Expirada: orcamento.Expirado,
+                EmpresaNome: empresa.Nome,
+                EmpresaNif: empresa.NIF,
+                EmpresaEmail: empresa.Email,
+                EmpresaTelefone: empresa.Telefone,
+                ClienteNome: oportunidade.Cliente!.Nome,
+                ClienteEmail: oportunidade.Cliente.Email,
+                Oportunidade: oportunidade.Titulo,
+                Categoria: oportunidade.Categoria!.Nome,
+                Descricao: orcamento.Descricao,
+                ValorSemIVA: orcamento.ValorSemIVA,
+                TaxaIVA: orcamento.TaxaIVA,
+                ValorIVA: orcamento.ValorIVA,
+                ValorTotal: orcamento.ValorTotal,
+                Data: orcamento.DataEnvio ?? orcamento.DataCriacao,
+                DataInicio: orcamento.DataInicio,
+                DataFim: orcamento.DataFim,
+                DuracaoDias: orcamento.DuracaoDias,
+                DataValidade: orcamento.DataValidade));
+
+            return ($"Proposta-{numero}.pdf", pdf);
+        }
+
         // criação e edição
 
         public Orcamento Criar(

@@ -6,22 +6,31 @@ export default function OrcamentoCard({
     onEliminar,
     onAceitar,
     onRecusar,
+    onDescarregarPdf,
 }) {
     return (
         <div className="card column slide-up">
             <div className="row space-between align-center">
                 <div className="id" title={orcamento.id}>
-                    ORC-{orcamento.id.slice(0, 8)}
+                    {orcamento.numero}
                 </div>
 
-                <div className="row">
+                <div className="row align-center">
+                    <button
+                        type="button"
+                        className="secondary"
+                        title="Descarregar PDF"
+                        aria-label="Descarregar PDF"
+                        disabled={emCurso}
+                        onClick={() => onDescarregarPdf(orcamento)}
+                    >
+                        <i className="bi bi-file-earmark-pdf"></i>
+                        PDF
+                    </button>
+
                     <div className="estado">
                         {orcamento.estado}
                     </div>
-                    <button type="button" className="secondary transparent more-actions">
-                        <i className="bi bi-download"></i>
-                    </button>
-
                 </div>
 
             </div>
