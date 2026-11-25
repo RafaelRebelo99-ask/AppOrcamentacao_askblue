@@ -38,6 +38,17 @@ public static class OrcamentoEndpoints
             .RequireAuthorization(p =>
                 p.RequireRole(nameof(Role.Administrador)));
 
+        // Cliente: todas as propostas que recebeu
+        group.MapGet("/recebidos", (
+            ClaimsPrincipal user,
+            OrcamentoService service) =>
+            Executar(() =>
+                TypedResults.Ok(
+                    service.ListarRecebidos(IdDe(user))
+                        .Select(OrcamentoResponse.De))))
+            .RequireAuthorization(p =>
+                p.RequireRole(nameof(Role.Cliente)));
+
         // Cliente: propostas enviadas para uma das suas oportunidades
         group.MapGet("/oportunidade/{oportunidadeId:guid}", (
             Guid oportunidadeId,

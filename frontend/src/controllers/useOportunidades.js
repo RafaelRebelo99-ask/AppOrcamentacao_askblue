@@ -104,6 +104,9 @@ export default function useOportunidadesController() {
   const handleIniciarPreparacao = oportunidade =>
     executar(oportunidade, iniciarPreparacao);
 
+  const handleCriarOrcamento = oportunidade =>
+    navigate(`/orcamentos/novo/${oportunidade.id}`);
+
   // Perdida e Cancelada não têm volta atrás: pede confirmação
   const handlePerdida = (oportunidade) => {
     if (window.confirm(`Marcar "${oportunidade.titulo}" como perdida? Não é possível desfazer.`))
@@ -129,6 +132,7 @@ export default function useOportunidadesController() {
     podeGerir,
     handleIniciarAnalise,
     handleIniciarPreparacao,
+    handleCriarOrcamento,
     handlePerdida,
     handleCancelar,
   };

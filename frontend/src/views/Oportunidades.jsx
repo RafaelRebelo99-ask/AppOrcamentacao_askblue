@@ -35,6 +35,7 @@ export default function Oportunidades() {
     podeGerir,
     handleIniciarAnalise,
     handleIniciarPreparacao,
+    handleCriarOrcamento,
     handlePerdida,
     handleCancelar,
   } =useOportunidadesController();
@@ -90,6 +91,7 @@ export default function Oportunidades() {
                 emCurso={idEmCurso === oportunidade.id}
                 onIniciarAnalise={handleIniciarAnalise}
                 onIniciarPreparacao={handleIniciarPreparacao}
+                onCriarOrcamento={handleCriarOrcamento}
                 onPerdida={handlePerdida}
                 onCancelar={handleCancelar}
               />

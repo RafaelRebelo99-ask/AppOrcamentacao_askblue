@@ -11,6 +11,7 @@ export default function OportunidadeRow({
   emCurso,
   onIniciarAnalise,
   onIniciarPreparacao,
+  onCriarOrcamento,
   onPerdida,
   onCancelar,
 }) {
@@ -83,6 +84,17 @@ export default function OportunidadeRow({
                   onClick={() => onIniciarPreparacao(oportunidade)}
                 >
                   Iniciar preparação
+                </button>
+              )}
+
+              {/* Com uma proposta já enviada, dá para enviar outra */}
+              {['EmPreparacao', 'PropostaEnviada'].includes(oportunidade.estado) && (
+                <button
+                  className="primary wide"
+                  disabled={emCurso}
+                  onClick={() => onCriarOrcamento(oportunidade)}
+                >
+                  Criar orçamento
                 </button>
               )}
 
