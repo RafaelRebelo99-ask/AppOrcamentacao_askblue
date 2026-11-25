@@ -1,6 +1,15 @@
 import Layout from '../components/Layout';
 import Aviso from '../components/Aviso';
 import useCriarOrcamento from '../controllers/orcamentos/useNovoOrcamento';
+import Select from '../components/Select';
+import NumeroInput from '../components/NumeroInput';
+import ThemeToggle from '../components/ThemeToggle';
+
+const taxasIVA = [
+  { label: '23%', value: '23' },
+  { label: '10%', value: '10' },
+  { label: '0% (isento)', value: '0' },
+];
 
 export default function CriarOrcamento() {
   const {
@@ -18,6 +27,7 @@ export default function CriarOrcamento() {
     handleConfirmarEnvio,
     handleFecharConfirmacao,
     handleCancelar,
+    handleSelectChange
   } = useCriarOrcamento();
 
   if (loadingOportunidade) {
@@ -44,173 +54,174 @@ export default function CriarOrcamento() {
 
   return (
     <Layout>
-      <div className="orcamento">
-        <h1 className="mb-1">Nova proposta</h1>
+      <div className="row">
+        <h1 className="mb-1">Novo Orçamento</h1>
+        <ThemeToggle/>
+      </div>
 
-        <section className="mb-1">
-          <h2>{oportunidade.titulo}</h2>
+      <section>
+        <h2>{oportunidade.titulo}</h2>
 
-          <p>{oportunidade.descricao}</p>
+        <p className='mb-1'>{oportunidade.descricao}</p>
 
-          <div className="row wrap">
-            <div className="pill primary">
-              {oportunidade.estadoTexto}
-            </div>
-
-            <p>Prazo da proposta: {oportunidade.prazo}</p>
-
-            <p>Data pretendida: {oportunidade.dataPretendida}</p>
+        <div className="row wrap align-center">
+          <div className="pill primary">
+            {oportunidade.categoria}
           </div>
-        </section>
 
-        <hr />
+          <p>Prazo da proposta:</p><div className="date">{oportunidade.prazo}</div>
 
-        <form onSubmit={handleEnviar}>
-          <div className="column gap-1">
+          <p>Data pretendida:</p><div className="date">{oportunidade.dataPretendida}</div>
+        </div>
+      </section>
+
+      <hr />
+
+      <form onSubmit={handleEnviar}>
+        <div className="column gap-1">
+          <div className="field">
+            <label htmlFor="descricao">Descrição da proposta *</label>
+
+            <textarea
+              id="descricao"
+              name="descricao"
+              value={dados.descricao}
+              onChange={handleChange}
+              maxLength={4000}
+              required
+            />
+          </div>
+
+          <div className="row wrap gap-1 align-center">
             <div className="field">
-              <label htmlFor="descricao">Descrição da proposta *</label>
+              <label htmlFor="valorSemIVA">Valor sem IVA *</label>
+              <div className="empty-box">
 
-              <textarea
-                id="descricao"
-                name="descricao"
-                value={dados.descricao}
-                onChange={handleChange}
-                maxLength={4000}
-                required
-              />
-            </div>
-
-            <div className="row wrap">
-              <div className="field">
-                <label htmlFor="valorSemIVA">Valor sem IVA (€) *</label>
-
-                <input
+                <NumeroInput
                   id="valorSemIVA"
                   name="valorSemIVA"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
                   value={dados.valorSemIVA}
                   onChange={handleChange}
                   required
                 />
+
+                <p id="moeda" className="weak">€</p>
+
               </div>
 
-              <div className="field">
-                <label htmlFor="taxaIVA">Taxa de IVA (%) *</label>
-
-                <select
-                  id="taxaIVA"
-                  name="taxaIVA"
-                  value={dados.taxaIVA}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="23">23%</option>
-                  <option value="13">13%</option>
-                  <option value="6">6%</option>
-                  <option value="0">0%</option>
-                </select>
-              </div>
-
-              {/* Só para ajudar quem preenche; o valor final é calculado no backend */}
-              <div className="field">
-                <label>Valor do IVA</label>
-                <output>{resumo.valorIVA}</output>
-              </div>
-
-              <div className="field">
-                <label>Valor total (incl. IVA)</label>
-                <output>{resumo.valorTotal}</output>
-              </div>
             </div>
 
-            <div className="row wrap">
-              <div className="field">
-                <label htmlFor="dataInicio">Data de início *</label>
+            <div className="field">
+              <label htmlFor="taxaIVA">Taxa de IVA (%) *</label>
 
-                <input
-                  id="dataInicio"
-                  name="dataInicio"
-                  type="date"
-                  value={dados.dataInicio}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <Select
+                options={taxasIVA}
+                className='w-100'
+                value={dados.taxaIVA}
+                onChange={(value) => handleSelectChange('taxaIVA', value)}
+              />
 
-              <div className="field">
-                <label htmlFor="duracaoDias">Duração (dias) *</label>
 
-                <input
-                  id="duracaoDias"
-                  name="duracaoDias"
-                  type="number"
-                  min="1"
-                  step="1"
-                  value={dados.duracaoDias}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="field">
-                <label>Data de fim</label>
-                <output>{resumo.dataFim}</output>
-              </div>
-
-              <div className="field">
-                <label htmlFor="dataValidade">Validade da proposta *</label>
-
-                <input
-                  id="dataValidade"
-                  name="dataValidade"
-                  type="date"
-                  value={dados.dataValidade}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
             </div>
 
-            {erro && (
-              <p className="danger" role="alert">
-                {erro}
-              </p>
-            )}
+            {/* Só para ajudar quem preenche; o valor final é calculado no backend */}
+            <div className="field">
+              <label>Valor do IVA</label>
+              <div className='empty-box'>{resumo.valorIVA}</div>
+            </div>
 
-            {sucesso && <p role="status">{sucesso}</p>}
-
-            <div className="row">
-              <button
-                type="button"
-                className="secondary"
-                onClick={handleCancelar}
-                disabled={loading}
-              >
-                Cancelar
-              </button>
-
-              <button
-                type="button"
-                className="secondary"
-                onClick={handleGuardarRascunho}
-                disabled={loading}
-              >
-                Guardar rascunho
-              </button>
-
-              <button
-                type="submit"
-                className="primary"
-                disabled={loading}
-              >
-                {loading ? 'A processar...' : 'Enviar proposta'}
-              </button>
+            <div className="field">
+              <label>Valor total (incl. IVA)</label>
+              <div className='empty-box'>{resumo.valorTotal}</div>
             </div>
           </div>
-        </form>
-      </div>
+
+          <div className="row wrap gap-1">
+            <div className="field">
+              <label htmlFor="dataInicio">Data de início *</label>
+
+              <input
+                id="dataInicio"
+                name="dataInicio"
+                type="date"
+                value={dados.dataInicio}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="field">
+              <label htmlFor="duracaoDias">Duração (dias) *</label>
+
+              <input
+                id="duracaoDias"
+                name="duracaoDias"
+                type="number"
+                min="1"
+                step="1"
+                value={dados.duracaoDias}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="field">
+              <label>Data de fim</label>
+              <div className='date'>{resumo.dataFim}</div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="dataValidade">Validade da proposta *</label>
+
+              <input
+                id="dataValidade"
+                name="dataValidade"
+                type="date"
+                value={dados.dataValidade}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          {erro && (
+            <p className="danger" role="alert">
+              {erro}
+            </p>
+          )}
+
+          {sucesso && <p role="status">{sucesso}</p>}
+          <hr></hr>
+          <div className="row">
+            <button
+              type="button"
+              className="secondary"
+              onClick={handleCancelar}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="button"
+              className="secondary"
+              onClick={handleGuardarRascunho}
+              disabled={loading}
+            >
+              Guardar rascunho
+            </button>
+
+            <button
+              type="submit"
+              className="primary"
+              disabled={loading}
+            >
+              {loading ? 'A processar...' : 'Enviar proposta'}
+            </button>
+          </div>
+        </div>
+      </form>
+
 
       {/* Fora do <form>, para os botões do aviso não o submeterem */}
       <Aviso

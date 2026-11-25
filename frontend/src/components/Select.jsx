@@ -51,7 +51,7 @@ export default function Select({
         <div className={`${className}`} ref={selectRef}>
             <button
                 type="button"
-                className={`wide secondary pos-rel ${isOpen ? 'active' : ''}`}
+                className={`wide secondary pos-rel w-100 space-between ${isOpen ? 'active' : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
                 disabled={disabled}
                 aria-haspopup="listbox"

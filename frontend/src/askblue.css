@@ -67,6 +67,7 @@ body {
     margin: 0;
     font-size: .90rem;
     line-height: var(--line-height);
+    color: var(--text-color);
 }
 
 p {
@@ -80,6 +81,10 @@ p {
 
 .gap-1 {
     gap: 1rem !important;
+}
+
+.gap-2 {
+    gap: 2rem !important;
 }
 
 .gap-sm {
@@ -453,7 +458,7 @@ option.danger:hover {
 label {
     color: var(--primary-blue);
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
 }
 
 .scrollable {
@@ -698,12 +703,14 @@ h2 {
     font-size: larger;
     font-weight: normal;
     color: var(--text-color);
+    margin-bottom: 0.5rem;
 }
 
 h1 {
     font-size: x-large;
     font-weight: normal;
     color: var(--text-color);
+    margin-bottom: 0.5rem;
 }
 
 .hint {

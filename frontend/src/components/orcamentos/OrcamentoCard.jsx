@@ -9,53 +9,69 @@ export default function OrcamentoCard({
 }) {
     return (
         <div className="card column">
-            <div className="row space-between align-center mb-1">
+            <div className="row space-between align-center">
                 <div className="id" title={orcamento.id}>
-                    {orcamento.id.slice(0, 8)}
+                    ORC-{orcamento.id.slice(0, 8)}
                 </div>
 
-                <div className="estado">
-                    {orcamento.estado}
+                <div className="row">
+                    <div className="estado">
+                        {orcamento.estado}
+                    </div>
+                    <button type="button" className="secondary transparent more-actions">
+                        <i className="bi bi-download"></i>
+                    </button>
+
                 </div>
+
             </div>
 
             <div className="column">
                 <h2 className="mb-05">
                     {orcamento.oportunidade}
                 </h2>
-
-                {podeGerir && <p>Cliente: {orcamento.cliente}</p>}
-
                 <p className="mb-05">{orcamento.descricao}</p>
+                {podeGerir && <p>Cliente: {orcamento.cliente}</p>}
+                <hr></hr>
+
+                <div className="column gap-1">
+                    <div className="row align-center">
+                        <p>Criada em:</p> <div className="date">{orcamento.criadaEm}</div>
+                    </div>
+
+                    <div className="row align-center">
+                        <p>Validade:</p> <div className="date">{orcamento.validade}</div>
+                    </div>
+
+                    <div className="row align-center wrap">
+                        <p>Execução:</p>
+                        <div className="date">{orcamento.inicio}</div>
+                        <p>a</p>
+                        <div className="date">{orcamento.fim}</div>
+                    </div>
+                </div>
+
+                <hr></hr>
 
                 <div className="row align-center">
-                    <p>Criada em:</p> <div className="date">{orcamento.criadaEm}</div>
+                    <div className="column">
+                        <p>
+                            Valor sem IVA:
+                        </p>
+                        <p>{orcamento.valorSemIVA}</p>
+                    </div>
+
+                    <div className="column">
+                        <p>
+                            IVA:
+                        </p>
+                        <p>{orcamento.valorIVA}</p>
+                    </div>
                 </div>
 
-                <div className="row align-center">
-                    <p>Validade:</p> <div className="date">{orcamento.validade}</div>
-                </div>
+                <hr />
 
-                <div className="row align-center wrap">
-                    <p>Execução:</p>
-                    <div className="date">{orcamento.inicio}</div>
-                    <p>a</p>
-                    <div className="date">{orcamento.fim}</div>
-                </div>
-
-                <div className="row">
-                    <p>
-                        Valor sem IVA: {orcamento.valorSemIVA}
-                    </p>
-                    <div className="vl"></div>
-                    <p>
-                        IVA ({orcamento.taxaIVA}%): {orcamento.valorIVA}
-                    </p>
-                </div>
-
-                <hr/>
-
-                <div className="empty-box">
+                <div className="empty-box mb-1">
                     Valor Total: {orcamento.valorTotal}
                 </div>
 

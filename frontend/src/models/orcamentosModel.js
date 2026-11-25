@@ -57,7 +57,9 @@ export async function listarOrcamentos() {
 // Um rascunho pode ter datas passadas; para enviar, não.
 export function validarOrcamento(dados, { paraEnviar }) {
   const descricao = dados.descricao.trim();
-  const valor = Number(dados.valorSemIVA);
+  const valor = Number(String(dados.valorSemIVA ?? '')
+    .replace(/[.\s\u00A0\u202F]/g, '')
+    .replace(',', '.'));
   const duracao = Number(dados.duracaoDias);
 
   if (!descricao) return 'A descrição da proposta é obrigatória.';
@@ -76,24 +78,35 @@ export function validarOrcamento(dados, { paraEnviar }) {
   return '';
 }
 
-// Pré-visualização enquanto se escreve. Os valores que contam são os que o backend calcula.
+// Pré-visualização enquanto se escreve.
 export function calcularResumo(dados) {
-  const valor = Number(dados.valorSemIVA);
-  const duracao = Number(dados.duracaoDias);
+  const valor = Number(
+    String(dados.valorSemIVA ?? '')
+      .replace(/[.\s\u00A0\u202F]/g, '')
+      .replace(',', '.')
+  );
+
+  console.log('Valor original:', dados.valorSemIVA);
+  console.log('Valor convertido:', valor);
 
   let valorIVA = '—';
   let valorTotal = '—';
   let dataFim = '—';
 
-  if (valor > 0) {
-    const total = Math.round((valor * (1 + Number(dados.taxaIVA) / 100) + Number.EPSILON) * 100) / 100;
+  if (Number.isFinite(valor) && valor > 0) {
+    const total = Math.round(
+      (valor * (1 + Number(dados.taxaIVA) / 100) + Number.EPSILON) * 100
+    ) / 100;
+
     valorIVA = formatarEuros(total - valor);
     valorTotal = formatarEuros(total);
   }
 
-  if (dados.dataInicio && duracao > 0) {
+  if (dados.dataInicio && dados.duracaoDias > 0) {
     const [ano, mes, dia] = dados.dataInicio.split('-').map(Number);
-    dataFim = formatarData(new Date(ano, mes - 1, dia + duracao));
+    dataFim = formatarData(
+      new Date(ano, mes - 1, dia + dados.duracaoDias)
+    );
   }
 
   return { valorIVA, valorTotal, dataFim };

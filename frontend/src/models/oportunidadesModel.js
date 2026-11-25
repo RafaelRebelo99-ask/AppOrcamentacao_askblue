@@ -108,10 +108,13 @@ export async function obterOportunidade(id) {
   const o = await apiRequest(`/api/oportunidades/${id}`);
   const estado = deEnum(o.estado, ESTADOS);
 
+  console.log(o);
+
   return {
     id: o.id,
     titulo: o.titulo,
     descricao: o.descricao,
+    categoria: o.idCategoria,
     estado,
     estadoTexto: TEXTO_ESTADO[estado] ?? estado,
     prazo: formatarData(o.prazoProposta),
