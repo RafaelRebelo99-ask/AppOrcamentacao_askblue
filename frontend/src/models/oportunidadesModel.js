@@ -1,7 +1,7 @@
 // ===== MODEL: oportunidades =====
 // Fala com a API e traduz os dados para o formato que os ecrãs usam.
 // Não sabe nada de formulários, botões nem páginas (isso é dos controllers e das views).
-import { apiRequest } from './api';
+import { apiRequest, obterToken } from './api';
 import { obterUtilizador } from './loginModel';
 
 // O backend envia os enums como números, pela ordem em que estão no C#
@@ -178,6 +178,68 @@ export const iniciarAnalise = id => mudarEstado(id, 'iniciar-analise');
 export const iniciarPreparacao = id => mudarEstado(id, 'iniciar-preparacao');
 export const marcarComoPerdida = id => mudarEstado(id, 'perdida');
 export const cancelarOportunidade = id => mudarEstado(id, 'cancelar');
+
+// ----- Documentos -----
+
+export const MAX_TAMANHO_DOCUMENTO_BYTES = 10 * 1024 * 1024; // 10 MB
+
+export function formatarTamanhoFicheiro(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+// Envia ficheiros em multipart/form-data (sem Content-Type manual para o browser gerar o boundary)
+export async function enviarDocumentosOportunidade(oportunidadeId, ficheiros) {
+  const formData = new FormData();
+  for (const ficheiro of ficheiros) {
+    formData.append('ficheiros', ficheiro);
+  }
+
+  const token = obterToken();
+  const resposta = await fetch(`/api/oportunidades/${oportunidadeId}/documentos`, {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  });
+
+  if (!resposta.ok) {
+    const texto = await resposta.text().catch(() => '');
+    const erro = new Error(texto || `Erro ao enviar documentos (${resposta.status})`);
+    erro.status = resposta.status;
+    throw erro;
+  }
+
+  return resposta.json();
+}
+
+export function listarDocumentosOportunidade(oportunidadeId) {
+  return apiRequest(`/api/oportunidades/${oportunidadeId}/documentos`);
+}
+
+export async function descarregarDocumentoOportunidade(oportunidadeId, nome) {
+  const token = obterToken();
+  const resposta = await fetch(
+    `/api/oportunidades/${oportunidadeId}/documentos/${encodeURIComponent(nome)}`,
+    { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+  );
+
+  if (!resposta.ok) {
+    const erro = new Error('Não foi possível descarregar o documento.');
+    erro.status = resposta.status;
+    throw erro;
+  }
+
+  const blob = await resposta.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = nome;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
 
 // ----- Datas -----
 

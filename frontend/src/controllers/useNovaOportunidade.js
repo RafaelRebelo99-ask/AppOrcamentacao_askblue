@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { limparSessao } from '../models/loginModel';
 import {
+  MAX_TAMANHO_DOCUMENTO_BYTES,
   criarOportunidade,
+  enviarDocumentosOportunidade,
   listarCategorias,
   listarClientes,
   mensagemDeErro,
@@ -23,6 +25,7 @@ export default function useNovaOportunidade() {
     prazoProposta: '',
     dataPretendida: '',
   });
+  const [documentos, setDocumentos] = useState([]);
 
   // Dados provenientes do backend
   const [clientes, setClientes] = useState([]);
@@ -75,7 +78,34 @@ export default function useNovaOportunidade() {
     }));
   };
 
-  // Registar oportunidade no backend
+  // Adicionar ficheiros selecionados (máx. 10 MB cada, sem duplicados)
+  const handleAdicionarDocumentos = (e) => {
+    const selecionados = Array.from(e.target.files || []);
+    e.target.value = '';
+
+    const demasiadoGrande = selecionados.find(
+      f => f.size > MAX_TAMANHO_DOCUMENTO_BYTES
+    );
+    if (demasiadoGrande) {
+      setErro(`O ficheiro "${demasiadoGrande.name}" excede o limite de 10 MB.`);
+      return;
+    }
+
+    setErro('');
+    setDocumentos(prev => {
+      const novos = selecionados.filter(
+        f => !prev.some(p => p.name === f.name && p.size === f.size)
+      );
+      return [...prev, ...novos];
+    });
+  };
+
+  // Remover um ficheiro antes de submeter
+  const handleRemoverDocumento = (indice) => {
+    setDocumentos(prev => prev.filter((_, i) => i !== indice));
+  };
+
+  // Registar oportunidade no backend (e enviar documentos se existirem)
   const handleSubmit = async (e) => {
     e.preventDefault(); // impede o browser de recarregar a página
 
@@ -89,7 +119,12 @@ export default function useNovaOportunidade() {
     setLoading(true);
 
     try {
-      await criarOportunidade(dados);
+      const criada = await criarOportunidade(dados);
+
+      if (documentos.length > 0) {
+        await enviarDocumentosOportunidade(criada.id, documentos);
+      }
+
       navigate('/oportunidades');
     } catch (err) {
       if (sessaoInvalida(err)) {
@@ -110,11 +145,14 @@ export default function useNovaOportunidade() {
 
   return {
     dados,
+    documentos,
     clientes,
     categorias,
     loading,
     erro,
     handleChange,
+    handleAdicionarDocumentos,
+    handleRemoverDocumento,
     handleSubmit,
     handleCancelar,
   };
