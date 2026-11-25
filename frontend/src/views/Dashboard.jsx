@@ -89,7 +89,7 @@ export default function Dashboard() {
                                                 <p className='weak'>{oportunidade.cliente}</p>
                                             </div>
                                         </div>
-                                        <div className="estado">{oportunidade.estado}</div>
+                                        <div className="estado">{oportunidade.estadoTexto}</div>
                                     </div>
 
                                 ))}
