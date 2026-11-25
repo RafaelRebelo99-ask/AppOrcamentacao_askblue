@@ -971,6 +971,8 @@ button:focus-visible .tooltip {
     max-width: 30rem;
     position: relative;
     transform: translateY(-5rem);
+    padding: 1rem;
+    padding-bottom: 2rem;
 }
 
 .overlay {
