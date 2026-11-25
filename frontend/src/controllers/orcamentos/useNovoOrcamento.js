@@ -12,16 +12,21 @@ import {
   calcularResumo,
   criarOrcamento,
   enviarOrcamento,
+  obterOrcamento,
   validarOrcamento,
 } from '../../models/orcamentosModel';
 import { listarCategorias } from '../../models/categoriasModel';
 
+// Serve para criar (/orcamentos/novo/:oportunidadeId) e para editar um rascunho (/orcamentos/:orcamentoId/editar)
 export default function useNovoOrcamento() {
-  const { oportunidadeId } = useParams();
+  const { oportunidadeId, orcamentoId } = useParams();
   const navigate = useNavigate();
 
+  const modoEdicao = Boolean(orcamentoId);
+  const paginaAnterior = modoEdicao ? '/orcamentos' : '/oportunidades';
+
   const [oportunidade, setOportunidade] = useState(null);
-  const [orcamentoCriadoId, setOrcamentoCriadoId] = useState(null); // rascunho já guardado
+  const [orcamentoCriadoId, setOrcamentoCriadoId] = useState(orcamentoId ?? null); // rascunho já guardado
 
   const [categorias, setCategorias] = useState([]);
 
@@ -40,7 +45,7 @@ export default function useNovoOrcamento() {
   const [sucesso, setSucesso] = useState('');
   const [confirmarEnvio, setConfirmarEnvio] = useState(false);
 
-  // Carregar a oportunidade ao abrir a página
+  // Carregar a oportunidade (e o rascunho, se for para editar) ao abrir a página
   useEffect(() => {
     if (!podeGerirOportunidades()) {
       navigate('/oportunidades', { replace: true });
@@ -51,12 +56,23 @@ export default function useNovoOrcamento() {
 
     async function carregarDados() {
       try {
+        const rascunho = orcamentoId ? await obterOrcamento(orcamentoId) : null;
+
+        if (!ativo) return;
+
+        if (rascunho && rascunho.estado !== 'Rascunho') {
+          setErro('Só é possível editar propostas em rascunho.');
+          return;
+        }
+
         const [resposta, listaCategorias] = await Promise.all([
-          obterOportunidade(oportunidadeId),
+          obterOportunidade(rascunho?.idOportunidade ?? oportunidadeId),
           listarCategorias().catch(() => [])
         ]);
 
         if (!ativo) return;
+
+        if (rascunho) setDados(rascunho.dados);
 
         const categoria = listaCategorias.find(
           c => String(c.id ?? c.Id) === String(resposta.categoria)
@@ -79,13 +95,11 @@ export default function useNovoOrcamento() {
         }
 
         if (erro.status === 404) {
-          setMensagemErro('Oportunidade não encontrada.');
+          setErro(orcamentoId ? 'Proposta não encontrada.' : 'Oportunidade não encontrada.');
           return;
         }
 
-        setMensagemErro(
-          mensagemDeErro(erro, 'Erro ao carregar oportunidade.')
-        );
+        setErro(mensagemDeErro(erro));
       } finally {
         if (ativo) {
           setLoadingOportunidade(false);
@@ -98,7 +112,7 @@ export default function useNovoOrcamento() {
     return () => {
       ativo = false;
     };
-  }, [oportunidadeId, navigate]);
+  }, [oportunidadeId, orcamentoId, navigate]);
 
   const resumo = calcularResumo(dados);
 
@@ -190,7 +204,7 @@ const handleConfirmarEnvio = async () => {
     guardado = true;
 
     await enviarOrcamento(id);
-    navigate('/oportunidades');
+    navigate(paginaAnterior);
   } catch (err) {
     tratarErro(err, guardado ? 'O rascunho foi guardado, mas não foi enviado. ' : '');
   } finally {
@@ -212,10 +226,11 @@ const handleFecharConfirmacao = () => {
 };
 
 const handleCancelar = () => {
-  navigate('/oportunidades');
+  navigate(paginaAnterior);
 };
 
 return {
+  modoEdicao,
   oportunidade,
   dados,
   resumo,
