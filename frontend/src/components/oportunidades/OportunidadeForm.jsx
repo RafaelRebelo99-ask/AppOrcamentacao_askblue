@@ -1,10 +1,14 @@
 import Select from "../Select";
+import { formatarTamanhoFicheiro } from "../../models/oportunidadesModel";
 
 export default function OportunidadeForm({
     dados,
+    documentos = [],
     clientes,
     categorias,
     onChange,
+    onAdicionarDocumentos,
+    onRemoverDocumento,
     onSubmit,
     onCancelar,
     erro,
@@ -109,6 +113,50 @@ export default function OportunidadeForm({
                 {erro && <p className="danger">{erro}</p>}
             </div>
 
+
+            <hr />
+
+            <div className="column">
+                <h2 className="mb-05">Documentos (opcional)</h2>
+                <label>Anexar ficheiros (máx. 10 MB cada)</label>
+                <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.txt"
+                    onChange={onAdicionarDocumentos}
+                    disabled={loading}
+                    className="mb-05"
+                />
+
+                {documentos.length > 0 && (
+                    <div className="column gap">
+                        {documentos.map((doc, indice) => (
+                            <div
+                                key={`${doc.name}-${doc.size}`}
+                                className="row align-center space-between"
+                            >
+                                <span>
+                                    <i className="bi bi-paperclip"></i>{' '}
+                                    {doc.name}{' '}
+                                    <span className="weak">
+                                        ({formatarTamanhoFicheiro(doc.size)})
+                                    </span>
+                                </span>
+
+                                <button
+                                    type="button"
+                                    className="more-actions"
+                                    onClick={() => onRemoverDocumento(indice)}
+                                    disabled={loading}
+                                    aria-label={`Remover ${doc.name}`}
+                                >
+                                    <i className="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             <hr />
 
