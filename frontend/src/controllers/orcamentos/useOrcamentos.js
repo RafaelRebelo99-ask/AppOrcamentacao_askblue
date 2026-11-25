@@ -1,153 +1,134 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { limparSessao } from '../../models/loginModel';
+import {
+  mensagemDeErro,
+  podeGerirOportunidades,
+  sessaoInvalida,
+} from '../../models/oportunidadesModel';
+import {
+  aceitarOrcamento,
+  eliminarOrcamento,
+  enviarOrcamento,
+  listarOrcamentos,
+  recusarOrcamento,
+} from '../../models/orcamentosModel';
 
-function obterToken() {
-  return localStorage.getItem('accessToken') ||
-    sessionStorage.getItem('accessToken');
-}
-
-function obterRole() {
-  const utilizador = localStorage.getItem('utilizador') ||
-    sessionStorage.getItem('utilizador');
-
-  if (!utilizador) return null;
-
-  try {
-    return JSON.parse(utilizador).role;
-  } catch {
-    return null;
-  }
-}
-
-function timestamp(data) {
-  return data ? new Date(data).getTime() : 0;
-}
+// O que cada ação chama na API, depois de confirmada
+const ACOES = {
+  enviar: enviarOrcamento,
+  eliminar: eliminarOrcamento,
+  aceitar: aceitarOrcamento,
+  recusar: recusarOrcamento,
+};
 
 export default function useOrcamentos() {
+  const navigate = useNavigate();
+
+  // Colaborador e Administrador gerem as propostas; o Cliente aceita ou recusa
+  const [podeGerir] = useState(podeGerirOportunidades);
+
   const [orcamentos, setOrcamentos] = useState([]);
   const [estadoSelecionado, setEstadoSelecionado] = useState('Todos');
   const [ordenacao, setOrdenacao] = useState('data-desc');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState('');
 
-  const carregarOrcamentos = useCallback(async () => {
-    const token = obterToken();
+  const [acaoPendente, setAcaoPendente] = useState(null); // { tipo, orcamento } à espera de confirmação
+  const [idEmCurso, setIdEmCurso] = useState(null);       // proposta com uma ação a decorrer
 
-    if (!token) {
-      setErro('Sessão não encontrada. Inicia sessão novamente.');
-      return;
-    }
-
-    setLoading(true);
-    setErro('');
-
-    try {
-      const role = obterRole();
-
-      const endpoint = role === 'Administrador'
-        ? '/api/orcamentos/todos'
-        : '/api/orcamentos/';
-
-      const response = await fetch(endpoint, {
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      });
-
-      if (!response.ok) {
-        const body = await response.json().catch(() => null);
-        throw new Error(
-          body?.erro || 'Não foi possível carregar as propostas.'
-        );
-      }
-
-      const data = await response.json();
-      setOrcamentos(Array.isArray(data) ? data : []);
-    } catch (error) {
-      setErro(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Carregar a lista ao abrir a página
   useEffect(() => {
-    carregarOrcamentos();
-  }, [carregarOrcamentos]);
+    let ativo = true; // evita mexer no estado se o utilizador já saiu da página
 
-  const contagens = useMemo(() => ({
-    Todos: orcamentos.length,
-    Rascunho: orcamentos.filter(o => o.estado === 'Rascunho').length,
-    Enviado: orcamentos.filter(o => o.estado === 'Enviado').length,
-    Aceite: orcamentos.filter(o => o.estado === 'Aceite').length,
-    Recusado: orcamentos.filter(o => o.estado === 'Recusado').length,
-  }), [orcamentos]);
+    listarOrcamentos()
+      .then(lista => {
+        if (ativo) setOrcamentos(lista);
+      })
+      .catch(err => {
+        if (!ativo) return;
 
-  const orcamentosFiltrados = useMemo(() => {
-    return [...orcamentos]
-      .filter(orcamento =>
-        estadoSelecionado === 'Todos' ||
-        orcamento.estado === estadoSelecionado
-      )
-      .sort((a, b) => {
-        switch (ordenacao) {
-          case 'data-asc':
-            return timestamp(a.dataCriacao) - timestamp(b.dataCriacao);
-
-          case 'data-desc':
-            return timestamp(b.dataCriacao) - timestamp(a.dataCriacao);
-
-          case 'valor-asc':
-            return Number(a.valorTotal) - Number(b.valorTotal);
-
-          case 'valor-desc':
-            return Number(b.valorTotal) - Number(a.valorTotal);
-
-          default:
-            return 0;
+        if (sessaoInvalida(err)) {
+          limparSessao();
+          navigate('/login', { replace: true });
+          return;
         }
+        setErro(mensagemDeErro(err));
+      })
+      .finally(() => {
+        if (ativo) setLoading(false);
       });
-  }, [orcamentos, estadoSelecionado, ordenacao]);
 
-  const handleEliminar = async (orcamento) => {
-    if (orcamento.estado !== 'Rascunho') {
-      setErro('Só é possível eliminar propostas em rascunho.');
-      return;
-    }
+    return () => { ativo = false; };
+  }, [navigate]);
 
-    if (!window.confirm('Queres mesmo eliminar este rascunho?')) {
-      return;
-    }
+  const contar = estado => orcamentos.filter(o => o.estado === estado).length;
 
-    const token = obterToken();
+  const contagens = {
+    Todos: orcamentos.length,
+    Rascunho: contar('Rascunho'),
+    Enviado: contar('Enviado'),
+    Aceite: contar('Aceite'),
+    Recusado: contar('Recusado'),
+  };
 
+  const orcamentosFiltrados = orcamentos
+    .filter(orcamento =>
+      estadoSelecionado === 'Todos' ||
+      orcamento.estado === estadoSelecionado
+    )
+    .sort((a, b) => {
+      switch (ordenacao) {
+        case 'data-asc':
+          return a.criadaTempo - b.criadaTempo;
+
+        case 'data-desc':
+          return b.criadaTempo - a.criadaTempo;
+
+        case 'valor-asc':
+          return a.total - b.total;
+
+        case 'valor-desc':
+          return b.total - a.total;
+
+        default:
+          return 0;
+      }
+    });
+
+  // Nenhuma destas ações tem volta atrás: primeiro pede-se confirmação
+  const handleEnviar = orcamento => setAcaoPendente({ tipo: 'enviar', orcamento });
+  const handleEliminar = orcamento => setAcaoPendente({ tipo: 'eliminar', orcamento });
+  const handleAceitar = orcamento => setAcaoPendente({ tipo: 'aceitar', orcamento });
+  const handleRecusar = orcamento => setAcaoPendente({ tipo: 'recusar', orcamento });
+  const handleFecharConfirmacao = () => setAcaoPendente(null);
+
+  const handleConfirmar = async () => {
+    const { tipo, orcamento } = acaoPendente;
+
+    setAcaoPendente(null);
     setErro('');
+    setIdEmCurso(orcamento.id);
 
     try {
-      const response = await fetch(
-        '/api/orcamentos/' + orcamento.id,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: 'Bearer ' + token,
-          },
-        }
-      );
+      await ACOES[tipo](orcamento.id);
 
-      if (!response.ok) {
-        const body = await response.json().catch(() => null);
-        throw new Error(
-          body?.erro || 'Não foi possível eliminar a proposta.'
-        );
+      // Volta a carregar, para mostrar o que ficou no backend
+      setOrcamentos(await listarOrcamentos());
+    } catch (err) {
+      if (sessaoInvalida(err)) {
+        limparSessao();
+        navigate('/login', { replace: true });
+        return;
       }
-
-      setOrcamentos(prev =>
-        prev.filter(o => o.id !== orcamento.id)
-      );
-    } catch (error) {
-      setErro(error.message);
+      setErro(mensagemDeErro(err));
+    } finally {
+      setIdEmCurso(null);
     }
   };
 
   return {
+    podeGerir,
     orcamentosFiltrados,
     estadoSelecionado,
     setEstadoSelecionado,
@@ -156,7 +137,13 @@ export default function useOrcamentos() {
     contagens,
     loading,
     erro,
-    carregarOrcamentos,
+    idEmCurso,
+    acaoPendente,
+    handleEnviar,
     handleEliminar,
+    handleAceitar,
+    handleRecusar,
+    handleConfirmar,
+    handleFecharConfirmacao,
   };
 }

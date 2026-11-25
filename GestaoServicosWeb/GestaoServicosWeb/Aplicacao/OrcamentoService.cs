@@ -45,6 +45,24 @@ namespace GestaoServicosWeb.Aplicacao
                 .ToArray();
         }
 
+        // Todas as propostas enviadas ao cliente, de todas as suas oportunidades
+        public Orcamento[] ListarRecebidos(Guid idCliente)
+        {
+            var utilizador = ObterUtilizador(idCliente);
+
+            if (utilizador.Role != Role.Cliente)
+                throw new UnauthorizedAccessException(
+                    "Apenas clientes recebem propostas.");
+
+            return db.Orcamentos
+                .AsNoTracking()
+                .Where(o =>
+                    o.Oportunidade!.IdCliente == idCliente &&
+                    o.Estado != EstadoOrcamento.Rascunho)
+                .OrderByDescending(o => o.DataEnvio)
+                .ToArray();
+        }
+
         // Propostas de uma oportunidade (cliente)
         public Orcamento[] ListarDaOportunidade(
             Guid idOportunidade,

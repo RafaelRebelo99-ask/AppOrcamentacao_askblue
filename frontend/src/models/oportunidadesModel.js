@@ -102,6 +102,22 @@ export async function listarOportunidades() {
   });
 }
 
+// Uma oportunidade, para mostrar no formulário de orçamento
+export async function obterOportunidade(id) {
+  const o = await apiRequest(`/api/oportunidades/${id}`);
+  const estado = deEnum(o.estado, ESTADOS);
+
+  return {
+    id: o.id,
+    titulo: o.titulo,
+    descricao: o.descricao,
+    estado,
+    estadoTexto: TEXTO_ESTADO[estado] ?? estado,
+    prazo: formatarData(o.prazoProposta),
+    dataPretendida: formatarData(o.dataPretendida),
+  };
+}
+
 // A API das oportunidades só envia o id do cliente; os nomes vêm de onde a role permitir
 async function clientesVisiveis() {
   if (podeGerirOportunidades()) return listarClientes();
@@ -159,14 +175,14 @@ export const cancelarOportunidade = id => mudarEstado(id, 'cancelar');
 
 // ----- Datas -----
 
-function hoje() {
+export function hoje() {
   const d = new Date();
   const mes = String(d.getMonth() + 1).padStart(2, '0');
   const dia = String(d.getDate()).padStart(2, '0');
   return `${d.getFullYear()}-${mes}-${dia}`;
 }
 
-function formatarData(data) {
+export function formatarData(data) {
   return data ? new Date(data).toLocaleDateString('pt-PT') : '—';
 }
 
