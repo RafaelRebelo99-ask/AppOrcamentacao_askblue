@@ -34,11 +34,15 @@ const opcoesOrdenacao = [
 
 export default function Oportunidades() {
   const {
+    clientes,
+    loadingClientes,
     oportunidadesFiltradas,
     estadoSelecionado,
     setEstadoSelecionado,
     categoriaSelecionada,
     setCategoriaSelecionada,
+    clienteSelecionado,
+    setClienteSelecionado,
     ordenacao,
     setOrdenacao,
     contagens,
@@ -78,6 +82,13 @@ export default function Oportunidades() {
           onChange={setCategoriaSelecionada}
           placeholder={loadingCategorias ? 'A carregar categorias...' : 'Categoria'}
           disabled={loadingCategorias}
+        />
+        <Select
+          options={clientes}
+          value={clienteSelecionado}
+          onChange={setClienteSelecionado}
+          placeholder={loadingClientes ? 'A carregar clientes...' : 'Cliente'}
+          disabled={loadingClientes}
         />
 
         <Sort

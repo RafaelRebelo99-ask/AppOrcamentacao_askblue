@@ -91,6 +91,7 @@ export async function listarOportunidades() {
       estado,                                        // para filtrar: 'EmAnalise'
       estadoTexto: TEXTO_ESTADO[estado] ?? estado,   // para mostrar: 'Em análise'
       cliente: nomeCliente.get(o.idCliente) ?? '—',
+      idCliente: o.idCliente,
       categoria: nomeCategoria.get(o.idCategoria) ?? '—',
       idCategoria: o.idCategoria, // para filtrar
       prazo: formatarData(o.prazoProposta),          // para mostrar: '10/12/2026'
@@ -115,6 +116,7 @@ export async function obterOportunidade(id) {
     titulo: o.titulo,
     descricao: o.descricao,
     categoria: o.idCategoria,
+    liente: o.idCliente,
     estado,
     estadoTexto: TEXTO_ESTADO[estado] ?? estado,
     prazo: formatarData(o.prazoProposta),

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { limparSessao } from '../models/loginModel';
@@ -8,6 +9,7 @@ import {
   iniciarAnalise,
   iniciarPreparacao,
   listarOportunidades,
+  listarClientes,
   marcarComoPerdida,
   mensagemDeErro,
   podeGerirOportunidades,
@@ -29,13 +31,16 @@ export default function useOportunidadesController() {
 
   const [oportunidades, setOportunidades] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [clientes, setClientes] = useState([]);
 
   const [estadoSelecionado, setEstadoSelecionado] = useState('Todas');
   const [categoriaSelecionada, setCategoriaSelecionada] = useState('Todas');
+  const [clienteSelecionado, setClienteSelecionado] = useState('Todos');
   const [ordenacao, setOrdenacao] = useState('prazo-asc');
 
   const [loading, setLoading] = useState(true);
   const [loadingCategorias, setLoadingCategorias] = useState(true);
+  const [loadingClientes, setLoadingClientes] = useState(true);
 
   const [erro, setErro] = useState('');
   const [idEmCurso, setIdEmCurso] = useState(null);
@@ -110,6 +115,44 @@ export default function useOportunidadesController() {
     };
   }, [navigate]);
 
+  // Carregar clientes
+  useEffect(() => {
+    let ativo = true;
+
+    listarClientes()
+      .then(lista => {
+        if (!ativo) return;
+
+        const clientesFormatados = lista.map(cliente => ({
+          label: cliente.nome ?? cliente.Nome,
+          value: String(cliente.id ?? cliente.Id),
+        }));
+
+        setClientes([
+          { label: 'Todos os clientes', value: 'Todos' },
+          ...clientesFormatados,
+        ]);
+      })
+      .catch(err => {
+        if (!ativo) return;
+
+        if (sessaoInvalida(err)) {
+          limparSessao();
+          navigate('/login', { replace: true });
+          return;
+        }
+
+        setErro(mensagemDeErro(err));
+      })
+      .finally(() => {
+        if (ativo) setLoadingClientes(false);
+      });
+
+    return () => {
+      ativo = false;
+    };
+  }, [navigate]);
+
   // Contagens por estado
   const contar = estado =>
     oportunidades.filter(o => o.estado === estado).length;
@@ -125,7 +168,7 @@ export default function useOportunidadesController() {
     Cancelada: contar('Cancelada'),
   };
 
-  // Filtrar por estado e categoria
+  // Filtrar por estado, categoria e cliente
   const oportunidadesFiltradas = oportunidades
     .filter(o =>
       estadoSelecionado === 'Todas' ||
@@ -134,6 +177,10 @@ export default function useOportunidadesController() {
     .filter(o =>
       categoriaSelecionada === 'Todas' ||
       String(o.idCategoria) === String(categoriaSelecionada)
+    )
+    .filter(o =>
+      clienteSelecionado === 'Todos' ||
+      String(o.idCliente) === String(clienteSelecionado)
     )
     .sort((a, b) =>
       compararPrazo(
@@ -206,11 +253,18 @@ export default function useOportunidadesController() {
     categoriaSelecionada,
     setCategoriaSelecionada,
 
+    clienteSelecionado,
+    setClienteSelecionado,
+
     ordenacao,
     setOrdenacao,
 
     categorias,
     loadingCategorias,
+
+    clientes,
+    loadingClientes,
+
     contagens,
     loading,
     erro,

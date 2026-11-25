@@ -2,8 +2,8 @@
     --primary-blue: #020AED;
     --secondary-blue: #0300a5;
     --danger-color: #ff0000;
-    --background-color: rgb(255, 255, 255);
-    --sec-background-color: #f7fdff;
+    --background-color: rgb(249, 249, 249);
+    --sec-background-color: #ffffff;
     --border: 1px solid var(--border-color);
     --border-color: #c7d2df;
     --border-radius-lg: 1rem;
@@ -175,6 +175,10 @@ a {
     width: 100% !important;
 }
 
+.w-50 {
+    width: 50% !important;
+}
+
 .h-100 {
     height: 100%;
 }
@@ -187,6 +191,7 @@ a {
     border: var(--border);
     border-radius: var(--border-radius-md);
     background-color: var(--background-color);
+    padding: 2rem;
 }
 
 .box.lg {
@@ -386,21 +391,31 @@ button.secondary.danger:hover {
     margin-top: 0.25rem;
 }
 
+.menu.select {
+    top: 100%;
+    left: 0;
+    min-width: fit-content;
+    max-width: min(24rem, 100vw - 1rem);
+    max-height: 16rem;
+    overflow-y: auto;
+    z-index: 50;
+}
+
 .menu {
-  animation: menuEntrada 0.1s ease;
-  transform-origin: top right;
+    animation: menuEntrada 0.1s ease;
+    transform-origin: top;
 }
 
 @keyframes menuEntrada {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .wrap {
@@ -596,7 +611,7 @@ hr {
 
 .table.utilizadores tr {
     grid-template-columns:
-        .8fr .8fr 0.6fr .8fr ;
+        .8fr .8fr 0.6fr .8fr;
 }
 
 .ml-auto {
@@ -653,6 +668,11 @@ textarea {
     background-color: var(--background-color);
     color: var(--text-color);
     transition: background-color 0.1s ease;
+}
+
+input[type=date] {
+    width: fit-content;
+    max-width: 10rem;
 }
 
 textarea {
@@ -878,7 +898,9 @@ button:focus-visible .tooltip {
     color: var(--text-color);
 }
 
-.dashboard-stat, .dashboard-section, .slide-up {
+.dashboard-stat,
+.dashboard-section,
+.slide-up {
     animation: slide-up 0.3s ease;
 }
 
