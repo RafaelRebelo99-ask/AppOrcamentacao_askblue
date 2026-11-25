@@ -1,5 +1,6 @@
-
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
+
 import Aviso from '../Aviso';
 import {
   descarregarDocumentoOportunidade,
@@ -29,6 +30,7 @@ export default function OportunidadeRow({
   const [docs, setDocs] = useState([]);
   const [loadingDocs, setLoadingDocs] = useState(false);
   const [erroDocs, setErroDocs] = useState('');
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   const mostrarAcoes =
     podeGerir && !ESTADOS_FINAIS.includes(oportunidade.estado);
@@ -58,6 +60,22 @@ export default function OportunidadeRow({
     }
   };
 
+  const handleToggleMenu = (event) => {
+    if (menuAberto) {
+      onToggleMenu();
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    setMenuPosition({
+      top: rect.bottom + 5,
+      left: rect.right - 190,
+    });
+
+    onToggleMenu();
+  };
+
   const abrirConfirmacao = (acao) => {
     onFecharMenu();
     setAcaoPendente(acao);
@@ -77,7 +95,7 @@ export default function OportunidadeRow({
 
   return (
     <>
-      <tr>
+      <tr className='scrollable-x'>
         <td title={oportunidade.id}>
           {oportunidade.id.slice(0, 4)}
         </td>
@@ -93,18 +111,21 @@ export default function OportunidadeRow({
         <td>{oportunidade.categoria}</td>
 
         <td>
-          {oportunidade.prazo}
-          {oportunidade.aviso && (
-            <div className={`pill ${oportunidade.aviso.cor}`}>
-              {oportunidade.aviso.texto}
-            </div>
-          )}
+          <div className="row align-center">
+            {oportunidade.prazo}
+            {oportunidade.aviso && (
+              <div className={`pill ${oportunidade.aviso.cor}`}>
+                {oportunidade.aviso.texto}
+              </div>
+            )}
+          </div>
+
         </td>
 
         <td>{oportunidade.dataPretendida}</td>
 
-        <td className="ml-auto">
-          <div className="row">
+        <td>
+          <div className="row justify-end">
             {mostrarAcoes && (
               <>
                 {oportunidade.estado === 'Registada' && (
@@ -130,34 +151,41 @@ export default function OportunidadeRow({
                 {['EmPreparacao', 'PropostaEnviada'].includes(
                   oportunidade.estado
                 ) && (
-                  <button
-                    className="primary wide"
-                    disabled={emCurso}
-                    onClick={() => onCriarOrcamento(oportunidade)}
-                  >
-                    Apresentar orçamento
-                  </button>
-                )}
+                    <button
+                      className="primary wide"
+                      disabled={emCurso}
+                      onClick={() => onCriarOrcamento(oportunidade)}
+                    >
+                      Apresentar orçamento
+                    </button>
+                  )}
 
                 <div className="pos-rel">
                   <button
-                    className="more-actions"
+                    className="more-actions ml-auto"
                     disabled={emCurso}
-                    onClick={onToggleMenu}
+                    onClick={handleToggleMenu}
                     aria-label="Mais ações"
                     aria-expanded={menuAberto}
                   >
                     <i className="bi bi-three-dots-vertical"></i>
                   </button>
 
-                  {menuAberto && (
-                    <div className="menu right">
+                  {menuAberto && createPortal(
+                    <div
+                      className="menu"
+                      style={{
+                        position: 'fixed',
+                        top: menuPosition.top,
+                        left: menuPosition.left,
+                        width: '190px',
+                        zIndex: 9999,
+                      }}
+                    >
                       <button
                         type="button"
                         className="item"
                         onClick={abrirDocumentos}
-                        title="Ver documentos"
-                        aria-label="Ver documentos"
                       >
                         <i className="bi bi-paperclip"></i>
                         Consultar anexos
@@ -178,7 +206,8 @@ export default function OportunidadeRow({
                         <i className="bi bi-clipboard-minus"></i>
                         <p>Cancelar oportunidade</p>
                       </button>
-                    </div>
+                    </div>,
+                    document.body
                   )}
                 </div>
               </>
