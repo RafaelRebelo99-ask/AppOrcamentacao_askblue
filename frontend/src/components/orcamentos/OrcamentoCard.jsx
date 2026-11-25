@@ -8,7 +8,7 @@ export default function OrcamentoCard({
     onRecusar,
 }) {
     return (
-        <div className="card column">
+        <div className="card column slide-up">
             <div className="row space-between align-center">
                 <div className="id" title={orcamento.id}>
                     ORC-{orcamento.id.slice(0, 8)}

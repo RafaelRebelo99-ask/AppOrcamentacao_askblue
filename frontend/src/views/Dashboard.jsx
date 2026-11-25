@@ -1,16 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
-import useOportunidades from '../controllers/useOportunidades';
+import useDashboard from '../controllers/useDashboard';
+import NumeroAnimado from '../components/NumeroAnimado';
 
 export default function Dashboard() {
     const navigate = useNavigate();
 
     const {
-        oportunidades,
+        estatisticas,
+        recentes,
         loading,
-        erro
-    } = useOportunidades();
+        erro,
+    } = useDashboard();
 
 
     const utilizador = JSON.parse(
@@ -20,46 +22,6 @@ export default function Dashboard() {
     );
 
     const nome = utilizador?.nome || 'Utilizador';
-
-    const contar = (estado) =>
-        oportunidades.filter(o => o.estado === estado).length;
-
-    const oportunidadesAtivas = oportunidades.filter(o =>
-        ['Registada', 'EmAnalise', 'EmPreparacao'].includes(o.estado)
-    ).length;
-
-    const estatisticas = [
-        {
-            titulo: 'Oportunidades ativas',
-            valor: oportunidadesAtivas,
-            descricao: 'Registadas, em análise ou preparação',
-            icon: 'bi-clipboard',
-        },
-        {
-            titulo: 'Propostas em rascunho',
-            valor: 'N/A',
-            descricao: 'Por concluir',
-            icon: 'bi-file-earmark-spreadsheet',
-        },
-        {
-            titulo: 'Propostas enviadas',
-            valor: contar('PropostaEnviada'),
-            descricao: 'À espera de resposta',
-            icon: 'bi-send',
-        },
-        {
-            titulo: 'Oportunidades ganhas',
-            valor: contar('Ganha'),
-            descricao: 'Com proposta aceite',
-            icon: 'bi-clipboard-check',
-        },
-    ];
-
-    const recentes = [...oportunidades]
-        .sort((a, b) =>
-            new Date(b.dataCriacao) - new Date(a.dataCriacao)
-        )
-        .slice(0, 5);
 
     return (
         <Layout>
@@ -82,7 +44,7 @@ export default function Dashboard() {
                                 <p>{item.titulo}</p>
                             </div>
 
-                            <h2>{item.valor}</h2>
+                            <h2><NumeroAnimado valor={item.valor} /></h2>
 
                             <p className="weak">{item.descricao}</p>
                         </article>
@@ -121,10 +83,13 @@ export default function Dashboard() {
                             <div className="column ">
                                 {recentes.map(oportunidade => (
                                     <div className="row pad align-center border-bottom" key={oportunidade.id}>
-                                        <p>{oportunidade.titulo}</p>
+                                        <div className="column">
+                                            <h4>{oportunidade.titulo}</h4>
+                                            <div className="row align-center">
+                                                <p className='weak'>{oportunidade.cliente}</p>
+                                            </div>
+                                        </div>
                                         <div className="estado">{oportunidade.estado}</div>
-                                        <p className='ml-auto'>Prazo da proposta: </p>
-                                        <div className="date">{oportunidade.prazo}</div>
                                     </div>
 
                                 ))}

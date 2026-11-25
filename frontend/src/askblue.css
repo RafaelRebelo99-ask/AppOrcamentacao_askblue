@@ -706,6 +706,11 @@ h2 {
     margin-bottom: 0.5rem;
 }
 
+h4 {
+    font-size: large;
+    font-weight: normal;
+}
+
 h1 {
     font-size: x-large;
     font-weight: normal;
@@ -873,9 +878,13 @@ button:focus-visible .tooltip {
     color: var(--text-color);
 }
 
+.dashboard-stat, .dashboard-section, .slide-up {
+    animation: slide-up 0.3s ease;
+}
+
 .dashboard-stat h2 {
-    margin: 1.5rem 0 1rem;
-    font-size: 2rem;
+    margin: 1.5rem 0 2rem;
+    font-size: 2.5rem;
 }
 
 .dashboard-stat i {
@@ -901,7 +910,7 @@ button:focus-visible .tooltip {
 }
 
 .dashboard-section h3 {
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.5em;
     color: var(--text-color);
     font-weight: normal;
     font-size: 1.5rem;
@@ -950,4 +959,17 @@ button:focus-visible .tooltip {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@keyframes slide-up {
+    from {
+        transform: translateY(2rem);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
 }
