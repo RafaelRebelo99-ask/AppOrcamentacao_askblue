@@ -15,13 +15,15 @@ export default function OportunidadeRow({
   oportunidade,
   podeGerir,
   emCurso,
+  menuAberto,
+  onToggleMenu,
+  onFecharMenu,
   onIniciarAnalise,
   onIniciarPreparacao,
   onCriarOrcamento,
   onPerdida,
   onCancelar,
 }) {
-  const [menuAberto, setMenuAberto] = useState(false);
   const [acaoPendente, setAcaoPendente] = useState(null);
   const [docsAberto, setDocsAberto] = useState(false);
   const [docs, setDocs] = useState([]);
@@ -32,6 +34,7 @@ export default function OportunidadeRow({
     podeGerir && !ESTADOS_FINAIS.includes(oportunidade.estado);
 
   const abrirDocumentos = async () => {
+    onFecharMenu();
     setDocsAberto(true);
     setLoadingDocs(true);
     setErroDocs('');
@@ -47,6 +50,7 @@ export default function OportunidadeRow({
 
   const handleDescarregar = async (nome) => {
     setErroDocs('');
+
     try {
       await descarregarDocumentoOportunidade(oportunidade.id, nome);
     } catch (err) {
@@ -55,7 +59,7 @@ export default function OportunidadeRow({
   };
 
   const abrirConfirmacao = (acao) => {
-    setMenuAberto(false);
+    onFecharMenu();
     setAcaoPendente(acao);
   };
 
@@ -74,7 +78,9 @@ export default function OportunidadeRow({
   return (
     <>
       <tr>
-        <td title={oportunidade.id}>{oportunidade.id.slice(0, 4)}</td>
+        <td title={oportunidade.id}>
+          {oportunidade.id.slice(0, 4)}
+        </td>
 
         <td>{oportunidade.titulo}</td>
 
@@ -99,7 +105,6 @@ export default function OportunidadeRow({
 
         <td className="ml-auto">
           <div className="row">
-
             {mostrarAcoes && (
               <>
                 {oportunidade.estado === 'Registada' && (
@@ -122,8 +127,9 @@ export default function OportunidadeRow({
                   </button>
                 )}
 
-                {/* Com uma proposta já enviada, dá para enviar outra */}
-                {['EmPreparacao', 'PropostaEnviada'].includes(oportunidade.estado) && (
+                {['EmPreparacao', 'PropostaEnviada'].includes(
+                  oportunidade.estado
+                ) && (
                   <button
                     className="primary wide"
                     disabled={emCurso}
@@ -137,7 +143,7 @@ export default function OportunidadeRow({
                   <button
                     className="more-actions"
                     disabled={emCurso}
-                    onClick={() => setMenuAberto(!menuAberto)}
+                    onClick={onToggleMenu}
                     aria-label="Mais ações"
                     aria-expanded={menuAberto}
                   >
@@ -156,11 +162,12 @@ export default function OportunidadeRow({
                         <i className="bi bi-paperclip"></i>
                         Consultar anexos
                       </button>
+
                       <button
                         className="item wide danger"
                         onClick={() => abrirConfirmacao('perdida')}
                       >
-                        <i className="bi bi-x-circle"></i>
+                        <i className="bi bi-clipboard-x"></i>
                         <p>Marcar como perdida</p>
                       </button>
 
@@ -168,7 +175,7 @@ export default function OportunidadeRow({
                         className="item wide danger"
                         onClick={() => abrirConfirmacao('cancelar')}
                       >
-                        <i className="bi bi-slash-circle"></i>
+                        <i className="bi bi-clipboard-minus"></i>
                         <p>Cancelar oportunidade</p>
                       </button>
                     </div>
@@ -199,7 +206,10 @@ export default function OportunidadeRow({
         <div className="overlay">
           <div className="box pad-1 modal">
             <div className="row align-center space-between mb-1">
-              <h2>Anexos <i className='bi bi-dash'></i> {oportunidade.titulo}</h2>
+              <h2>
+                Anexos <i className="bi bi-dash"></i> {oportunidade.titulo}
+              </h2>
+
               <button
                 className="more-actions"
                 type="button"
@@ -209,11 +219,18 @@ export default function OportunidadeRow({
               </button>
             </div>
 
-            {loadingDocs && <p className="weak">A carregar documentos...</p>}
-            {erroDocs && <p className="danger mb-05">{erroDocs}</p>}
+            {loadingDocs && (
+              <p className="weak">A carregar documentos...</p>
+            )}
+
+            {erroDocs && (
+              <p className="danger mb-05">{erroDocs}</p>
+            )}
 
             {!loadingDocs && !erroDocs && docs.length === 0 && (
-              <p className="weak">Esta oportunidade não tem documentos anexados.</p>
+              <p className="weak">
+                Esta oportunidade não tem documentos anexados.
+              </p>
             )}
 
             {!loadingDocs && docs.length > 0 && (
