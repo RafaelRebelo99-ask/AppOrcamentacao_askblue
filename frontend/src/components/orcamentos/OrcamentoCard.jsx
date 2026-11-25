@@ -3,6 +3,7 @@ export default function OrcamentoCard({
     podeGerir,
     emCurso,
     onEnviar,
+    onEditar,
     onEliminar,
     onAceitar,
     onRecusar,
@@ -91,7 +92,7 @@ export default function OrcamentoCard({
 
             {/* Colaborador e Administrador */}
             {podeGerir && orcamento.estado === 'Rascunho' && (
-                <div className="row">
+                <div className="row wrap">
                     <button
                         type="button"
                         className="primary"
@@ -100,6 +101,17 @@ export default function OrcamentoCard({
                     >
                         Enviar
                     </button>
+
+                    {orcamento.podeEditar && (
+                        <button
+                            type="button"
+                            className="secondary"
+                            disabled={emCurso}
+                            onClick={() => onEditar(orcamento)}
+                        >
+                            Editar
+                        </button>
+                    )}
 
                     <button
                         type="button"
