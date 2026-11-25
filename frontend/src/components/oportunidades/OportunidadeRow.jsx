@@ -129,7 +129,7 @@ export default function OportunidadeRow({
                     disabled={emCurso}
                     onClick={() => onCriarOrcamento(oportunidade)}
                   >
-                    Criar orçamento
+                    Apresentar orçamento
                   </button>
                 )}
 
