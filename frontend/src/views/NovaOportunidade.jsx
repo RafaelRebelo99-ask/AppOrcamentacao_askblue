@@ -5,7 +5,10 @@ import useNovaOportunidade from '../controllers/useNovaOportunidade';
 export default function NovaOportunidade() {
     const {
         dados,
+        documentos,
         handleChange,
+        handleAdicionarDocumentos,
+        handleRemoverDocumento,
         handleSubmit,
         handleCancelar,
         loading,
@@ -24,9 +27,12 @@ export default function NovaOportunidade() {
                 <div className="row">
                     <OportunidadeForm
                         dados={dados}
+                        documentos={documentos}
                         clientes={clientes}
                         categorias={categorias}
                         onChange={handleChange}
+                        onAdicionarDocumentos={handleAdicionarDocumentos}
+                        onRemoverDocumento={handleRemoverDocumento}
                         onSubmit={handleSubmit}
                         onCancelar={handleCancelar}
                         erro={erro}

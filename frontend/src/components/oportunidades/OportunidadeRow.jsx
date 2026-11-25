@@ -1,6 +1,12 @@
 
 import { useState } from 'react';
 import Aviso from '../Aviso';
+import {
+  descarregarDocumentoOportunidade,
+  formatarTamanhoFicheiro,
+  listarDocumentosOportunidade,
+  mensagemDeErro,
+} from '../../models/oportunidadesModel';
 
 // Estados finais: já não há nada a fazer com a oportunidade
 const ESTADOS_FINAIS = ['Ganha', 'Perdida', 'Cancelada'];
@@ -17,9 +23,36 @@ export default function OportunidadeRow({
 }) {
   const [menuAberto, setMenuAberto] = useState(false);
   const [acaoPendente, setAcaoPendente] = useState(null);
+  const [docsAberto, setDocsAberto] = useState(false);
+  const [docs, setDocs] = useState([]);
+  const [loadingDocs, setLoadingDocs] = useState(false);
+  const [erroDocs, setErroDocs] = useState('');
 
   const mostrarAcoes =
     podeGerir && !ESTADOS_FINAIS.includes(oportunidade.estado);
+
+  const abrirDocumentos = async () => {
+    setDocsAberto(true);
+    setLoadingDocs(true);
+    setErroDocs('');
+
+    try {
+      setDocs(await listarDocumentosOportunidade(oportunidade.id));
+    } catch (err) {
+      setErroDocs(mensagemDeErro(err));
+    } finally {
+      setLoadingDocs(false);
+    }
+  };
+
+  const handleDescarregar = async (nome) => {
+    setErroDocs('');
+    try {
+      await descarregarDocumentoOportunidade(oportunidade.id, nome);
+    } catch (err) {
+      setErroDocs(mensagemDeErro(err));
+    }
+  };
 
   const abrirConfirmacao = (acao) => {
     setMenuAberto(false);
@@ -65,72 +98,84 @@ export default function OportunidadeRow({
         <td>{oportunidade.dataPretendida}</td>
 
         <td className="ml-auto">
-          {mostrarAcoes && (
-            <div className="row">
-              {oportunidade.estado === 'Registada' && (
-                <button
-                  className="primary wide"
-                  disabled={emCurso}
-                  onClick={() => onIniciarAnalise(oportunidade)}
-                >
-                  Iniciar análise
-                </button>
-              )}
+          <div className="row">
+            <button
+              type="button"
+              className="more-actions"
+              onClick={abrirDocumentos}
+              title="Ver documentos"
+              aria-label="Ver documentos"
+            >
+              <i className="bi bi-paperclip"></i>
+            </button>
 
-              {oportunidade.estado === 'EmAnalise' && (
-                <button
-                  className="primary wide"
-                  disabled={emCurso}
-                  onClick={() => onIniciarPreparacao(oportunidade)}
-                >
-                  Iniciar preparação
-                </button>
-              )}
-
-              {/* Com uma proposta já enviada, dá para enviar outra */}
-              {['EmPreparacao', 'PropostaEnviada'].includes(oportunidade.estado) && (
-                <button
-                  className="primary wide"
-                  disabled={emCurso}
-                  onClick={() => onCriarOrcamento(oportunidade)}
-                >
-                  Criar orçamento
-                </button>
-              )}
-
-              <div className="pos-rel">
-                <button
-                  className="more-actions"
-                  disabled={emCurso}
-                  onClick={() => setMenuAberto(!menuAberto)}
-                  aria-label="Mais ações"
-                  aria-expanded={menuAberto}
-                >
-                  <i className="bi bi-three-dots-vertical"></i>
-                </button>
-
-                {menuAberto && (
-                  <div className="menu right">
-                    <button
-                      className="item wide danger"
-                      onClick={() => abrirConfirmacao('perdida')}
-                    >
-                      <i className="bi bi-x-circle"></i>
-                      <p>Marcar como perdida</p>
-                    </button>
-
-                    <button
-                      className="item wide danger"
-                      onClick={() => abrirConfirmacao('cancelar')}
-                    >
-                      <i className="bi bi-slash-circle"></i>
-                      <p>Cancelar oportunidade</p>
-                    </button>
-                  </div>
+            {mostrarAcoes && (
+              <>
+                {oportunidade.estado === 'Registada' && (
+                  <button
+                    className="primary wide"
+                    disabled={emCurso}
+                    onClick={() => onIniciarAnalise(oportunidade)}
+                  >
+                    Iniciar análise
+                  </button>
                 )}
-              </div>
-            </div>
-          )}
+
+                {oportunidade.estado === 'EmAnalise' && (
+                  <button
+                    className="primary wide"
+                    disabled={emCurso}
+                    onClick={() => onIniciarPreparacao(oportunidade)}
+                  >
+                    Iniciar preparação
+                  </button>
+                )}
+
+                {/* Com uma proposta já enviada, dá para enviar outra */}
+                {['EmPreparacao', 'PropostaEnviada'].includes(oportunidade.estado) && (
+                  <button
+                    className="primary wide"
+                    disabled={emCurso}
+                    onClick={() => onCriarOrcamento(oportunidade)}
+                  >
+                    Criar orçamento
+                  </button>
+                )}
+
+                <div className="pos-rel">
+                  <button
+                    className="more-actions"
+                    disabled={emCurso}
+                    onClick={() => setMenuAberto(!menuAberto)}
+                    aria-label="Mais ações"
+                    aria-expanded={menuAberto}
+                  >
+                    <i className="bi bi-three-dots-vertical"></i>
+                  </button>
+
+                  {menuAberto && (
+                    <div className="menu right">
+                      <button
+                        className="item wide danger"
+                        onClick={() => abrirConfirmacao('perdida')}
+                      >
+                        <i className="bi bi-x-circle"></i>
+                        <p>Marcar como perdida</p>
+                      </button>
+
+                      <button
+                        className="item wide danger"
+                        onClick={() => abrirConfirmacao('cancelar')}
+                      >
+                        <i className="bi bi-slash-circle"></i>
+                        <p>Cancelar oportunidade</p>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </td>
       </tr>
 
@@ -148,6 +193,56 @@ export default function OportunidadeRow({
         onFechar={() => setAcaoPendente(null)}
         onConfirmar={confirmarAcao}
       />
+
+      {docsAberto && (
+        <div className="overlay">
+          <div className="box pad-1 modal">
+            <div className="row align-center space-between mb-1">
+              <h2>Documentos — {oportunidade.titulo}</h2>
+              <button
+                className="more-actions"
+                type="button"
+                onClick={() => setDocsAberto(false)}
+              >
+                <i className="bi bi-x-lg"></i>
+              </button>
+            </div>
+
+            {loadingDocs && <p className="weak">A carregar documentos...</p>}
+            {erroDocs && <p className="danger mb-05">{erroDocs}</p>}
+
+            {!loadingDocs && !erroDocs && docs.length === 0 && (
+              <p className="weak">Esta oportunidade não tem documentos anexados.</p>
+            )}
+
+            {!loadingDocs && docs.length > 0 && (
+              <div className="column gap">
+                {docs.map(doc => (
+                  <div
+                    key={doc.nome}
+                    className="row align-center space-between"
+                  >
+                    <span>
+                      <i className="bi bi-file-earmark"></i> {doc.nome}{' '}
+                      <span className="weak">
+                        ({formatarTamanhoFicheiro(doc.tamanho)})
+                      </span>
+                    </span>
+
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => handleDescarregar(doc.nome)}
+                    >
+                      <i className="bi bi-download"></i> Descarregar
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

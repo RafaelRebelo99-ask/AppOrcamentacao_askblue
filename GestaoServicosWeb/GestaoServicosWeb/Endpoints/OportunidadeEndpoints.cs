@@ -164,7 +164,129 @@ namespace GestaoServicosWeb.API
                         : Results.NotFound());
             })
             .RequireAuthorization(Politicas.Colaborador);
+
+            // POST /api/oportunidades/{id}/documentos
+            // Guarda um ou mais ficheiros na pasta Uploads/oportunidades/{id}
+            grupo.MapPost("/{id:guid}/documentos", async (
+                Guid id,
+                HttpRequest request,
+                ClaimsPrincipal user,
+                OportunidadeService service,
+                IWebHostEnvironment env) =>
+            {
+                Oportunidade? oportunidade;
+                try
+                {
+                    oportunidade = service.Buscar(id, user.ObterId());
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    return Results.Forbid();
+                }
+
+                if (oportunidade == null)
+                    return Results.NotFound("Oportunidade não encontrada.");
+
+                if (!request.HasFormContentType)
+                    return Results.BadRequest("Envie os ficheiros em formato multipart/form-data.");
+
+                var form = await request.ReadFormAsync();
+                if (form.Files.Count == 0)
+                    return Results.BadRequest("Nenhum ficheiro enviado.");
+
+                const long maxTamanhoBytes = 10 * 1024 * 1024; // 10 MB por ficheiro
+                var pasta = ObterPastaDocumentos(env, id);
+                Directory.CreateDirectory(pasta);
+
+                var guardados = new List<object>();
+
+                foreach (var ficheiro in form.Files)
+                {
+                    if (ficheiro.Length == 0)
+                        continue;
+
+                    if (ficheiro.Length > maxTamanhoBytes)
+                        return Results.BadRequest(
+                            $"O ficheiro '{ficheiro.FileName}' excede o limite de 10 MB.");
+
+                    var nomeSeguro = Path.GetFileName(ficheiro.FileName);
+                    if (string.IsNullOrWhiteSpace(nomeSeguro))
+                        continue;
+
+                    var caminho = Path.Combine(pasta, nomeSeguro);
+                    if (File.Exists(caminho))
+                    {
+                        nomeSeguro = $"{DateTime.UtcNow:yyyyMMddHHmmss}_{nomeSeguro}";
+                        caminho = Path.Combine(pasta, nomeSeguro);
+                    }
+
+                    await using var stream = File.Create(caminho);
+                    await ficheiro.CopyToAsync(stream);
+
+                    guardados.Add(new { nome = nomeSeguro, tamanho = ficheiro.Length });
+                }
+
+                return Results.Ok(guardados);
+            })
+            .RequireAuthorization(Politicas.Colaborador)
+            .DisableAntiforgery();
+
+            // GET /api/oportunidades/{id}/documentos
+            // Lista os documentos associados a uma oportunidade (com controlo de acesso)
+            grupo.MapGet("/{id:guid}/documentos", (
+                Guid id,
+                ClaimsPrincipal user,
+                OportunidadeService service,
+                IWebHostEnvironment env) =>
+            {
+                return Executar(() =>
+                {
+                    var oportunidade = service.Buscar(id, user.ObterId());
+                    if (oportunidade == null)
+                        return Results.NotFound();
+
+                    var pasta = ObterPastaDocumentos(env, id);
+                    if (!Directory.Exists(pasta))
+                        return Results.Ok(Array.Empty<object>());
+
+                    var ficheiros = new DirectoryInfo(pasta)
+                        .GetFiles()
+                        .OrderBy(f => f.Name)
+                        .Select(f => new { nome = f.Name, tamanho = f.Length })
+                        .ToList();
+
+                    return Results.Ok(ficheiros);
+                });
+            });
+
+            // GET /api/oportunidades/{id}/documentos/{nome}
+            // Faz download de um documento específico da oportunidade
+            grupo.MapGet("/{id:guid}/documentos/{nome}", (
+                Guid id,
+                string nome,
+                ClaimsPrincipal user,
+                OportunidadeService service,
+                IWebHostEnvironment env) =>
+            {
+                return Executar(() =>
+                {
+                    var oportunidade = service.Buscar(id, user.ObterId());
+                    if (oportunidade == null)
+                        return Results.NotFound();
+
+                    var nomeSeguro = Path.GetFileName(nome);
+                    var caminho = Path.Combine(ObterPastaDocumentos(env, id), nomeSeguro);
+
+                    if (!File.Exists(caminho))
+                        return Results.NotFound("Documento não encontrado.");
+
+                    return Results.File(caminho, "application/octet-stream", nomeSeguro);
+                });
+            });
         }
+
+        private static string ObterPastaDocumentos(IWebHostEnvironment env, Guid oportunidadeId) =>
+            Path.Combine(env.ContentRootPath, "Uploads", "oportunidades", oportunidadeId.ToString());
 
         private static OportunidadeDto ParaDto(Oportunidade o) =>
             new(
