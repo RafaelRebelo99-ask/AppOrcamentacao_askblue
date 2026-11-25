@@ -20,7 +20,7 @@ export default function NovaOportunidade() {
 
     return (
         <Layout>
-            <div className="column gap w-50">
+            <div className="column gap">
 
                 <div className="row align-center">
                     <h1>Nova oportunidade</h1>
@@ -28,7 +28,7 @@ export default function NovaOportunidade() {
                 </div>
                 <p className='mb-1 weak'>Regista uma nova oportunidade comercial da AskBlue.</p>
 
-                <div className="row">
+                <div className="row w-50">
                     <OportunidadeForm
                         dados={dados}
                         documentos={documentos}

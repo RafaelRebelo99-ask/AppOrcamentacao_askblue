@@ -1,4 +1,4 @@
-
+import { useState } from 'react';
 import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
 import Filters from '../components/Filters';
@@ -34,6 +34,8 @@ const opcoesOrdenacao = [
 ];
 
 export default function Oportunidades() {
+  const [menuAbertoId, setMenuAbertoId] = useState(null);
+
   const {
     clientes,
     loadingClientes,
@@ -125,6 +127,13 @@ export default function Oportunidades() {
               <OportunidadeRow
                 key={oportunidade.id}
                 oportunidade={oportunidade}
+                menuAberto={menuAbertoId === oportunidade.id}
+                onToggleMenu={() =>
+                  setMenuAbertoId(
+                    menuAbertoId === oportunidade.id ? null : oportunidade.id
+                  )
+                }
+                onFecharMenu={() => setMenuAbertoId(null)}
                 podeGerir={podeGerir}
                 emCurso={idEmCurso === oportunidade.id}
                 onIniciarAnalise={handleIniciarAnalise}
