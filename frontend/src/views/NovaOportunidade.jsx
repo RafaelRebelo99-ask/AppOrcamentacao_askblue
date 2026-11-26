@@ -20,7 +20,7 @@ export default function NovaOportunidade() {
 
     return (
         <Layout>
-            <div className="column gap">
+            <div className="column gap scrollable-y">
 
                 <div className="row align-center">
                     <h1>Nova oportunidade</h1>

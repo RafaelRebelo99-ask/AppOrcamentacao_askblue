@@ -907,6 +907,11 @@ button:focus-visible .tooltip {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    background-color: var(--background-color);
+    border-bottom: var(--border);
+    top:0;
+    position: sticky;
+    padding-bottom: 1rem;
 }
 
 .dashboard-header h1 {

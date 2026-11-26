@@ -64,7 +64,7 @@ export default function CriarOrcamento() {
         <h1 className="mb-1">{modoEdicao ? 'Editar Orçamento' : 'Novo Orçamento'}</h1>
         <ThemeToggle />
       </div>
-      <div className="column w-50">
+      <div className="column w-50 scrollable-y">
         <section>
           <h2>{oportunidade.titulo}</h2>
 
