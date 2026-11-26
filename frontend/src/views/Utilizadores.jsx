@@ -76,35 +76,36 @@ export default function Utilizadores() {
       {sucesso && <p className="mb-05" role="status">{sucesso}</p>}
       {erro && <p className="error mb-05">{erro}</p>}
       {loading && <p>A carregar utilizadores...</p>}
-
-      <table className="table utilizadores" hidden={loading}>
-        <thead>
-          <tr className="header">
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Função</th>
-            <th></th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {utilizadoresFiltrados.length > 0 ? (
-            utilizadoresFiltrados.map(utilizador => (
-              <UtilizadorRow
-                key={utilizador.id}
-                utilizador={utilizador}
-                emCurso={idEmCurso === utilizador.id}
-                onApagar={handleApagar}
-                onEditar={handleAbrirEdicao}
-              />
-            ))
-          ) : (
-            <tr>
-              <td>Não existem utilizadores com esta função.</td>
+      <div className="table-container">
+        <table className="table utilizadores" hidden={loading}>
+          <thead>
+            <tr className="header">
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Função</th>
+              <th></th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {utilizadoresFiltrados.length > 0 ? (
+              utilizadoresFiltrados.map(utilizador => (
+                <UtilizadorRow
+                  key={utilizador.id}
+                  utilizador={utilizador}
+                  emCurso={idEmCurso === utilizador.id}
+                  onApagar={handleApagar}
+                  onEditar={handleAbrirEdicao}
+                />
+              ))
+            ) : (
+              <tr>
+                <td>Não existem utilizadores com esta função.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </Layout>
   )
 }

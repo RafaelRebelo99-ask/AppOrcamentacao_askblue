@@ -11,7 +11,7 @@
     --border-radius-sm: 0.5rem;
     --border-radius-xs: 0.25rem;
     --border-radius-pill: 20rem;
-    --secondary-hover: var(--sec-background-color);
+    --secondary-hover: #fbfbfb;
     --gap: 0.5rem;
     --gap-sm: 0.25rem;
     --text-color: rgb(0, 0, 0);
@@ -45,6 +45,7 @@
     --text-color: white;
     --skeleton-highlight: var(--border-color);
     --skeleton-base: var(--background-color);
+    --secondary-hover: var(--sec-background-color);
 
     --blue-bg: #020aed2f;
     --on-blue: #b6b9ff;
@@ -624,7 +625,11 @@ hr {
     width: 100%;
     min-width: 1000px;
     border-collapse: collapse;
-    table-layout: fixed;
+    
+}
+
+.table tr {
+    grid-template-columns: 0.5rem; /* coluna de ID */
 }
 
 tr.header {
@@ -659,8 +664,13 @@ tr.header {
 }
 
 .table.historico tr {
+    display: grid;
     grid-template-columns:
-        minmax(10.5rem, 1.1fr) 1fr minmax(8.5rem, 0.9fr) 1fr 2.4fr;
+        1fr 1fr minmax(8.5rem, 0.9fr) 1fr 2.4fr;
+}
+
+.table.historico tr td {
+    width: 100%;
 }
 
 .ml-auto {
@@ -744,7 +754,6 @@ textarea:focus {
 main {
     justify-content: center;
     display: flex;
-    padding: 1rem;
 }
 
 h2 {
@@ -898,7 +907,6 @@ button:focus-visible .tooltip {
 .dashboard {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
     width: 100%;
 }
 
@@ -922,6 +930,7 @@ button:focus-visible .tooltip {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1rem;
+    padding-top: 1rem;
 }
 
 .dashboard-stat {

@@ -10,7 +10,7 @@ export default function OrcamentoCard({
     onDescarregarPdf,
 }) {
     return (
-        <div className="card column slide-up">
+        <div className="card column">
             <div className="row space-between align-center">
                 <div className="id" title={orcamento.id}>
                     {orcamento.numero}

@@ -16,7 +16,7 @@ export default function OportunidadeRowSkeleton() {
     <tr>
       {/* ID */}
       <td>
-        <SkeletonBlock width="30%" />
+        <SkeletonBlock />
       </td>
 
       {/* Título */}
@@ -26,12 +26,12 @@ export default function OportunidadeRowSkeleton() {
 
       {/* Estado */}
       <td>
-        <SkeletonBlock width="60%" />
+        <SkeletonBlock />
       </td>
 
       {/* Cliente */}
       <td>
-        <SkeletonBlock width="70%"/>
+        <SkeletonBlock/>
       </td>
 
       {/* Categoria */}
@@ -41,12 +41,12 @@ export default function OportunidadeRowSkeleton() {
 
       {/* Prazo da proposta */}
       <td>
-        <SkeletonBlock />
+        <SkeletonBlock/>
       </td>
 
       {/* Data pretendida */}
       <td>
-        <SkeletonBlock width="60%"/>
+        <SkeletonBlock/>
       </td>
 
       {/* Ações */}
