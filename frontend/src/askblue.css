@@ -1041,6 +1041,16 @@ button:focus-visible .tooltip {
 
 }
 
+.slide-right {
+    i {transition: transform 0.1s ease;}
+}
+
+.slide-right:hover {
+    i {
+        transform: translateX(2px);
+    }
+}
+
 .skeleton {
     background: linear-gradient(90deg,
             var(--skeleton-base, #e5e7eb) 25%,

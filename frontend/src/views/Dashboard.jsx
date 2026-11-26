@@ -66,7 +66,7 @@ export default function Dashboard() {
 
                                 <button
                                     type="button"
-                                    className="transparent"
+                                    className="transparent slide-right"
                                     onClick={() => navigate('/oportunidades')}
                                 >
                                     Ver todas
