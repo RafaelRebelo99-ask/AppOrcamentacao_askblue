@@ -9,6 +9,10 @@ import {
   mensagemDeErro,
 } from '../../models/oportunidadesModel';
 
+import { CircleClose, CircleMinus, Close, Download, File, MoreVertical, Paperclip } from '@coolicons/react';
+import Icon from '../Icon';
+import Tooltip from '../Tooltip';
+
 // Estados finais: já não há nada a fazer com a oportunidade
 const ESTADOS_FINAIS = ['Ganha', 'Perdida', 'Cancelada'];
 
@@ -70,7 +74,7 @@ export default function OportunidadeRow({
 
     setMenuPosition({
       top: rect.bottom + 5,
-      left: rect.right - 190,
+      left: rect.right - 200,
     });
 
     onToggleMenu();
@@ -161,15 +165,17 @@ export default function OportunidadeRow({
                   )}
 
                 <div className="pos-rel">
-                  <button
-                    className="more-actions ml-auto"
-                    disabled={emCurso}
-                    onClick={handleToggleMenu}
-                    aria-label="Mais ações"
-                    aria-expanded={menuAberto}
-                  >
-                    <i className="bi bi-three-dots-vertical"></i>
-                  </button>
+                  <Tooltip text="Mais ações">
+                    <button
+                      className="more-actions ml-auto"
+                      disabled={emCurso}
+                      onClick={handleToggleMenu}
+                      aria-label="Mais ações"
+                      aria-expanded={menuAberto}
+                    >
+                      <Icon icon={MoreVertical} />
+                    </button>
+                  </Tooltip>
 
                   {menuAberto && createPortal(
                     <div
@@ -178,7 +184,7 @@ export default function OportunidadeRow({
                         position: 'fixed',
                         top: menuPosition.top,
                         left: menuPosition.left,
-                        width: '190px',
+                        width: 'fit-content',
                         zIndex: 9999,
                       }}
                     >
@@ -187,7 +193,7 @@ export default function OportunidadeRow({
                         className="item"
                         onClick={abrirDocumentos}
                       >
-                        <i className="bi bi-paperclip"></i>
+                        <Icon icon={Paperclip} />
                         Consultar anexos
                       </button>
 
@@ -195,7 +201,7 @@ export default function OportunidadeRow({
                         className="item wide danger"
                         onClick={() => abrirConfirmacao('perdida')}
                       >
-                        <i className="bi bi-clipboard-x"></i>
+                        <Icon icon={CircleMinus} />
                         <p>Marcar como perdida</p>
                       </button>
 
@@ -203,7 +209,7 @@ export default function OportunidadeRow({
                         className="item wide danger"
                         onClick={() => abrirConfirmacao('cancelar')}
                       >
-                        <i className="bi bi-clipboard-minus"></i>
+                        <Icon icon={CircleClose} />
                         <p>Cancelar oportunidade</p>
                       </button>
                     </div>,
@@ -214,7 +220,7 @@ export default function OportunidadeRow({
             )}
           </div>
         </td>
-      </tr>
+      </tr >
 
       <Aviso
         mensagem={
@@ -231,65 +237,67 @@ export default function OportunidadeRow({
         onConfirmar={confirmarAcao}
       />
 
-      {docsAberto && (
-        <div className="overlay">
-          <div className="box pad-1 modal">
-            <div className="row align-center space-between mb-1">
-              <h2>
-                Anexos <i className="bi bi-dash"></i> {oportunidade.titulo}
-              </h2>
+      {
+        docsAberto && (
+          <div className="overlay">
+            <div className="box pad-1 modal">
+              <div className="row align-center space-between mb-1">
+                <h2>
+                  Anexos - {oportunidade.titulo}
+                </h2>
 
-              <button
-                className="more-actions"
-                type="button"
-                onClick={() => setDocsAberto(false)}
-              >
-                <i className="bi bi-x-lg"></i>
-              </button>
-            </div>
-
-            {loadingDocs && (
-              <p className="weak">A carregar documentos...</p>
-            )}
-
-            {erroDocs && (
-              <p className="danger mb-05">{erroDocs}</p>
-            )}
-
-            {!loadingDocs && !erroDocs && docs.length === 0 && (
-              <p className="weak">
-                Esta oportunidade não tem documentos anexados.
-              </p>
-            )}
-
-            {!loadingDocs && docs.length > 0 && (
-              <div className="column gap">
-                {docs.map(doc => (
-                  <div
-                    key={doc.nome}
-                    className="row align-center space-between"
-                  >
-                    <span>
-                      <i className="bi bi-file-earmark"></i> {doc.nome}{' '}
-                      <span className="weak">
-                        ({formatarTamanhoFicheiro(doc.tamanho)})
-                      </span>
-                    </span>
-
-                    <button
-                      type="button"
-                      className="secondary"
-                      onClick={() => handleDescarregar(doc.nome)}
-                    >
-                      <i className="bi bi-download"></i> Descarregar
-                    </button>
-                  </div>
-                ))}
+                <button
+                  className="more-actions"
+                  type="button"
+                  onClick={() => setDocsAberto(false)}
+                >
+                  <Icon icon={Close} />
+                </button>
               </div>
-            )}
+
+              {loadingDocs && (
+                <p className="weak">A carregar documentos...</p>
+              )}
+
+              {erroDocs && (
+                <p className="danger mb-05">{erroDocs}</p>
+              )}
+
+              {!loadingDocs && !erroDocs && docs.length === 0 && (
+                <p className="weak">
+                  Esta oportunidade não tem documentos anexados.
+                </p>
+              )}
+
+              {!loadingDocs && docs.length > 0 && (
+                <div className="column gap">
+                  {docs.map(doc => (
+                    <div
+                      key={doc.nome}
+                      className="row align-center space-between"
+                    >
+                      <div className='row align-center'>
+                        <Icon icon={File} /> {doc.nome}{' '}
+                        <span className="weak">
+                          ({formatarTamanhoFicheiro(doc.tamanho)})
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="secondary"
+                        onClick={() => handleDescarregar(doc.nome)}
+                      >
+                        <Icon icon={Download} /> Descarregar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
     </>
   );
 }

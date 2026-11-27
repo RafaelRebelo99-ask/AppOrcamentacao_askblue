@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { limparSessao } from '../models/loginModel';
+import { limparSessao, obterUtilizador } from '../models/loginModel';
 import { sessaoInvalida } from '../models/oportunidadesModel';
 
 import {
@@ -46,6 +46,8 @@ export default function useOportunidadesController() {
   const [idEmCurso, setIdEmCurso] = useState(null);
 
   const [podeGerir] = useState(podeGerirOportunidades);
+
+  const isCliente = obterUtilizador().role === 2;
 
   // Carregar oportunidades
   useEffect(() => {
@@ -262,6 +264,7 @@ export default function useOportunidadesController() {
     categorias,
     loadingCategorias,
 
+    isCliente,
     clientes,
     loadingClientes,
 

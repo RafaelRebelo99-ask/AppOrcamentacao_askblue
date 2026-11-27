@@ -2,6 +2,9 @@ import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
 import Filters from '../components/Filters';
 import useHistorico from '../controllers/useHistorico';
+import Icon from '../components/Icon';
+import { ArrowLoopLeft, Redo, Search } from '@coolicons/react';
+import Tooltip from '../components/Tooltip';
 
 const filtros = [
   { label: 'Todas', value: 'Todas' },
@@ -38,7 +41,7 @@ export default function Historico() {
         <div className="vl"></div>
 
         <div className="empty-box">
-          <i className='bi bi-search'></i>
+          <Icon icon={Search} />
           <input
             type="search"
             placeholder="Pesquisar utilizador ou ação..."
@@ -47,15 +50,17 @@ export default function Historico() {
           />
         </div>
 
-        <button
-          type="button"
-          className="secondary"
-          onClick={recarregar}
-          disabled={loading}
-          title="Atualizar histórico"
-        >
-          <i className="bi bi-arrow-clockwise"></i>
-        </button>
+        <Tooltip text="Atualizar" position='bottom'>
+          <button
+            type="button"
+            className="secondary"
+            onClick={recarregar}
+            disabled={loading}
+            title="Atualizar histórico"
+          >
+            <Icon icon={Redo} />
+          </button>
+        </Tooltip>
 
         <ThemeToggle />
       </div>

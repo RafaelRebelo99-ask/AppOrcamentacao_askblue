@@ -6,6 +6,8 @@ import Aviso from '../components/Aviso';
 import OrcamentoCard from '../components/orcamentos/OrcamentoCard';
 import useOrcamentos from '../controllers/orcamentos/useOrcamentos';
 import OrcamentoCardSkeleton from '../components/skeletons/OrcamentoSkeleton';
+import { ArrowDown, ArrowUp, Clock2, Clock5, FileDownloadCorner } from '@coolicons/react';
+import Icon from '../components/Icon';
 
 const filtros = [
   { label: 'Todos', value: 'Todos' },
@@ -36,10 +38,10 @@ const confirmacoes = {
 };
 
 const opcoesOrdenacao = [
-  { icon: 'bi bi-clock' , label: 'Data (Mais recente)', value: 'data-desc' },
-  { icon: 'bi bi-clock-history', label: 'Data (Mais antigo)', value: 'data-asc' },
-  { icon: 'bi bi-sort-numeric-down', label: 'Valor (Mais baixo)', value: 'valor-asc' },
-  { icon: 'bi bi-sort-numeric-up', label: 'Valor (Mais alto)', value: 'valor-desc' },
+  { icon: Clock2 , label: 'Data (Mais recente)', value: 'data-desc' },
+  { icon: Clock5, label: 'Data (Mais antigo)', value: 'data-asc' },
+  { icon: ArrowDown, label: 'Valor (Mais baixo)', value: 'valor-asc' },
+  { icon: ArrowUp, label: 'Valor (Mais alto)', value: 'valor-desc' },
 ];
 
 export default function Orcamentos() {

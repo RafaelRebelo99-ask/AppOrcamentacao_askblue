@@ -9,6 +9,8 @@ import { useTheme } from '../controllers/ThemeController'
 import { eAdministrador } from '../models/utilizadoresModel'
 import { podeGerirOportunidades } from '../models/oportunidadesModel'
 import { limparSessao, obterUtilizador } from '../models/loginModel'
+import Icon from '../components/Icon'
+import { Grid, Clipboard, Invoice, Users, Clock, ClipboardPlus, LogOut } from "@coolicons/react"
 
 // O NavLink marca com "selected" o link da página onde estamos (classe do askblue.css)
 function classeLink({ isActive }) {
@@ -54,37 +56,44 @@ export default function Layout({ children }) {
           <div className="column fit gap nav h-100">
             <img src={darkMode ? logoDark : logo} alt="AskBlue Logo" className="logo big" />
             <NavLink to="/dashboard" className={classeLink}>
-              <i className="bi bi-grid"></i>Dashboard
+              <Icon icon={Grid} />Dashboard
             </NavLink>
             <NavLink to="/oportunidades" className={classeLink}>
-              <i className="bi bi-clipboard"></i>Oportunidades
+              <Icon icon={Clipboard} />Oportunidades
             </NavLink>
-          
-            {/* Só o Administrador gere contas */}
-            {eAdministrador() && (
-              <NavLink to="/utilizadores" className={classeLink}>
-                <i className="bi bi-people"></i>Utilizadores
-              </NavLink>
-            )}
 
             <NavLink to="/orcamentos" end className={classeLink}>
-              <i className="bi bi-file-earmark-spreadsheet"></i>Orçamentos
+              <Icon icon={Invoice} />Orçamentos
             </NavLink>
-            {/* Só o Administrador vê o histórico de atividade */}
-            {eAdministrador() && (
-              <NavLink to="/historico" end className={classeLink}>
-                <i className="bi bi-clock"></i>Histórico
-              </NavLink>
-            )}
+
+
             {/* Só Colaborador e Administrador criam oportunidades */}
             {podeGerirOportunidades() && (
               <>
-                <hr></hr>
+                <hr />
                 <NavLink to="/registar-oportunidade" className={classeLink}>
-                  <i className="bi bi-clipboard-plus"></i>Nova Oportunidade
+                  <Icon icon={ClipboardPlus} />Nova Oportunidade
                 </NavLink>
               </>
             )}
+
+
+            {/* Só o Administrador gere contas */}
+            {eAdministrador() && (
+              <>
+                <hr />
+                <NavLink to="/utilizadores" className={classeLink}>
+                  <Icon icon={Users} />Utilizadores
+                </NavLink>
+              </>
+            )}
+            {/* Só o Administrador vê o histórico de atividade */}
+            {eAdministrador() && (
+              <NavLink to="/historico" end className={classeLink}>
+                <Icon icon={Clock} />Histórico
+              </NavLink>
+            )}
+
 
             <div className="user mt-auto">
               <div className="column gap-1">
@@ -109,7 +118,7 @@ export default function Layout({ children }) {
                   className="more-actions transparent w-100 justify-start"
                   onClick={handleLogout}
                 >
-                  <i className='bi bi-arrow-bar-right'></i>
+                  <Icon icon={LogOut} />
                   <p>Terminar sessão</p>
                 </button>
 

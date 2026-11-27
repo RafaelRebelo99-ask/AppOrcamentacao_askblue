@@ -1,5 +1,7 @@
-//import { Bell } from 'lucide-react';
 import useNotificacoes from '../controllers/useNotificacoes';
+import Icon from './Icon';
+import { Bell } from '@coolicons/react'
+import Tooltip from './Tooltip';
 
 // Sino com o número de notificações por ler e a lista das mais recentes
 export default function Notificacoes() {
@@ -19,22 +21,24 @@ export default function Notificacoes() {
 
   return (
     <div className="notificacoes" ref={contentor}>
-      <button
-        type="button"
-        className="sino"
-        onClick={alternar}
-        title={descricao}
-        aria-label={descricao}
-        aria-expanded={aberto}
-      >
-        <i className='bi bi-bell'></i>
+      <Tooltip text='Notificações' position='bottom'>
+        <button
+          type="button"
+          className="sino"
+          onClick={alternar}
+          title={descricao}
+          aria-label={descricao}
+          aria-expanded={aberto}
+        >
+          <Icon icon={Bell} />
 
-        {naoLidas > 0 && (
-          <span className="sino-total" aria-hidden="true">
-            {naoLidas > 99 ? '99+' : naoLidas}
-          </span>
-        )}
-      </button>
+          {naoLidas > 0 && (
+            <span className="sino-total" aria-hidden="true">
+              {naoLidas > 99 ? '99+' : naoLidas}
+            </span>
+          )}
+        </button>
+      </Tooltip>
 
       {aberto && (
         <div className="menu pad-1 right notificacoes-lista">

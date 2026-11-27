@@ -1,5 +1,9 @@
 import Select from "../Select";
 import { formatarTamanhoFicheiro } from "../../models/oportunidadesModel";
+import DateInput from "../DateInput";
+import FileUpload from "../FileUpload";
+import Icon from "../Icon";
+import { File } from "@coolicons/react";
 
 export default function OportunidadeForm({
     dados,
@@ -46,11 +50,11 @@ export default function OportunidadeForm({
 
             <div className="row">
                 <div className="column w-50">
-                    <h2 className="mb-05">Classificação</h2>
+                    <h2 className="mb-1">Classificação</h2>
 
                     <label>Cliente *</label>
                     <Select
-                    className="mb-05"
+                        className="mb-1"
                         name="idCliente"
                         value={dados.idCliente}
                         onChange={(value) =>
@@ -70,7 +74,7 @@ export default function OportunidadeForm({
 
                     <label>Categoria *</label>
                     <Select
-                    name="idCategoria"
+                        name="idCategoria"
                         value={dados.idCategoria}
                         onChange={(value) =>
                             onChange({
@@ -89,20 +93,18 @@ export default function OportunidadeForm({
                 </div>
 
                 <div className="column w-50">
-                    <h2 className="mb-05">Datas</h2>
+                    <h2 className="mb-1">Datas</h2>
 
                     <label>Prazo da proposta</label>
-                    <input
-                        type="date"
+                    <DateInput
                         name="prazoProposta"
                         value={dados.prazoProposta}
                         onChange={onChange}
-                        className="mb-05"
+                        className='mb-1'
                     />
 
                     <label>Data pretendida</label>
-                    <input
-                        type="date"
+                    <DateInput
                         name="dataPretendida"
                         value={dados.dataPretendida}
                         onChange={onChange}
@@ -119,13 +121,15 @@ export default function OportunidadeForm({
 
             <div className="column">
                 <h2 className="mb-05">Documentos (opcional)</h2>
-                <label>Anexar ficheiros (máx. 10 MB cada)</label>
-                <input
-                    type="file"
+                <label className="mb-1">Anexar ficheiros (máx. 10 MB cada)</label>
+                <FileUpload
+                    id="documentos-upload"
                     multiple
                     accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.txt"
                     onChange={onAdicionarDocumentos}
                     disabled={loading}
+                    buttonText="Selecionar ficheiros"
+                    hintText="Máx. 10 MB por ficheiro"
                     className="mb-05"
                 />
 
@@ -136,13 +140,13 @@ export default function OportunidadeForm({
                                 key={`${doc.name}-${doc.size}`}
                                 className="row align-center space-between"
                             >
-                                <span>
-                                    <i className="bi bi-paperclip"></i>{' '}
+                                <div className="row align-center">
+                                    <Icon icon={File}/>{' '}
                                     {doc.name}{' '}
                                     <span className="weak">
                                         ({formatarTamanhoFicheiro(doc.size)})
                                     </span>
-                                </span>
+                                </div>
 
                                 <button
                                     type="button"

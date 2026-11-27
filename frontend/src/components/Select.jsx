@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import '../askblue.css';
+import {Check, ChevronDown, ChevronUp} from '@coolicons/react';
+import Icon from './Icon';
 
 export default function Select({
     options = [],
@@ -15,6 +17,8 @@ export default function Select({
     const selectedOption = options.find(
         (option) => option.value === value
     );
+
+    const icon = isOpen ? ChevronUp : ChevronDown;
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -60,7 +64,7 @@ export default function Select({
                 aria-expanded={isOpen}
             >
                 <span>{selectedOption?.label || placeholder}</span>
-                <i className={`bi bi-caret-${isOpen ? 'up' : 'down'}`} />
+                <Icon icon={icon}/>
             </button>
 
             {isOpen && (
@@ -80,7 +84,7 @@ export default function Select({
                         >
                             {option.label}
                             {option.value === value && (
-                                <i className="bi bi-check2" />
+                                <Icon icon={Check} />
                             )}
                         </button>
                     ))}

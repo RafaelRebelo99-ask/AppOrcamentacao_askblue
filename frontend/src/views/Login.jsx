@@ -4,6 +4,8 @@ import logoDark from '../assets/askblue-logo-negativo-rgb.png'
 import useLogin from '../controllers/useLogin'
 import { useTheme } from '../controllers/ThemeController'
 import ThemeToggle from '../components/ThemeToggle';
+import { Check, Eye, EyeOff } from '@coolicons/react';
+import Icon from '../components/Icon';
 
 export default function Login() {
 
@@ -23,8 +25,10 @@ export default function Login() {
     handleLogin
   } = useLogin()
 
+  const eyeIcon = passwordVisible ? Eye : EyeOff;
+
   return (
-    <div className="container align-center">
+    <div className="container align-center mb-2">
       <div className="card column" style={{ padding: '4rem' }}>
 
         <div className="row center mb-1">
@@ -53,7 +57,7 @@ export default function Login() {
                 name="email"
                 type="email"
                 required
-                placeholder="Email"
+                placeholder="user@company.com"
                 autoComplete="username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -82,9 +86,7 @@ export default function Login() {
                 title="Mostrar password"
                 onClick={togglePasswordVisibility}
               >
-                <i className={`bi ${
-                  passwordVisible ? 'bi-eye-slash' : 'bi-eye'
-                }`}></i>
+                <Icon icon={eyeIcon}/>
               </button>
             </div>
           </div>
@@ -100,7 +102,7 @@ export default function Login() {
               onClick={toggleRememberMe}
               aria-pressed={rememberMe}
             >
-              <i className="bi bi-check"></i>
+              <Icon icon={Check}/>
             </button>
 
             <p>Lembrar detalhes</p>

@@ -1,3 +1,7 @@
+import { FileDownloadCorner } from "@coolicons/react";
+import Icon from "../Icon";
+import Tooltip from "../Tooltip";
+
 export default function OrcamentoCard({
     orcamento,
     podeGerir,
@@ -17,34 +21,38 @@ export default function OrcamentoCard({
                 </div>
 
                 <div className="row align-center">
-                    <button
-                        type="button"
-                        className="secondary"
-                        title="Descarregar PDF"
-                        aria-label="Descarregar PDF"
-                        disabled={emCurso}
-                        onClick={() => onDescarregarPdf(orcamento)}
-                    >
-                        <i className="bi bi-file-earmark-pdf"></i>
-                        PDF
-                    </button>
+
 
                     <div className="estado">
                         {orcamento.estado}
                     </div>
+                    <Tooltip text='Descarregar PDF'>
+                        <button
+                            type="button"
+                            className="more-actions transparent"
+                            title="Descarregar PDF"
+                            aria-label="Descarregar PDF"
+                            disabled={emCurso}
+                            onClick={() => onDescarregarPdf(orcamento)}
+                        >
+                            <Icon icon={FileDownloadCorner} />
+                        </button>
+                    </Tooltip>
                 </div>
 
             </div>
+
+            <hr />
 
             <div className="column">
                 <h2 className="mb-05">
                     {orcamento.oportunidade}
                 </h2>
-                <p className="mb-05">{orcamento.descricao}</p>
+                <p className="mb-1">{orcamento.descricao}</p>
                 {podeGerir && <p>Cliente: {orcamento.cliente}</p>}
                 <hr></hr>
 
-                <div className="column gap-1">
+                <div className="column fit gap-1">
                     <div className="row align-center">
                         <p>Criada em:</p> <div className="date">{orcamento.criadaEm}</div>
                     </div>

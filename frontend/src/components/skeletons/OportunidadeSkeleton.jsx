@@ -1,4 +1,4 @@
-function SkeletonBlock({ width = '100%', height = '1.5rem' }) {
+function SkeletonBlock({ width = '100%', height = '2rem' }) {
   return (
     <div
       className="skeleton"
@@ -41,7 +41,7 @@ export default function OportunidadeRowSkeleton() {
 
       {/* Prazo da proposta */}
       <td>
-        <SkeletonBlock/>
+        <SkeletonBlock width="50%"/>
       </td>
 
       {/* Data pretendida */}
@@ -53,7 +53,7 @@ export default function OportunidadeRowSkeleton() {
       <td>
         <div className="row align-center">
           <SkeletonBlock />
-          <SkeletonBlock />
+          <SkeletonBlock width="25%"/>
         </div>
       </td>
     </tr>

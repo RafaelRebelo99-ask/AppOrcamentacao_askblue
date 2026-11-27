@@ -23,10 +23,9 @@ export default function NovaOportunidade() {
             <div className="column gap scrollable-y">
 
                 <div className="row align-center">
-                    <h1>Nova oportunidade</h1>
+                    <h1>Nova Oportunidade</h1>
                     <ThemeToggle />
                 </div>
-                <p className='mb-1 weak'>Regista uma nova oportunidade comercial da AskBlue.</p>
 
                 <div className="row w-50">
                     <OportunidadeForm

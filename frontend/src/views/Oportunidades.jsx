@@ -8,6 +8,8 @@ import OportunidadeRow from '../components/oportunidades/OportunidadeRow';
 import OportunidadeRowSkeleton from '../components/skeletons/OportunidadeSkeleton';
 
 import useOportunidadesController from '../controllers/useOportunidades';
+import { Clock2, Clock5, Hash } from '@coolicons/react';
+import Icon from '../components/Icon';
 
 const filtros = [
   { label: 'Todas', value: 'Todas' },
@@ -22,12 +24,12 @@ const filtros = [
 
 const opcoesOrdenacao = [
   {
-    icon: 'bi bi-clock',
+    icon: Clock2,
     label: 'Prazo (Mais próximo)',
     value: 'prazo-asc',
   },
   {
-    icon: 'bi bi-clock-history',
+    icon: Clock5,
     label: 'Prazo (Mais distante)',
     value: 'prazo-desc',
   },
@@ -37,6 +39,7 @@ export default function Oportunidades() {
   const [menuAbertoId, setMenuAbertoId] = useState(null);
 
   const {
+    isCliente,
     clientes,
     loadingClientes,
     oportunidadesFiltradas,
@@ -86,13 +89,15 @@ export default function Oportunidades() {
           placeholder={loadingCategorias ? 'A carregar categorias...' : 'Categoria'}
           disabled={loadingCategorias}
         />
-        <Select
-          options={clientes}
-          value={clienteSelecionado}
-          onChange={setClienteSelecionado}
-          placeholder={loadingClientes ? 'A carregar clientes...' : 'Cliente'}
-          disabled={loadingClientes}
-        />
+        {!isCliente && (
+          <Select
+            options={clientes}
+            value={clienteSelecionado}
+            onChange={setClienteSelecionado}
+            placeholder={loadingClientes ? 'A carregar clientes...' : 'Cliente'}
+            disabled={loadingClientes}
+          />
+        )}
 
         <Sort
           opcoes={opcoesOrdenacao}
@@ -108,7 +113,7 @@ export default function Oportunidades() {
         <table className="table">
           <thead>
             <tr className="header">
-              <th>ID</th>
+              <th><Icon icon={Hash} /></th>
               <th>Título</th>
               <th>Estado</th>
               <th>Cliente</th>

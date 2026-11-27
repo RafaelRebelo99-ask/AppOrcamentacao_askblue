@@ -1,8 +1,19 @@
+
 import { useNavigate } from 'react-router-dom';
+
 import Layout from '../components/Layout';
 import ThemeToggle from '../components/ThemeToggle';
+
 import useDashboard from '../controllers/useDashboard';
+
 import NumeroAnimado from '../components/NumeroAnimado';
+import Icon from '../components/Icon';
+
+import { DashboardRecentSkeleton, DashboardStatsSkeleton } from '../components/skeletons/DashboardSkeleton';
+
+import {
+    Clipboard
+} from '@coolicons/react';
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -12,8 +23,8 @@ export default function Dashboard() {
         recentes,
         loading,
         erro,
+        isCliente,
     } = useDashboard();
-
 
     const utilizador = JSON.parse(
         localStorage.getItem('utilizador') ||
@@ -25,97 +36,121 @@ export default function Dashboard() {
 
     return (
         <Layout>
-            <main className="dashboard scrollable-y">
-                <section className="dashboard-header">
+            <div className="dashboard scrollable-y">
+
+                {/* Header */}
+                <div className="dashboard-header">
                     <div>
-                        <h1>Bem vindo, {nome}</h1>
-                        <p className="weak">
-                            Aqui está o resumo da tua atividade comercial.
-                        </p>
+                        <h1 className='mb-0'>
+                            Olá, {nome}
+                        </h1>
                     </div>
+
                     <ThemeToggle />
-                </section>
-
+                </div>
                 <div className="column gap-1 scrollable-y">
+                    {/* Statistics */}
+                    <div className="dashboard-stats">
+                        {loading
+                            ? (<DashboardStatsSkeleton />)
+                            : estatisticas.map((stat, index) => {
 
-                    <section className="dashboard-stats">
-                        {estatisticas.map((item) => (
-                            <article className="dashboard-stat" key={item.titulo}>
-                                <div className="row align-center justify-between">
-                                    <i className={`bi ${item.icon}`}></i>
-                                    <p>{item.titulo}</p>
-                                </div>
+                                return (
+                                    <div
+                                        className="dashboard-stat"
+                                        key={index}
+                                    >
+                                        <p className='mb-2'>{stat.titulo}</p>
+                                        <h2>
+                                            <NumeroAnimado
+                                                valor={stat.valor}
+                                            />
+                                        </h2>
 
-                                <h2><NumeroAnimado valor={item.valor} /></h2>
+                                        <p className="weak">
+                                            {stat.descricao}
+                                        </p>
+                                    </div>
+                                );
+                            })}
+                    </div>
 
-                                <p className="weak">{item.descricao}</p>
-                            </article>
-                        ))}
-                    </section>
+                    {/* Recent opportunities */}
+                    <div className="dashboard-section">
+                        <div className="row align/center space-between">
+                            <div className='column'>
+                                <h2>
+                                    {isCliente
+                                        ? 'Os meus pedidos'
+                                        : 'Oportunidades recentes'}
+                                </h2>
 
-                    <section className="dashboard-content">
-
-                        <article className="dashboard-section">
-                            <div className="row space-between align-center">
-                                <div>
-                                    <h3>Oportunidades recentes</h3>
-                                    <p className="weak">
-                                        As últimas oportunidades registadas.
-                                    </p>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    className="transparent slide-right"
-                                    onClick={() => navigate('/oportunidades')}
-                                >
-                                    Ver todas
-                                    <i className="bi bi-arrow-right"></i>
-                                </button>
-                            </div>
-
-                            {loading ? (
-                                <p className="weak">A carregar oportunidades...</p>
-                            ) : recentes.length === 0 ? (
-                                <div className="dashboard-empty">
-                                    <i className="bi bi-clipboard"></i>
-                                    <p>Ainda não existem oportunidades.</p>
-                                </div>
-                            ) : (
-                                <div className="column ">
-                                    {recentes.map(oportunidade => (
-                                        <div className="row pad align-center border-bottom" key={oportunidade.id}>
-                                            <div className="column">
-                                                <h4>{oportunidade.titulo}</h4>
-                                                <div className="row align-center">
-                                                    <p className='weak'>{oportunidade.cliente}</p>
-                                                </div>
-                                            </div>
-                                            <div className="estado">{oportunidade.estadoTexto}</div>
-                                        </div>
-
-                                    ))}
-                                </div>
-                            )}
-                        </article>
-
-                        <article className="dashboard-section">
-                            <div>
-                                <h3>Ações pendentes</h3>
-                                <p className="weak">
-                                    Atividades que podem precisar da tua atenção.
+                                <p>
+                                    {isCliente
+                                        ? 'Consulte o estado dos seus pedidos mais recentes.'
+                                        : 'Últimas oportunidades registadas.'}
                                 </p>
                             </div>
 
-                            <div className="dashboard-empty">
-                                <i className="bi bi-check-all"></i>
-                                <p>Não existem ações pendentes.</p>
-                            </div>
-                        </article>
+                            <button
+                                className="btn-secondary"
+                                onClick={() => navigate('/oportunidades')}
+                            >
+                                Ver todas
+                            </button>
+                        </div>
 
-                    </section>
+                        {erro && (
+                            <div className="error-message">
+                                {erro}
+                            </div>
+                        )}
+
+                        {loading ? (
+                            <DashboardRecentSkeleton />
+
+                        ) : recentes.length === 0 ? (
+                        <div className="dashboard-empty">
+                            <Icon icon={Clipboard} />
+                            <p>
+                                {isCliente
+                                    ? 'Ainda não submeteu nenhum pedido.'
+                                    : 'Ainda não existem oportunidades.'}
+                            </p>
+                        </div>
+                        ) : (
+                        <div className="column gap-1">
+                            {recentes.map(oportunidade => (
+                                <div
+                                    className="row pad-05 align-center border-bottom"
+                                    key={oportunidade.id}
+                                >
+                                    <div className="column">
+                                        <h4>
+                                            {oportunidade.titulo}
+                                        </h4>
+
+                                        {!isCliente && (
+                                            <p className='weak'>
+                                                {oportunidade.cliente}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="estado">
+                                        {oportunidade.estadoTexto ||
+                                            oportunidade.estado}
+                                    </div>
+
+                                    <Icon icon={Clipboard} />
+                                </div>
+                            ))}
+                        </div>
+                        )}
+                    </div>
                 </div>
-            </main>
+
+            </div>
         </Layout>
     );
 }

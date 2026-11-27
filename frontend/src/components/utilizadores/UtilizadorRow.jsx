@@ -1,3 +1,6 @@
+import { Pencil, Trash, TrashFull } from "@coolicons/react";
+import Icon from "../Icon";
+
 export default function UtilizadorRow({ utilizador, emCurso, onApagar, onEditar }) {
   return (
     <tr>
@@ -6,14 +9,14 @@ export default function UtilizadorRow({ utilizador, emCurso, onApagar, onEditar 
       <td>
         <div className="estado">{utilizador.role}</div>
       </td>
-      <td className="row ml-auto">
+      <td className="row">
         <button
             type="button"
             className="secondary"
             disabled={emCurso}
             onClick={() => onEditar(utilizador)}
           >
-            <i className="bi bi-pencil"></i>
+            <Icon icon={Pencil}/>
             Editar
           </button>
         {/* Os administradores não se apagam (o backend também recusa) */}
@@ -25,7 +28,7 @@ export default function UtilizadorRow({ utilizador, emCurso, onApagar, onEditar 
             disabled={emCurso}
             onClick={() => onApagar(utilizador)}
           >
-            <i className="bi bi-trash"></i>
+            <Icon icon={TrashFull}/>
             {emCurso ? 'A apagar...' : 'Apagar'}
           </button>
         )}

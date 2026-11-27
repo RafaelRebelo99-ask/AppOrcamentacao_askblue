@@ -4,6 +4,7 @@ import useCriarOrcamento from '../controllers/orcamentos/useNovoOrcamento';
 import Select from '../components/Select';
 import NumeroInput from '../components/NumeroInput';
 import ThemeToggle from '../components/ThemeToggle';
+import DateInput from '../components/DateInput';
 
 const taxasIVA = [
   { label: '23%', value: '23' },
@@ -64,7 +65,7 @@ export default function CriarOrcamento() {
         <h1 className="mb-1">{modoEdicao ? 'Editar Orçamento' : 'Novo Orçamento'}</h1>
         <ThemeToggle />
       </div>
-      <div className="column w-50 scrollable-y">
+      <div className="column vw-50 scrollable-y">
         <section>
           <h2>{oportunidade.titulo}</h2>
 
@@ -145,11 +146,9 @@ export default function CriarOrcamento() {
             <div className="row wrap gap-2">
               <div className="field">
                 <label htmlFor="dataInicio">Data de início *</label>
-
-                <input
+                <DateInput
                   id="dataInicio"
                   name="dataInicio"
-                  type="date"
                   value={dados.dataInicio}
                   onChange={handleChange}
                   required
@@ -178,11 +177,9 @@ export default function CriarOrcamento() {
 
               <div className="field">
                 <label htmlFor="dataValidade">Validade da proposta *</label>
-
-                <input
+                <DateInput
                   id="dataValidade"
                   name="dataValidade"
-                  type="date"
                   value={dados.dataValidade}
                   onChange={handleChange}
                   required

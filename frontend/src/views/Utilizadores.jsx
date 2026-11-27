@@ -4,6 +4,8 @@ import Filters from '../components/Filters';
 import UtilizadorForm from '../components/utilizadores/UtilizadorForm';
 import UtilizadorRow from '../components/utilizadores/UtilizadorRow';
 import useUtilizadores from '../controllers/useUtilizadores';
+import Icon from '../components/Icon';
+import { UserPlusCorner } from '@coolicons/react';
 
 const filtros = [
   { label: 'Todos', value: 'Todos' },
@@ -57,7 +59,7 @@ export default function Utilizadores() {
           onClick={handleAbrirForm}
           disabled={formAberto}
         >
-          <i className="bi bi-person-plus"></i>Novo utilizador
+          <Icon icon={UserPlusCorner}/>Novo utilizador
         </button>
       </div>
 
@@ -83,7 +85,7 @@ export default function Utilizadores() {
               <th>Nome</th>
               <th>Email</th>
               <th>Função</th>
-              <th></th>
+              <th>Ações</th>
             </tr>
           </thead>
 

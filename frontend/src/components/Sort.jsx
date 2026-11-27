@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { ChevronDown, ChevronUp } from '@coolicons/react';
+import Icon from './Icon';
 
 export default function Sort({
   opcoes,
@@ -11,6 +13,8 @@ export default function Sort({
     opcao => opcao.value === ordenacao
   );
 
+  const icon = menuAberto ? ChevronUp : ChevronDown;
+
   return (
     <div className="sort">
       <button
@@ -18,7 +22,7 @@ export default function Sort({
         onClick={() => setMenuAberto(!menuAberto)}
       >
         {opcaoSelecionada?.label || 'Ordenar por'}
-        <i className={`bi bi-caret-${menuAberto ? 'up' : 'down'}`}></i>
+        <Icon icon={icon}/>
       </button>
 
       {menuAberto && (
@@ -33,7 +37,7 @@ export default function Sort({
                 setMenuAberto(false);
               }}
             >
-              {opcao.icon && <i className={`bi ${opcao.icon}`}></i>}
+              {opcao.icon && <Icon icon={opcao.icon}/>}
               {opcao.label}
             </button>
           ))}
